@@ -1,4 +1,4 @@
-# nf-core/hlatyping
+# ![nfcore/hlatyping](docs/images/hlatyping_logo.png)
 Precision HLA typing from next-generation sequencing data.
 
 [![Build Status](https://travis-ci.org/nf-core/hlatyping.svg?branch=master)](https://travis-ci.org/nf-core/hlatyping)
