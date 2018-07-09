@@ -27,19 +27,25 @@ def helpMessage() {
 
     Mandatory arguments:
       --reads                       Path to input data (must be surrounded with quotes)
-      --genome                      Name of iGenomes reference
+      --rna/--dna                   Use with RNA/DNA sequencing data.
+      --outdir OUTDIR               The output directory where the results will be saved
       -profile                      Hardware config to use. docker / aws
 
     Options:
       --singleEnd                   Specifies that the input is single end reads
+      --beta B                      The beta value for for homozygosity detection (see paper). Default: 0.009. Handle with care.
+      --enumerate N                 Number of enumerations. OptiType will output the optimal solution and the top N-1 suboptimal solutions
+                                    in the results CSV. Default: 1
+      --solver SOLVER               Choose between different IP solver (glpk, cbc). Default: glpk
 
     References                      If not specified in the configuration file or you wish to overwrite any of the references.
       --fasta                       Path to Fasta reference
 
     Other options:
-      --outdir                      The output directory where the results will be saved
-      --email                       Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits
-      -name                         Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic.
+      --prefix PREFIX               Specifies a prefix of output files from Optitype
+      --verbose                     Activate verbose mode of Optitype
+      --email EMAIL                 Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits
+      -name NAME                    Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic.
     """.stripIndent()
 }
 
