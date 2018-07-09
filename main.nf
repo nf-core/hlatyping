@@ -8,11 +8,13 @@
  https://github.com/nf-core/hlatyping
  #### Authors
  Sven Fillinger sven1103 <sven.fillinger@qbic.uni-tuebingen.de> - https://github.com/sven1103>
+ Christopher Mohr christopher-mohr <christopher.mohr@uni-tuebingen.de>
 ----------------------------------------------------------------------------------------
 */
 
 
 def helpMessage() {
+    //TODO Rewrite help message
     log.info"""
     =========================================
      nf-core/hlatyping v${params.version}
@@ -91,6 +93,7 @@ Channel
 
 
 // Header log info
+// TODO: Change logging info
 log.info "========================================="
 log.info " nf-core/hlatyping v${params.version}"
 log.info "========================================="
@@ -154,6 +157,7 @@ process get_software_versions {
 /*
  * STEP 1 - FastQC
  */
+ //TODO Implement processes for HLA typing
 process fastqc {
     tag "$name"
     publishDir "${params.outdir}/fastqc", mode: 'copy',
