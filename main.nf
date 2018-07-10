@@ -61,7 +61,6 @@ if (params.help){
 
 // Configurable variables
 params.name = false
-params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
 params.multiqc_config = "$baseDir/conf/multiqc_config.yaml"
 params.email = false
 params.plaintext_email = false
@@ -92,10 +91,10 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
 /*
  * Create a channel for input read files
  */
-Channel
-    .fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
-    .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --singleEnd on the command line." }
-    .into { read_files_fastqc }
+//Channel
+//    .fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
+//    .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --singleEnd on the command line." }
+//    .into { read_files_fastqc }
 
 
 // Header log info
@@ -141,92 +140,110 @@ try {
 
 
 /*
- * Parse software version numbers
+ * Preparation - Unpack files if packed.
+ *
  */
-process get_software_versions {
 
-    output:
-    file 'software_versions_mqc.yaml' into software_versions_yaml
-
-    script:
-    """
-    echo $params.version > v_pipeline.txt
-    echo $workflow.nextflow.version > v_nextflow.txt
-    fastqc --version > v_fastqc.txt
-    multiqc --version > v_multiqc.txt
-    scrape_software_versions.py > software_versions_mqc.yaml
-    """
+if( params.readPaths ){
+    if( params.singleEnd ) {
+        Channel
+            .from( params.readPaths )
+            .map { row -> [ row[0], [ file( row[1][0] ) ] ] }
+            .ifEmpty { exit 1, "params.readPaths was empty - no input files supplied!" }
+            .set { input_data }
+    } else {
+        Channel
+            .from( params.readPaths )
+            .map { row -> [ row[0], [ row( row[1][0] ), row( row[1][1] ) ] ] }
+            .ifEmpty { exit 1, "params.readPaths was empty - no input files supplied!" }
+            .set { input_data }
+    }
+} else {
+     Channel
+        .fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
+        .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs" +
+            "to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --singleEnd on the command line." }
+        .set { input_data }
 }
-
 
 
 /*
- * STEP 1 - FastQC
+ * STEP 1 - Create config.ini for Optitype
+ *
+ * Optitype requires a config.ini file with information like
+ * which solver to use for the optimization step. Also, the number
+ * of threads is specified there for different steps.
+ * As we do not want to touch the original source code of Optitype,
+ * we simply take information from Nextflow about the available ressources
+ * and create a small config.ini as first stepm which is then passed to Optitype.
  */
- //TODO Implement processes for HLA typing
-process fastqc {
-    tag "$name"
-    publishDir "${params.outdir}/fastqc", mode: 'copy',
-        saveAs: {filename -> filename.indexOf(".zip") > 0 ? "zips/$filename" : "$filename"}
+process init {
 
-    input:
-    set val(name), file(reads) from read_files_fastqc
+    publishDir "${params.outdir}/config", mode: 'copy'
 
     output:
-    file "*_fastqc.{zip,html}" into fastqc_results
+    file 'config.ini' into config_result
 
     script:
     """
-    fastqc -q $reads
+    configbuilder --max-cpus ${params.max_cpus} --solver ${params.solver} > config.ini
     """
+
 }
 
+if(params.singleEnd == true){
+    process unzip {
 
+            input:
+            set val(pattern), file(reads) from input_data
+
+            output:
+            set val(pattern), unzipped into raw_reads
+
+            script:
+            """
+            zcat ${reads[0]} > unzipped
+            """
+    }
+} else {
+    process unzip {
+
+            input:
+            set val(pattern), file(reads) from input_data
+
+            output:
+            set val(pattern), "unzipped_{1,2}.fastq" into raw_reads
+
+            script:
+            """
+            zcat ${reads[0]} > unzipped_1.fastq
+            zcat ${reads[1]} > unzipped_2.fastq
+            """
+    }
+}
+ 
 
 /*
- * STEP 2 - MultiQC
+ * STEP 2 - Run Optitype
+ * 
+ * This is the major process, that formulates the IP and calls the selected
+ * IP solver.
+ *  
+ * Ouput formats: <still to enter>
  */
-process multiqc {
-    publishDir "${params.outdir}/MultiQC", mode: 'copy'
+process run_optitype {
+
+    publishDir "${params.outdir}/optitype", mode: 'copy', pattern: 'results/*'
 
     input:
-    file multiqc_config
-    file ('fastqc/*') from fastqc_results.collect()
-    file ('software_versions/*') from software_versions_yaml
-
-    output:
-    file "*multiqc_report.html" into multiqc_report
-    file "*_data"
-
-    script:
-    rtitle = custom_runName ? "--title \"$custom_runName\"" : ''
-    rfilename = custom_runName ? "--filename " + custom_runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report" : ''
-    """
-    multiqc -f $rtitle $rfilename --config $multiqc_config .
-    """
-}
-
-
-
-/*
- * STEP 3 - Output Description HTML
- */
-process output_documentation {
-    tag "$prefix"
-    publishDir "${params.outdir}/Documentation", mode: 'copy'
-
-    input:
-    file output_docs
-
-    output:
-    file "results_description.html"
+    file 'config.ini' from config_result
+    set val(x), file(reads) from raw_reads
 
     script:
     """
-    markdown_to_html.r $output_docs results_description.html
+    OptiTypePipeline.py -i ${reads} -c config.ini --${params.seqtype} --outdir ${params.outdir}
     """
 }
-
 
 
 /*
@@ -260,8 +277,8 @@ workflow.onComplete {
     if(workflow.revision) email_fields['summary']['Pipeline Git branch/tag'] = workflow.revision
     if(workflow.container) email_fields['summary']['Docker image'] = workflow.container
     email_fields['software_versions'] = software_versions
-    email_fields['software_versions']['Nextflow Build'] = workflow.nextflow.build
-    email_fields['software_versions']['Nextflow Compile Timestamp'] = workflow.nextflow.timestamp
+    //email_fields['software_versions']['Nextflow Build'] = workflow.nextflow.build
+    //email_fields['software_versions']['Nextflow Compile Timestamp'] = workflow.nextflow.timestamp
 
     // Render the TXT template
     def engine = new groovy.text.GStringTemplateEngine()
