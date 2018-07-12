@@ -138,12 +138,6 @@ try {
               "============================================================"
 }
 
-
-/*
- * Preparation - Unpack files if packed.
- *
- */
-
 if( params.readPaths ){
     if( params.singleEnd ) {
         Channel
@@ -166,31 +160,39 @@ if( params.readPaths ){
         .set { input_data }
 }
 
+/*
+* Let's first see, if the provided input data is BAM or not. In the case the user
+* provides BAM files, a remapping step is then done against the HLA reference sequence.
+* We set a boolean flag here, if we found BAM files and check later.
+*/
+def isInputBam = {
+    def files = []
+    input_data.queue.value.each {
+        if( it instanceof ArrayList ) {
+            if( it[1] ) {
+                files.add(it[1])
+            } else if (it[0]) {
+                files.add(it[0])
+            }
+        }
+    }
+    def bam_files = files.flatten().findAll { it.getName().endsWith(".bam")  }
+    if( bam_files && (bam_files.size() != files.flatten().size()) ) {
+        log.error """You have provide a mixture of input data types. Both bams and others found. \n
+        Please provide only one data type. ${files}\n  """
+        exit(1)
+    }
+    if ( bam_files ) return true
+    return false
+}()
+
+if( isInputBam ) log.info "BAM file format detected. Initiate remapping to HLA alleles with yara mapper."
+exit(0)
 
 /*
- * STEP 1 - Create config.ini for Optitype
+ * Preparation - Unpack files if packed.
  *
- * Optitype requires a config.ini file with information like
- * which solver to use for the optimization step. Also, the number
- * of threads is specified there for different steps.
- * As we do not want to touch the original source code of Optitype,
- * we simply take information from Nextflow about the available ressources
- * and create a small config.ini as first stepm which is then passed to Optitype.
  */
-process init {
-
-    publishDir "${params.outdir}/config", mode: 'copy'
-
-    output:
-    file 'config.ini' into config_result
-
-    script:
-    """
-    configbuilder --max-cpus ${params.max_cpus} --solver ${params.solver} > config.ini
-    """
-
-}
-
 if(params.singleEnd == true){
     process unzip {
 
@@ -222,6 +224,32 @@ if(params.singleEnd == true){
     }
 }
  
+
+/*
+ * STEP 1 - Create config.ini for Optitype
+ *
+ * Optitype requires a config.ini file with information like
+ * which solver to use for the optimization step. Also, the number
+ * of threads is specified there for different steps.
+ * As we do not want to touch the original source code of Optitype,
+ * we simply take information from Nextflow about the available ressources
+ * and create a small config.ini as first stepm which is then passed to Optitype.
+ */
+process init {
+
+    publishDir "${params.outdir}/config", mode: 'copy'
+
+    output:
+    file 'config.ini' into config_result
+
+    script:
+    """
+    configbuilder --max-cpus ${params.max_cpus} --solver ${params.solver} > config.ini
+    """
+
+}
+
+
 
 /*
  * STEP 2 - Run Optitype
