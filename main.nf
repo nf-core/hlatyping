@@ -137,35 +137,114 @@ try {
               "  Please run `nextflow self-update` to update Nextflow.\n" +
               "============================================================"
 }
-
-
 /*
- * Preparation - Unpack files if packed.
- *
- */
+* Let's first see, if the provided input data is BAM or not. In the case the user
+* provides BAM files, a remapping step is then done against the HLA reference sequence.
+* We set a boolean flag here, if we found BAM files and check later.
+*/
 
 if( params.readPaths ){
-    if( params.singleEnd ) {
+    if( params.singleEnd || params.bam) {
         Channel
             .from( params.readPaths )
             .map { row -> [ row[0], [ file( row[1][0] ) ] ] }
-            .ifEmpty { exit 1, "params.readPaths was empty - no input files supplied!" }
+            .ifEmpty { exit 1, "params.readPaths or params.bams was empty - no input files supplied!" }
             .set { input_data }
     } else {
         Channel
             .from( params.readPaths )
             .map { row -> [ row[0], [ row( row[1][0] ), row( row[1][1] ) ] ] }
-            .ifEmpty { exit 1, "params.readPaths was empty - no input files supplied!" }
+            .ifEmpty { exit 1, "params.readPaths or params.bams was empty - no input files supplied!" }
             .set { input_data }
     }
 } else {
      Channel
-        .fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
+        .fromFilePairs( params.reads, size: params.singleEnd || params.bam ? 1 : 2 )
         .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs" +
             "to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --singleEnd on the command line." }
         .set { input_data }
 }
 
+
+if( params.bam ) log.info "BAM file format detected. Initiate remapping to HLA alleles with yara mapper."
+
+/*
+ * Preparation - Unpack files if packed.
+ * 
+ * OptiType cannot handle *.gz archives as input files, 
+ * So we have to unpack first, if this is the case. 
+ */
+if ( !params.bam  ) { // FASTQ files processing
+    if(params.singleEnd == true){
+        process unzip {
+
+                input:
+                set val(pattern), file(reads) from input_data
+
+                output:
+                set val(pattern), unzipped into raw_reads
+
+                script:
+                """
+                zcat ${reads[0]} > unzipped
+                """
+        }
+    } else {
+        process unzip {
+
+                input:
+                set val(pattern), file(reads) from input_data
+
+                output:
+                set val(pattern), "unzipped_{1,2}.fastq" into raw_reads
+
+                script:
+                """
+                zcat ${reads[0]} > unzipped_1.fastq
+                zcat ${reads[1]} > unzipped_2.fastq
+                """
+        }
+    }
+} else { // BAM files processing
+
+    /*
+     * Preparation - Remapping of reads against HLA reference and filtering these
+     *
+     * <Description here>
+     */
+    process remap_to_hla {
+        
+        input:
+        set val(pattern), file(bams) from input_data
+
+        output:
+        set val(pattern), "filtered_{1,2}.fastq" into raw_reads
+
+        script:
+        if (params.singleEnd)
+        """
+        samtools bam2fq $bams > output_1.fastq
+        yara_mapper -e 3 -t ${params.max_cpus} -f bam ${workflow.projectDir}/${params.index} output_1.fastq > output_1.bam
+        samtools view -h -F 4 -b1 output_1.bam > mapped_1.bam
+        samtools bam2fq mapped_1.bam > filtered_1.fastq
+        """
+        else
+        """
+        samtools view -h -f 0x40 $bams > output_1.bam
+        samtools view -h -f 0x80 $bams > output_2.bam
+        samtools bam2fq output_1.bam > output_1.fastq
+        samtools bam2fq output_2.bam > output_2.fastq
+        yara_mapper -e 3 -t ${params.max_cpus} -f bam ${workflow.projectDir}/${params.index} output_1.fastq output_2.fastq > output.bam
+        samtools view -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
+        samtools view -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
+        samtools bam2fq mapped_1.bam > filtered_1.fastq
+        samtools bam2fq mapped_2.bam > filtered_2.fastq
+        """
+
+    }
+
+}
+ 
 
 /*
  * STEP 1 - Create config.ini for Optitype
@@ -177,7 +256,7 @@ if( params.readPaths ){
  * we simply take information from Nextflow about the available ressources
  * and create a small config.ini as first stepm which is then passed to Optitype.
  */
-process init {
+process build_config {
 
     publishDir "${params.outdir}/config", mode: 'copy'
 
@@ -191,37 +270,7 @@ process init {
 
 }
 
-if(params.singleEnd == true){
-    process unzip {
 
-            input:
-            set val(pattern), file(reads) from input_data
-
-            output:
-            set val(pattern), unzipped into raw_reads
-
-            script:
-            """
-            zcat ${reads[0]} > unzipped
-            """
-    }
-} else {
-    process unzip {
-
-            input:
-            set val(pattern), file(reads) from input_data
-
-            output:
-            set val(pattern), "unzipped_{1,2}.fastq" into raw_reads
-
-            script:
-            """
-            zcat ${reads[0]} > unzipped_1.fastq
-            zcat ${reads[1]} > unzipped_2.fastq
-            """
-    }
-}
- 
 
 /*
  * STEP 2 - Run Optitype
