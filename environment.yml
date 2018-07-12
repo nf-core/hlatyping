@@ -8,3 +8,4 @@ dependencies:
   - multiqc=1.5
   - optitype=1.3.2
   - yara=0.9.10
+  - samtools=1.8
