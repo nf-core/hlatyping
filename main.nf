@@ -66,7 +66,7 @@ params.plaintext_email = false
 output_docs = file("$baseDir/docs/output.md")
 
 // Validate inputs
-params.reads ?: { log.error "No read data privided. Make sure you have used the '--reads' option."; exit 1 }()
+params.reads ?: params.readPaths ?: { log.error "No read data privided. Make sure you have used the '--reads' option."; exit 1 }()
 params.seqtype ?: { log.error "No sequence type provided, you need to add '--dna/--rna.'"; exit 1 }()
 if( params.bam ) params.index ?: { log.error "For BAM option, you need to provide a path to the HLA reference index (yara; --index) "; exit 1 }()
 params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
@@ -85,7 +85,7 @@ log.info " nf-core/hlatyping v${params.version}"
 log.info "========================================="
 def summary = [:]
 summary['Run Name']     = custom_runName ?: workflow.runName
-summary['Reads']        = params.reads
+summary['Reads']        = params.readPaths? params.readPaths : params.reads
 summary['Data Type']    = params.singleEnd ? 'Single-End' : 'Paired-End'
 summary['File Type']    = params.bam ? 'BAM' : 'Other (fastq, fastq.gz, ...)'
 summary['IP solver']    = params.solver
