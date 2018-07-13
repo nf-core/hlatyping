@@ -32,14 +32,13 @@ def helpMessage() {
       -profile                      Hardware config to use. docker / aws
 
     Options:
+      --bam                         If the input format is of type BAM. A remapping step with yara mapper against the HLA
+                                    reference is performed in this case
       --singleEnd                   Specifies that the input is single end reads
       --beta B                      The beta value for for homozygosity detection (see paper). Default: 0.009. Handle with care.
       --enumerate N                 Number of enumerations. OptiType will output the optimal solution and the top N-1 suboptimal solutions
                                     in the results CSV. Default: 1
       --solver SOLVER               Choose between different IP solver (glpk, cbc). Default: glpk
-
-    References                      If not specified in the configuration file or you wish to overwrite any of the references.
-      --fasta                       Path to Fasta reference
 
     Other options:
       --prefix PREFIX               Specifies a prefix of output files from Optitype
@@ -175,35 +174,24 @@ if( params.bam ) log.info "BAM file format detected. Initiate remapping to HLA a
  * So we have to unpack first, if this is the case. 
  */
 if ( !params.bam  ) { // FASTQ files processing
-    if(params.singleEnd == true){
-        process unzip {
+    process unzip {
 
-                input:
-                set val(pattern), file(reads) from input_data
+            input:
+            set val(pattern), file(reads) from input_data
 
-                output:
-                set val(pattern), unzipped into raw_reads
+            output:
+            set val(pattern), "unzipped_{1,2}.fastq" into raw_reads
 
-                script:
-                """
-                zcat ${reads[0]} > unzipped
-                """
-        }
-    } else {
-        process unzip {
-
-                input:
-                set val(pattern), file(reads) from input_data
-
-                output:
-                set val(pattern), "unzipped_{1,2}.fastq" into raw_reads
-
-                script:
-                """
-                zcat ${reads[0]} > unzipped_1.fastq
-                zcat ${reads[1]} > unzipped_2.fastq
-                """
-        }
+            script:
+            if(params.singleEnd == true)
+            """
+            zcat ${reads[0]} > unzipped_1.fastq
+            """
+            else
+            """
+            zcat ${reads[0]} > unzipped_1.fastq
+            zcat ${reads[1]} > unzipped_2.fastq
+            """
     }
 } else { // BAM files processing
 
