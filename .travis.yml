@@ -24,7 +24,6 @@ install:
 
 env:
   - NXF_VER=0.30.2
-  - NXF_VER=''
 
 script:
   - "nf-core lint ${TRAVIS_BUILD_DIR}"
