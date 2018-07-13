@@ -14,7 +14,6 @@
 
 
 def helpMessage() {
-    //TODO Rewrite help message
     log.info"""
     =========================================
      nf-core/hlatyping v${params.version}
@@ -64,21 +63,13 @@ params.multiqc_config = "$baseDir/conf/multiqc_config.yaml"
 params.email = false
 params.plaintext_email = false
 
-multiqc_config = file(params.multiqc_config)
 output_docs = file("$baseDir/docs/output.md")
 
 // Validate inputs
-if ( params.fasta ){
-    fasta = file(params.fasta)
-    if( !fasta.exists() ) exit 1, "Fasta file not found: ${params.fasta}"
-}
-//
-// NOTE - THIS IS NOT USED IN THIS PIPELINE, EXAMPLE ONLY
-// If you want to use the above in a process, define the following:
-//   input:
-//   file fasta from fasta
-//
-
+params.reads ?: { log.error "No read data privided. Make sure you have used the '--reads' option."; exit 1 }()
+params.seqtype ?: { log.error "No sequence type provided, you need to add '--dna/--rna.'"; exit 1 }()
+if( params.bam ) params.index ?: { log.error "For BAM option, you need to provide a path to the HLA reference index (yara; --index) "; exit 1 }()
+params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
 
 // Has the run name been specified by the user?
 //  this has the bonus effect of catching both -name and --name
@@ -104,8 +95,9 @@ log.info "========================================="
 def summary = [:]
 summary['Run Name']     = custom_runName ?: workflow.runName
 summary['Reads']        = params.reads
-summary['Fasta Ref']    = params.fasta
 summary['Data Type']    = params.singleEnd ? 'Single-End' : 'Paired-End'
+summary['File Type']    = params.bam ? 'BAM' : 'Other (fastq, fastq.gz, ...)'
+summary['IP solver']    = params.solver
 summary['Max Memory']   = params.max_memory
 summary['Max CPUs']     = params.max_cpus
 summary['Max Time']     = params.max_time
