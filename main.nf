@@ -78,17 +78,8 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
   custom_runName = workflow.runName
 }
 
-/*
- * Create a channel for input read files
- */
-//Channel
-//    .fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
-//    .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --singleEnd on the command line." }
-//    .into { read_files_fastqc }
-
 
 // Header log info
-// TODO: Change logging info
 log.info "========================================="
 log.info " nf-core/hlatyping v${params.version}"
 log.info "========================================="
@@ -128,11 +119,7 @@ try {
               "  Please run `nextflow self-update` to update Nextflow.\n" +
               "============================================================"
 }
-/*
-* Let's first see, if the provided input data is BAM or not. In the case the user
-* provides BAM files, a remapping step is then done against the HLA reference sequence.
-* We set a boolean flag here, if we found BAM files and check later.
-*/
+
 
 if( params.readPaths ){
     if( params.singleEnd || params.bam) {
@@ -144,7 +131,7 @@ if( params.readPaths ){
     } else {
         Channel
             .from( params.readPaths )
-            .map { row -> [ row[0], [ row( row[1][0] ), row( row[1][1] ) ] ] }
+            .map { row -> [ row[0], [ file( row[1][0] ), file( row[1][1] ) ] ] }
             .ifEmpty { exit 1, "params.readPaths or params.bams was empty - no input files supplied!" }
             .set { input_data }
     }
@@ -190,7 +177,8 @@ if ( !params.bam  ) { // FASTQ files processing
     /*
      * Preparation - Remapping of reads against HLA reference and filtering these
      *
-     * <Description here>
+     * In case the user provides BAM files, a remapping step
+     * is then done against the HLA reference sequence.
      */
     process remap_to_hla {
         
