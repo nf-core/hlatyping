@@ -9,6 +9,9 @@ cache: pip
 matrix:
   fast_finish: true
 
+before_install:
+  - docker pull nfcore/hlatyping:latest
+
 install:
   # Install Nextflow
   - mkdir /tmp/nextflow
