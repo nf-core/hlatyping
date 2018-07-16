@@ -10,4 +10,5 @@ Bootstrap:docker
     environment.yml /
 
 %post
-    conda env create -n root -f /environment.yml && conda clean -a
+    /opt/conda/bin/conda env create -n root -f /environment.yml
+    /opt/conda/bin/conda clean -a
