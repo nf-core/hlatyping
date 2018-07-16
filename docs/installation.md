@@ -24,7 +24,7 @@ mv nextflow ~/bin/
 # sudo mv nextflow /usr/local/bin
 ```
 
-**You need NextFlow version >= 0.24 to run this pipeline.**
+**You need NextFlow version >= 0.30.2 to run this pipeline.**
 
 See [nextflow.io](https://www.nextflow.io/) and [NGI-NextflowDocs](https://github.com/SciLifeLab/NGI-NextflowDocs) for further instructions on how to install and configure Nextflow.
 
