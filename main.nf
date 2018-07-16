@@ -261,7 +261,7 @@ process run_optitype {
 
     script:
     """
-    OptiTypePipeline.py -i ${reads} -e ${params.enumerations} -b ${params.beta} -p ${params.prefix} -c config.ini --${params.seqtype} --outdir ${params.outdir}
+    OptiTypePipeline.py -i ${reads} -e ${params.enumerations} -b ${params.beta} -p "${params.prefix}" -c config.ini --${params.seqtype} --outdir ${params.outdir}
     """
 }
 
