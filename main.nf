@@ -79,6 +79,7 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
 }
 
 
+
 // Header log info
 log.info "========================================="
 log.info " nf-core/hlatyping v${params.version}"
@@ -89,6 +90,8 @@ summary['Reads']        = params.readPaths? params.readPaths : params.reads
 summary['Data Type']    = params.singleEnd ? 'Single-End' : 'Paired-End'
 summary['File Type']    = params.bam ? 'BAM' : 'Other (fastq, fastq.gz, ...)'
 summary['IP solver']    = params.solver
+summary['Enumerations'] = params.enumerations
+summary['Beta'] = params.beta
 summary['Max Memory']   = params.max_memory
 summary['Max CPUs']     = params.max_cpus
 summary['Max Time']     = params.max_time
@@ -258,7 +261,7 @@ process run_optitype {
 
     script:
     """
-    OptiTypePipeline.py -i ${reads} -c config.ini --${params.seqtype} --outdir ${params.outdir}
+    OptiTypePipeline.py -i ${reads} -e ${params.enumerations} -b ${params.beta} -p ${params.prefix} -c config.ini --${params.seqtype} --outdir ${params.outdir}
     """
 }
 
