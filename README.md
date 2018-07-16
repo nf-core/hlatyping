@@ -18,6 +18,17 @@ nf-core/hlatyping: Precision HLA typing from next-generation sequencing data.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker / singularity containers making installation trivial and results highly reproducible.
 
+### Hot run
+If you want to test with a single line, if the pipeline works on your system, type for **Singularity** container usage:
+
+```bash
+nextflow run nf-core/hlatyping -profile singularity,test --outdir $PWD/results
+```
+and for **Docker**:
+
+```bash
+nextflow run nf-core/hlatyping -profile docker,test --outdir $PWD/results
+```
 
 ### Documentation
 The nf-core/hlatyping pipeline comes with documentation about the pipeline, found in the `docs/` directory:
