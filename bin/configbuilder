@@ -18,7 +18,7 @@ threads=$max_cpus
 # Pyomo. Examples: glpk, cplex, cbc.
 
 solver=$solver
-threads=1
+threads=$solver_threads
 
 [behavior]
 
@@ -60,8 +60,18 @@ def __main__():
     parser.add_argument('-s', "--solver", help="Specifies the solver used by OptiType.", required=True)
 
     args = parser.parse_args()
+    
+    """ Not all IP solvers are multi-threaded.
 
-    print(generate_config_file({'solver':args.solver, 'max_cpus':args.max_cpus}))
+    So we have to tell the script, which solvers to restrict the number of threads.
+    """
+    solver_threads_config = {
+        'glpk': 1 # The glpk solver is not multi-threaded, so we have to set it to one
+    }
+
+    max_solver_threads = solver_threads_config[args.solver] if solver_threads_config.get(args.solver) else args.max_cpus
+
+    print(generate_config_file({'solver':args.solver, 'max_cpus':args.max_cpus, 'solver_threads':max_solver_threads}))
 
 if __name__ == "__main__":
     __main__()
