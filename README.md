@@ -1,5 +1,7 @@
 # ![nfcore/hlatyping](docs/images/hlatyping_logo.png)
-Precision HLA typing from next-generation sequencing data.
+Precision HLA typing from next-generation sequencing data using OptiType.
+
+
 
 [![Build Status](https://travis-ci.org/nf-core/hlatyping.svg?branch=master)](https://travis-ci.org/nf-core/hlatyping)
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A50.30.2-brightgreen.svg)](https://www.nextflow.io/)
@@ -14,7 +16,9 @@ Precision HLA typing from next-generation sequencing data.
 
 
 ### Introduction
-nf-core/hlatyping: Precision HLA typing from next-generation sequencing data.
+nf-core/hlatyping: Precision HLA typing from next-generation sequencing data using OptiType.
+
+OptiType is a HLA genotyping algorithm based on integer linear programming. Reads of whole exome/genome/transcriptome sequencing data are mapped against a reference of known MHC class I alleles. To produce accurate 4-digit HLA genotyping predictions, all major and minor HLA-I loci are considered simultaneously to find an allele combination that maximizes the number of explained reads.  
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker / singularity containers making installation trivial and results highly reproducible.
 
