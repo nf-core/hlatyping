@@ -61,7 +61,18 @@ The nf-core/hlatyping pipeline comes with documentation about the pipeline, foun
 
 The hlatyping pipeline can currently deal with two input formats: `.fastq{.gz}` or `.bam`, not both at the same time however. If the input file type is `bam`, than the pipeline extracts all reads from it and performs an mapping additional step with the `yara` mapper against the HLA reference sequence. Indices are provided in the `./data` directory of this repository. Optitype uses [razers3](https://github.com/seqan/seqan/tree/master/apps/razers3), which is very memory consuming. In order to avoid memory issues during pipeline execution, we reduce the mapping information on the relevant HLA regions on chromosome 6.
 
+**DAG with `.fastq{.gz}` as input**
 
+Creates a config file from the command line arguments, which is then passed to OptiType. In parallel, the fastqs are unzipped if they are passed as archives. OptiType is then used for the HLA typing.
+
+<img src="./docs/images/hlatyping_dag_fastq.svg">
+
+**DAG with `.bam` as input**
+
+Creates a config file from the command line arguments, which is then passed to OptiType. In parallel, the reads are extracted from the bam file and mapped again against the HLA reference sequence on chromosome 6. OptiType is then used for the HLA typing.
+
+<img src="./docs/images/hlatyping_dag_bam.svg">
 
 ### <a name="credits"></a>Credits
-This pipeline was written by Sven Fillinger ([sven1103](https://github.com/sven1103)) at [QBiC](http://qbic.life).
+
+This pipeline was written by Sven Fillinger ([sven1103](https://github.com/sven1103)) at [QBiC](http://qbic.life) and Christopher Mohr ([christopher-mohr](https://github.com/christopher-mohr)) at [QBiC](http://qbic.life).
