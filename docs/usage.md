@@ -113,10 +113,13 @@ By default, the pipeline uses the [`glpk`](https://www.gnu.org/software/glpk/) I
 If you want to use a different solver, then you have to provide it in the `./envrionment.yml` conda cofiguration file, which is used in the container built. This requires a valid conda recipe of course, and we encourage the creation of one, if not already present on Anaconda cloud.
 
 ### `--enumerations`
-...todo
+
+By default, the pipeline will do one enumeration (`--enumerations 1`). If you want OptiType to output the optimal solution and the top N-1 suboptimal solutions in the result file, specify the number of enumerations accordingly.
 
 ### `--beta`
-...todo
+
+By default, the pipeline uses a beta value of 0.009. The constant beta weights the regularization term of the underlying integer linear program to account for homozygosity since the formulation favors heterozygous allele combinations. Beta represents the proportion of reads that need to be additionally explained by a chosen allele combination in order to choose heterzygous solutions over homzygous solutions. Evaluation of different values for beta showed the best performance with 0.009. Please refer to the original publication 
+of OptiType (doi: 10.1093/bioinformatics/btu548) for details.
 
 ### `--prefix`
 A string prefix for the output directory used. The default String is empty.
