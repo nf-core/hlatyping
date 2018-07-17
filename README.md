@@ -75,4 +75,7 @@ Creates a config file from the command line arguments, which is then passed to O
 
 ### <a name="credits"></a>Credits
 
-This pipeline was written by Sven Fillinger ([sven1103](https://github.com/sven1103)) at [QBiC](http://qbic.life) and Christopher Mohr ([christopher-mohr](https://github.com/christopher-mohr)) at [QBiC](http://qbic.life).
+This pipeline was written by:
+
+* Sven Fillinger ([sven1103](https://github.com/sven1103)) at [QBiC](http://qbic.life)
+* Christopher Mohr ([christopher-mohr](https://github.com/christopher-mohr)) at [QBiC](http://qbic.life).
