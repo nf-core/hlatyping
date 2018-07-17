@@ -228,12 +228,12 @@ if ( !params.bam  ) { // FASTQ files processing
  * we simply take information from Nextflow about the available ressources
  * and create a small config.ini as first stepm which is then passed to Optitype.
  */
-process build_config {
+process make_ot_config {
 
     publishDir "${params.outdir}/config", mode: 'copy'
 
     output:
-    file 'config.ini' into config_result
+    file 'config.ini' into config
 
     script:
     """
@@ -257,7 +257,7 @@ process run_optitype {
     publishDir "${params.outdir}/optitype", mode: 'copy', pattern: 'results/*'
 
     input:
-    file 'config.ini' from config_result
+    file 'config.ini' from config
     set val(x), file(reads) from raw_reads
 
     script:
