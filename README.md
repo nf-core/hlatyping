@@ -9,13 +9,10 @@ Precision HLA typing from next-generation sequencing data using [OptiType](https
 [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/1251)
 
 
-
-# UNDER DEVELOPMENT!
-
 # Table of Contents
 
 1. [Introduction](#introduction)
-2. [Hot Run](#hotrun)
+2. [Quick Start](#hotrun)
    * [With Docker](#hrdocker)
    * [With Singularity](#hrsingularity)
 3. [Documentation](#doc)
@@ -30,7 +27,7 @@ OptiType is a HLA genotyping algorithm based on integer linear programming. Read
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker / singularity containers making installation trivial and results highly reproducible.
 
-### <a name="hotrun"></a>Hot run
+### <a name="hotrun"></a>Quick Start
 
 If you want to test with a single line, if the pipeline works on your system, follow the next commands, with pre-configured test data-sets.
 
