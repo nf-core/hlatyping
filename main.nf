@@ -222,7 +222,7 @@ if ( !params.bam  ) { // FASTQ files processing
  * which solver to use for the optimization step. Also, the number
  * of threads is specified there for different steps.
  * As we do not want to touch the original source code of Optitype,
- * we simply take information from Nextflow about the available ressources
+ * we simply take information from Nextflow about the available resources
  * and create a small config.ini as first stepm which is then passed to Optitype.
  */
 process make_ot_config {

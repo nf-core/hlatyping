@@ -43,7 +43,7 @@ nextflow run -latest nf-core/hlatyping
 ### Reproducibility
 It's a good idea to **specify** a **pipeline version** when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
 
-First, go to the [nf-core/hlatyping releases page](https://github.com/nf-core/hlatyping/releases) and find the latest version number - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`. An example run command could look like this:
+First, go to the [nf-core/hlatyping releases page](https://github.com/nf-core/hlatyping/releases) and find the latest version number - numeric only (eg. `1.0.0`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.0.0`. An example run command could look like this:
 
 ```bash
 nextflow run -r 1.0.0 nf-core/hlatyping -profile docker,test
@@ -110,7 +110,7 @@ By default, the pipeline assumes DNA as sequence type. In case you are having RN
 
 By default, the pipeline uses the [`glpk`](https://www.gnu.org/software/glpk/) IP solver. With this pipeline, there is also native support for the [`cbc`](https://projects.coin-or.org/Cbc) solver, just pass it as argument with `--solver 'cbc'`, and the pipeline will run OptiType using this IP solver.
 
-If you want to use a different solver, then you have to provide it in the `./envrionment.yml` conda cofiguration file, which is used in the container built. This requires a valid conda recipe of course, and we encourage the creation of one, if not already present on Anaconda cloud.
+If you want to use a different solver, then you have to provide it in the `./environment.yml` conda cofiguration file, which is used in the container built. This requires a valid conda recipe of course, and we encourage the creation of one, if not already present on Anaconda cloud.
 
 ### `--enumerations`
 
