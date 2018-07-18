@@ -1,4 +1,4 @@
-name: nfcore-hlatyping-0.1.0
+name: nfcore-hlatyping-1.0.0
 channels:
   - bioconda
   - conda-forge

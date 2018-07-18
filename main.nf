@@ -190,7 +190,7 @@ if ( !params.bam  ) { // FASTQ files processing
         set val(pattern), file(bams) from input_data
 
         output:
-        set val(pattern), "filtered_{1,2}.fastq" into raw_reads
+        set val(pattern), "mapped_{1,2}.bam" into raw_reads
 
         script:
         if (params.singleEnd)
@@ -198,7 +198,6 @@ if ( !params.bam  ) { // FASTQ files processing
         samtools bam2fq $bams > output_1.fastq
         yara_mapper -e 3 -t ${params.max_cpus} -f bam ${workflow.projectDir}/${params.index} output_1.fastq > output_1.bam
         samtools view -h -F 4 -b1 output_1.bam > mapped_1.bam
-        samtools bam2fq mapped_1.bam > filtered_1.fastq
         """
         else
         """
@@ -209,8 +208,6 @@ if ( !params.bam  ) { // FASTQ files processing
         yara_mapper -e 3 -t ${params.max_cpus} -f bam ${workflow.projectDir}/${params.index} output_1.fastq output_2.fastq > output.bam
         samtools view -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
         samtools view -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
-        samtools bam2fq mapped_1.bam > filtered_1.fastq
-        samtools bam2fq mapped_2.bam > filtered_2.fastq
         """
 
     }
@@ -225,15 +222,15 @@ if ( !params.bam  ) { // FASTQ files processing
  * which solver to use for the optimization step. Also, the number
  * of threads is specified there for different steps.
  * As we do not want to touch the original source code of Optitype,
- * we simply take information from Nextflow about the available ressources
+ * we simply take information from Nextflow about the available resources
  * and create a small config.ini as first stepm which is then passed to Optitype.
  */
-process build_config {
+process make_ot_config {
 
     publishDir "${params.outdir}/config", mode: 'copy'
 
     output:
-    file 'config.ini' into config_result
+    file 'config.ini' into config
 
     script:
     """
@@ -257,7 +254,7 @@ process run_optitype {
     publishDir "${params.outdir}/optitype", mode: 'copy', pattern: 'results/*'
 
     input:
-    file 'config.ini' from config_result
+    file 'config.ini' from config
     set val(x), file(reads) from raw_reads
 
     script:
