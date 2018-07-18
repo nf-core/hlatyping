@@ -4,7 +4,7 @@ Bootstrap:docker
 %labels
     MAINTAINER Sven Fillinger <sven.fillinger@qbic.uni-tuebingen.de>
     DESCRIPTION Singularity image containing all requirements for nf-core/hlatyping pipeline
-    VERSION latest
+    VERSION 1.0.0
 
 %files
     environment.yml /
