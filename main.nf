@@ -190,7 +190,7 @@ if ( !params.bam  ) { // FASTQ files processing
         set val(pattern), file(bams) from input_data
 
         output:
-        set val(pattern), "mapped_{1,2}.bam" into raw_reads
+        set val(pattern), "mapped_{1,2}.bam" into fished_reads
 
         script:
         if (params.singleEnd)
@@ -239,7 +239,37 @@ process make_ot_config {
 
 }
 
+/*
+ * Preparation Step - Pre-mapping against HLA
+ * 
+ * In order to avoid the internal usage of RazerS from within OptiType when 
+ * the input files are of type `fastq`, we perform a pre-mapping step
+ * here with the `yara` mapper, and map against the HLA reference only. 
+ *
+ */
+if (!params.bam)
+process pre_map_hla {
+    
+    input:
+    set val(pattern), file(reads) from raw_reads
 
+    output:
+    set val(pattern), "mapped_{1,2}.bam" into fished_reads
+
+    script:
+    if (params.singleEnd)
+    """
+    yara_mapper -e 3 -t ${params.max_cpus} -f bam ${workflow.projectDir}/${params.index} $reads > output_1.bam
+    samtools view -h -F 4 -b1 output_1.bam > mapped_1.bam
+    """
+    else
+    """
+    yara_mapper -e 3 -t ${params.max_cpus} -f bam ${workflow.projectDir}/${params.index} $reads > output.bam
+    samtools view -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
+    samtools view -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
+    """
+
+}
 
 /*
  * STEP 2 - Run Optitype
@@ -255,7 +285,7 @@ process run_optitype {
 
     input:
     file 'config.ini' from config
-    set val(x), file(reads) from raw_reads
+    set val(x), file(reads) from fished_reads
 
     script:
     """
