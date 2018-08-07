@@ -1,6 +1,6 @@
-# nf-core/hlatyping Documentation
+# nf-core/example Documentation
 
-The nf-core/hlatyping documentation is split into the following files:
+The nf-core/example documentation is split into the following files:
 
 1. [Installation](installation.md)
 2. Pipeline configuration

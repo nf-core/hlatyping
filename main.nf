@@ -1,13 +1,13 @@
 #!/usr/bin/env nextflow
 /*
 ========================================================================================
-                         nf-core/hlatyping
+                         nf-core/example
 ========================================================================================
- nf-core/hlatyping Analysis Pipeline. Started 2018-06-01.
+ nf-core/example Analysis Pipeline. Started 2018-08-07.
  #### Homepage / Documentation
- https://github.com/nf-core/hlatyping
+ https://github.com/nf-core/example
  #### Authors
- Sven Fillinger sven1103 <sven.fillinger@qbic.uni-tuebingen.de> - https://github.com/sven1103>
+ Your Name yourname <your.name@gmail.com> - https://github.com/yourname>
 ----------------------------------------------------------------------------------------
 */
 
@@ -15,18 +15,18 @@
 def helpMessage() {
     log.info"""
     =========================================
-     nf-core/hlatyping v${params.version}
+     nf-core/example v${params.version}
     =========================================
     Usage:
 
     The typical command for running the pipeline is as follows:
 
-    nextflow run nf-core/hlatyping --reads '*_R{1,2}.fastq.gz' -profile docker
+    nextflow run nf-core/example --reads '*_R{1,2}.fastq.gz' -profile docker
 
     Mandatory arguments:
       --reads                       Path to input data (must be surrounded with quotes)
       --genome                      Name of iGenomes reference
-      -profile                      Hardware config to use. docker / aws
+      -profile                      Configuration profile to use. docker / awsbatch
 
     Options:
       --singleEnd                   Specifies that the input is single end reads
@@ -81,20 +81,50 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
   custom_runName = workflow.runName
 }
 
+//Check workDir/outdir paths to be S3 buckets if running on AWSBatch
+//related: https://github.com/nextflow-io/nextflow/issues/813
+if( workflow.profile == 'awsbatch') {
+    if(!workflow.workDir.startsWith('s3:') || !params.outdir.startsWith('s3:')) exit 1, "Workdir or Outdir not on S3 - specify S3 Buckets for each to run on AWSBatch!"
+}
+
 /*
  * Create a channel for input read files
  */
-Channel
-    .fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
-    .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --singleEnd on the command line." }
-    .into { read_files_fastqc }
+ if(params.readPaths){
+     if(params.singleEnd){
+         Channel
+             .from(params.readPaths)
+             .map { row -> [ row[0], [file(row[1][0])]] }
+             .ifEmpty { exit 1, "params.readPaths was empty - no input files supplied" }
+             .into { read_files_fastqc; read_files_trimming }
+     } else {
+         Channel
+             .from(params.readPaths)
+             .map { row -> [ row[0], [file(row[1][0]), file(row[1][1])]] }
+             .ifEmpty { exit 1, "params.readPaths was empty - no input files supplied" }
+             .into { read_files_fastqc; read_files_trimming }
+     }
+ } else {
+     Channel
+         .fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
+         .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!\nIf this is single-end data, please specify --singleEnd on the command line." }
+         .into { read_files_fastqc; read_files_trimming }
+ }
 
 
 // Header log info
-log.info "========================================="
-log.info " nf-core/hlatyping v${params.version}"
-log.info "========================================="
+log.info """=======================================================
+                                          ,--./,-.
+          ___     __   __   __   ___     /,-._.--~\'
+    |\\ | |__  __ /  ` /  \\ |__) |__         }  {
+    | \\| |       \\__, \\__/ |  \\ |___     \\`-._,-`-,
+                                          `._,._,\'
+
+nf-core/example v${params.version}"
+======================================================="""
 def summary = [:]
+summary['Pipeline Name']  = 'nf-core/example'
+summary['Pipeline Version'] = params.version
 summary['Run Name']     = custom_runName ?: workflow.runName
 summary['Reads']        = params.reads
 summary['Fasta Ref']    = params.fasta
@@ -104,13 +134,19 @@ summary['Max CPUs']     = params.max_cpus
 summary['Max Time']     = params.max_time
 summary['Output dir']   = params.outdir
 summary['Working dir']  = workflow.workDir
-summary['Container']    = workflow.container
-if(workflow.revision) summary['Pipeline Release'] = workflow.revision
+summary['Container Engine'] = workflow.containerEngine
+if(workflow.containerEngine) summary['Container'] = workflow.container
 summary['Current home']   = "$HOME"
 summary['Current user']   = "$USER"
 summary['Current path']   = "$PWD"
+summary['Working dir']    = workflow.workDir
+summary['Output dir']     = params.outdir
 summary['Script dir']     = workflow.projectDir
 summary['Config Profile'] = workflow.profile
+if(workflow.profile == 'awsbatch'){
+   summary['AWS Region'] = params.awsregion
+   summary['AWS Queue'] = params.awsqueue
+} 
 if(params.email) summary['E-mail Address'] = params.email
 log.info summary.collect { k,v -> "${k.padRight(15)}: $v" }.join("\n")
 log.info "========================================="
@@ -225,9 +261,9 @@ process output_documentation {
 workflow.onComplete {
 
     // Set up the e-mail variables
-    def subject = "[nf-core/hlatyping] Successful: $workflow.runName"
+    def subject = "[nf-core/example] Successful: $workflow.runName"
     if(!workflow.success){
-      subject = "[nf-core/hlatyping] FAILED: $workflow.runName"
+      subject = "[nf-core/example] FAILED: $workflow.runName"
     }
     def email_fields = [:]
     email_fields['version'] = params.version
@@ -248,10 +284,9 @@ workflow.onComplete {
     if(workflow.repository) email_fields['summary']['Pipeline repository Git URL'] = workflow.repository
     if(workflow.commitId) email_fields['summary']['Pipeline repository Git Commit'] = workflow.commitId
     if(workflow.revision) email_fields['summary']['Pipeline Git branch/tag'] = workflow.revision
-    if(workflow.container) email_fields['summary']['Docker image'] = workflow.container
-    email_fields['software_versions'] = software_versions
-    email_fields['software_versions']['Nextflow Build'] = workflow.nextflow.build
-    email_fields['software_versions']['Nextflow Compile Timestamp'] = workflow.nextflow.timestamp
+    email_fields['summary']['Nextflow Version'] = workflow.nextflow.version
+    email_fields['summary']['Nextflow Build'] = workflow.nextflow.build
+    email_fields['summary']['Nextflow Compile Timestamp'] = workflow.nextflow.timestamp
 
     // Render the TXT template
     def engine = new groovy.text.GStringTemplateEngine()
@@ -276,11 +311,11 @@ workflow.onComplete {
           if( params.plaintext_email ){ throw GroovyException('Send plaintext e-mail, not HTML') }
           // Try to send HTML e-mail using sendmail
           [ 'sendmail', '-t' ].execute() << sendmail_html
-          log.info "[nf-core/hlatyping] Sent summary e-mail to $params.email (sendmail)"
+          log.info "[nf-core/example] Sent summary e-mail to $params.email (sendmail)"
         } catch (all) {
           // Catch failures and try with plaintext
           [ 'mail', '-s', subject, params.email ].execute() << email_txt
-          log.info "[nf-core/hlatyping] Sent summary e-mail to $params.email (mail)"
+          log.info "[nf-core/example] Sent summary e-mail to $params.email (mail)"
         }
     }
 
@@ -294,6 +329,6 @@ workflow.onComplete {
     def output_tf = new File( output_d, "pipeline_report.txt" )
     output_tf.withWriter { w -> w << email_txt }
 
-    log.info "[nf-core/hlatyping] Pipeline Complete"
+    log.info "[nf-core/example] Pipeline Complete"
 
 }
