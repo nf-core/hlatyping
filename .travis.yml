@@ -11,7 +11,7 @@ matrix:
 
 before_install:
   # Pull the docker image first so the test doesn't wait for this
-  - docker pull nfcore/example:0.1.0
+  - docker pull hlatyping:1.1.0
 
 install:
   # Install Nextflow

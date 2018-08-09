@@ -1,13 +1,11 @@
 #!/usr/bin/env nextflow
 /*
 ========================================================================================
-                         nf-core/example
+                         hlatyping
 ========================================================================================
- nf-core/example Analysis Pipeline. Started 2018-08-07.
+ hlatyping Analysis Pipeline.
  #### Homepage / Documentation
- https://github.com/nf-core/example
- #### Authors
- Your Name yourname <your.name@gmail.com> - https://github.com/yourname>
+ https://github.com/nf-core/hlatyping
 ----------------------------------------------------------------------------------------
 */
 
@@ -15,18 +13,19 @@
 def helpMessage() {
     log.info"""
     =========================================
-     nf-core/example v${params.version}
+     hlatyping v${params.version}
     =========================================
     Usage:
 
     The typical command for running the pipeline is as follows:
 
-    nextflow run nf-core/example --reads '*_R{1,2}.fastq.gz' -profile docker
+    nextflow run nf-core/hlatyping --reads '*_R{1,2}.fastq.gz' -profile docker
 
     Mandatory arguments:
       --reads                       Path to input data (must be surrounded with quotes)
       --genome                      Name of iGenomes reference
-      -profile                      Configuration profile to use. docker / awsbatch
+      -profile                      Configuration profile to use. Can use multiple (comma separated)
+                                    Available: standard, conda, docker, singularity, awsbatch, test
 
     Options:
       --singleEnd                   Specifies that the input is single end reads
@@ -38,6 +37,10 @@ def helpMessage() {
       --outdir                      The output directory where the results will be saved
       --email                       Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits
       -name                         Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic.
+
+    AWSBatch options:
+      --awsqueue                    The AWSBatch JobQueue that needs to be set when running on AWSBatch
+      --awsregion                   The AWS Region for your AWS Batch job to run on
     """.stripIndent()
 }
 
@@ -66,6 +69,11 @@ if ( params.fasta ){
     fasta = file(params.fasta)
     if( !fasta.exists() ) exit 1, "Fasta file not found: ${params.fasta}"
 }
+// AWSBatch sanity checking
+if(workflow.profile == 'awsbatch'){
+    if (!params.awsqueue || !params.awsregion) exit 1, "Specify correct --awsqueue and --awsregion parameters on AWSBatch!"
+    if (!workflow.workDir.startsWith('s3') || !params.outdir.startsWith('s3')) exit 1, "Specify S3 URLs for workDir and outdir parameters on AWSBatch!"
+}
 //
 // NOTE - THIS IS NOT USED IN THIS PIPELINE, EXAMPLE ONLY
 // If you want to use the above in a process, define the following:
@@ -81,8 +89,8 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
   custom_runName = workflow.runName
 }
 
-//Check workDir/outdir paths to be S3 buckets if running on AWSBatch
-//related: https://github.com/nextflow-io/nextflow/issues/813
+// Check workDir/outdir paths to be S3 buckets if running on AWSBatch
+// related: https://github.com/nextflow-io/nextflow/issues/813
 if( workflow.profile == 'awsbatch') {
     if(!workflow.workDir.startsWith('s3:') || !params.outdir.startsWith('s3:')) exit 1, "Workdir or Outdir not on S3 - specify S3 Buckets for each to run on AWSBatch!"
 }
@@ -120,10 +128,10 @@ log.info """=======================================================
     | \\| |       \\__, \\__/ |  \\ |___     \\`-._,-`-,
                                           `._,._,\'
 
-nf-core/example v${params.version}"
+hlatyping v${params.version}"
 ======================================================="""
 def summary = [:]
-summary['Pipeline Name']  = 'nf-core/example'
+summary['Pipeline Name']  = 'hlatyping'
 summary['Pipeline Version'] = params.version
 summary['Run Name']     = custom_runName ?: workflow.runName
 summary['Reads']        = params.reads
@@ -146,26 +154,10 @@ summary['Config Profile'] = workflow.profile
 if(workflow.profile == 'awsbatch'){
    summary['AWS Region'] = params.awsregion
    summary['AWS Queue'] = params.awsqueue
-} 
+}
 if(params.email) summary['E-mail Address'] = params.email
 log.info summary.collect { k,v -> "${k.padRight(15)}: $v" }.join("\n")
 log.info "========================================="
-
-
-// Check that Nextflow version is up to date enough
-// try / throw / catch works for NF versions < 0.25 when this was implemented
-try {
-    if( ! nextflow.version.matches(">= $params.nf_required_version") ){
-        throw GroovyException('Nextflow version too old')
-    }
-} catch (all) {
-    log.error "====================================================\n" +
-              "  Nextflow version $params.nf_required_version required! You are running v$workflow.nextflow.version.\n" +
-              "  Pipeline execution will continue, but things may break.\n" +
-              "  Please run `nextflow self-update` to update Nextflow.\n" +
-              "============================================================"
-}
-
 
 /*
  * Parse software version numbers
@@ -261,9 +253,9 @@ process output_documentation {
 workflow.onComplete {
 
     // Set up the e-mail variables
-    def subject = "[nf-core/example] Successful: $workflow.runName"
+    def subject = "[hlatyping] Successful: $workflow.runName"
     if(!workflow.success){
-      subject = "[nf-core/example] FAILED: $workflow.runName"
+      subject = "[hlatyping] FAILED: $workflow.runName"
     }
     def email_fields = [:]
     email_fields['version'] = params.version
@@ -311,11 +303,11 @@ workflow.onComplete {
           if( params.plaintext_email ){ throw GroovyException('Send plaintext e-mail, not HTML') }
           // Try to send HTML e-mail using sendmail
           [ 'sendmail', '-t' ].execute() << sendmail_html
-          log.info "[nf-core/example] Sent summary e-mail to $params.email (sendmail)"
+          log.info "[hlatyping] Sent summary e-mail to $params.email (sendmail)"
         } catch (all) {
           // Catch failures and try with plaintext
           [ 'mail', '-s', subject, params.email ].execute() << email_txt
-          log.info "[nf-core/example] Sent summary e-mail to $params.email (mail)"
+          log.info "[hlatyping] Sent summary e-mail to $params.email (mail)"
         }
     }
 
@@ -329,6 +321,6 @@ workflow.onComplete {
     def output_tf = new File( output_d, "pipeline_report.txt" )
     output_tf.withWriter { w -> w << email_txt }
 
-    log.info "[nf-core/example] Pipeline Complete"
+    log.info "[hlatyping] Pipeline Complete"
 
 }

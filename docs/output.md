@@ -1,5 +1,5 @@
-# nf-core/example
-This pipeline takes some data and does something with it.
+# hlatyping
+Precision HLA typing from next-generation sequencing data.
 
 This document describes the output produced by the pipeline. Most of the plots are taken from the MultiQC report, which summarises results at the end of the pipeline.
 

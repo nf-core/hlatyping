@@ -1,13 +1,13 @@
 ========================================
- nf-core/example v${version}
+ hlatyping v${version}
 ========================================
 Run Name: $runName
 
 <% if (success){
-    out << "## nf-core/example execution completed successfully! ##"
+    out << "## hlatyping execution completed successfully! ##"
 } else {
     out << """####################################################
-## nf-core/example execution completed unsuccessfully! ##
+## hlatyping execution completed unsuccessfully! ##
 ####################################################
 The exit status of the task that caused the workflow execution to fail was: $exitStatus.
 The full error message was:
@@ -19,7 +19,7 @@ ${errorReport}
 
 <% if (!success){
     out << """####################################################
-## nf-core/example execution completed unsuccessfully! ##
+## hlatyping execution completed unsuccessfully! ##
 ####################################################
 The exit status of the task that caused the workflow execution to fail was: $exitStatus.
 The full error message was:
@@ -27,7 +27,7 @@ The full error message was:
 ${errorReport}
 """
 } else {
-    out << "## nf-core/example execution completed successfully! ##"
+    out << "## hlatyping execution completed successfully! ##"
 }
 %>
 
@@ -47,5 +47,5 @@ Pipeline Configuration:
 <% out << summary.collect{ k,v -> " - $k: $v" }.join("\n") %>
 
 --
-nf-core/example
-https://github.com/nf-core/example
+hlatyping
+https://github.com/nf-core/hlatyping

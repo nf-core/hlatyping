@@ -1,6 +1,6 @@
-# nf-core/example: Reference Genomes Configuration
+# hlatyping: Reference Genomes Configuration
 
-The nf-core/example pipeline needs a reference genome for alignment and annotation. If not already available, start by downloading the relevant reference, for example from [illumina iGenomes](https://support.illumina.com/sequencing/sequencing_software/igenome.html).
+The hlatyping pipeline needs a reference genome for alignment and annotation. If not already available, start by downloading the relevant reference, for example from [illumina iGenomes](https://support.illumina.com/sequencing/sequencing_software/igenome.html).
 
 The minimal requirements are a FASTA file.
 
@@ -36,7 +36,7 @@ If possible, we recommend making this resource available on your cluster. We hav
 To add iGenomes to your config file, add the following line to the end of your config file:
 
 ```nextflow
-includeConfig '/path/to/nf-core/example/conf/igenomes.config'
+includeConfig '/path/to/hlatyping/conf/igenomes.config'
 ```
 
 This works best when you have a `profile` set up in the pipeline - see [`nextflow.config`](../../nextflow.config).
