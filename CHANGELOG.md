@@ -1,4 +1,4 @@
-## 1.1.0 - aqua-titanium-crab - soon
+## 1.1.0 - aqua-titanium-crab - 2018-08-14
 
 - Fix [#17](https://github.com/nf-core/hlatyping/issues/17)
 - Fix [#13](https://github.com/nf-core/hlatyping/issues/13)
