@@ -1,10 +1,10 @@
 sudo: required
-language: java
+language: python
 jdk: openjdk8
 services:
   - docker
 python:
-  - "3.6"
+  - '3.6'
 cache: pip
 matrix:
   fast_finish: true
@@ -24,7 +24,7 @@ install:
   # Install nf-core/tools
   - git clone https://github.com/nf-core/tools.git /tmp/nf-core-tools
   - cd /tmp/nf-core-tools
-  - pip install --user -e .
+  - pip install .
   # Reset
   - cd ${TRAVIS_BUILD_DIR}
 
