@@ -10,5 +10,9 @@ Bootstrap:docker
     environment.yml /
 
 %post
-    /opt/conda/bin/conda env update -n root -f /environment.yml
+    /opt/conda/bin/conda env create -f /environment.yml
     /opt/conda/bin/conda clean -a
+    PATH=/opt/conda/envs/nf-core-hlatyping-1.1.0/bin:$PATH
+    export PATH
+
+    
