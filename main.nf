@@ -293,7 +293,7 @@ process run_optitype {
     script:
     """
     OptiTypePipeline.py -i ${reads} -e ${params.enumerations} -b ${params.beta} \\
-        -p "" -c config.ini --${params.seqtype} --outdir ${pattern}
+        -p "${pattern}" -c config.ini --${params.seqtype} --outdir ${pattern}
     """
 }
 
