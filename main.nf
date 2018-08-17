@@ -281,15 +281,19 @@ process pre_map_hla {
  */
 process run_optitype {
 
-    publishDir "${params.outdir}/optitype", mode: 'copy', pattern: 'results/*'
+    publishDir "${params.outdir}/optitype/", mode: 'copy'
 
     input:
     file 'config.ini' from config
-    set val(x), file(reads) from fished_reads
+    set val(pattern), file(reads) from fished_reads
+
+    output:
+    file "${pattern}"
 
     script:
     """
-    OptiTypePipeline.py -i ${reads} -e ${params.enumerations} -b ${params.beta} -p "${params.prefix}" -c config.ini --${params.seqtype} --outdir ${params.outdir}
+    OptiTypePipeline.py -i ${reads} -e ${params.enumerations} -b ${params.beta} \\
+        -p "" -c config.ini --${params.seqtype} --outdir ${pattern}
     """
 }
 
