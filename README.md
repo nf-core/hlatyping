@@ -15,7 +15,7 @@ Precision HLA typing from next-generation sequencing data using [OptiType](https
 2. [Quick Start](#hotrun)
    * [With Docker](#hrdocker)
    * [With Singularity](#hrsingularity)
-3. [Documentation](#doc)
+3. [Documentation](docs/README.md)
 4. [Pipeline DAG](#dag)
    * [Input `fastq`](#dagfastq)
    * [Input `bam`](#dagbam)
