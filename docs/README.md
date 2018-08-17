@@ -1,4 +1,4 @@
-# nf-core/hlatyping Documentation
+# nf-core/hlatyping documentation
 
 The nf-core/hlatyping documentation is split into the following files:
 
