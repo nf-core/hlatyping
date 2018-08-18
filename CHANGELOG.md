@@ -1,4 +1,6 @@
-## 1.1.1 - Upcoming patch release
+## 1.1.1 - Patch release - 2018-08-18
+
+- Fix [#30](https://github.com/nf-core/hlatyping/issues/30)
 
 ## 1.1.0 - aqua-titanium-crab - 2018-08-14
 
