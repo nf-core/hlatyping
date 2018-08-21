@@ -3,6 +3,7 @@ Precision HLA typing from next-generation sequencing data using [OptiType](https
 
 [![Build Status](https://travis-ci.org/nf-core/hlatyping.svg?branch=master)](https://travis-ci.org/nf-core/hlatyping)
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A50.31.0-brightgreen.svg)](https://www.nextflow.io/)
+[![DOI](https://zenodo.org/badge/140573587.svg)](https://zenodo.org/badge/latestdoi/140573587)
 
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](http://bioconda.github.io/)
 [![Docker](https://img.shields.io/docker/automated/nfcore/hlatyping.svg)](https://hub.docker.com/r/nfcore/hlatyping)
