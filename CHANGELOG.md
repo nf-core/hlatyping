@@ -1,6 +1,7 @@
-## 1.1.1 - Patch release - 2018-08-18
+## 1.1.1 - Patch release - 2018-08-21
 
 - Fix [#30](https://github.com/nf-core/hlatyping/issues/30)
+- Removed support to pull from Singularity Hub directly, when using the profile `singularity`. For now, Nextflow will pull the container image from Docker Hub and create the Singularity container on the local host. 
 
 ## 1.1.0 - aqua-titanium-crab - 2018-08-14
 
