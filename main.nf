@@ -105,6 +105,7 @@ summary['Current user']   = "$USER"
 summary['Current path']   = "$PWD"
 summary['Script dir']     = workflow.projectDir
 summary['Config Profile'] = workflow.profile
+summary['Pipeline version'] = workflow.manifest.nextflowVersion
 if(params.email) summary['E-mail Address'] = params.email
 log.info summary.collect { k,v -> "${k.padRight(15)}: $v" }.join("\n")
 log.info "========================================="
