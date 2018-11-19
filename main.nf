@@ -197,7 +197,7 @@ if ( !params.bam  ) { // FASTQ files processing
         if (params.singleEnd)
         """
         samtools bam2fq $bams > output_1.fastq
-        yara_mapper -e 3 -t ${params.max_cpus} -f bam ${workflow.projectDir}/${params.index} output_1.fastq > output_1.bam
+        yara_mapper -e 3 -t ${params.max_cpus} -f bam ${params.index} output_1.fastq > output_1.bam
         samtools view -h -F 4 -b1 output_1.bam > mapped_1.bam
         """
         else
@@ -206,7 +206,7 @@ if ( !params.bam  ) { // FASTQ files processing
         samtools view -h -f 0x80 $bams > output_2.bam
         samtools bam2fq output_1.bam > output_1.fastq
         samtools bam2fq output_2.bam > output_2.fastq
-        yara_mapper -e 3 -t ${params.max_cpus} -f bam ${workflow.projectDir}/${params.index} output_1.fastq output_2.fastq > output.bam
+        yara_mapper -e 3 -t ${params.max_cpus} -f bam ${params.index} output_1.fastq output_2.fastq > output.bam
         samtools view -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
         samtools view -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
         """
@@ -260,12 +260,12 @@ process pre_map_hla {
     script:
     if (params.singleEnd)
     """
-    yara_mapper -e 3 -t ${params.max_cpus} -f bam ${workflow.projectDir}/${params.index} $reads > output_1.bam
+    yara_mapper -e 3 -t ${params.max_cpus} -f bam ${params.index} $reads > output_1.bam
     samtools view -h -F 4 -b1 output_1.bam > mapped_1.bam
     """
     else
     """
-    yara_mapper -e 3 -t ${params.max_cpus} -f bam ${workflow.projectDir}/${params.index} $reads > output.bam
+    yara_mapper -e 3 -t ${params.max_cpus} -f bam ${params.index} $reads > output.bam
     samtools view -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
     samtools view -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
     """
