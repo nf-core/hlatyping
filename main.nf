@@ -89,6 +89,7 @@ summary['Run Name']     = custom_runName ?: workflow.runName
 summary['Reads']        = params.readPaths? params.readPaths : params.reads
 summary['Data Type']    = params.singleEnd ? 'Single-End' : 'Paired-End'
 summary['File Type']    = params.bam ? 'BAM' : 'Other (fastq, fastq.gz, ...)'
+summary['Index Location'] = params.index ?: { log.error "You did not provide any path to the mapper indices."; exit 1 }
 summary['IP solver']    = params.solver
 summary['Enumerations'] = params.enumerations
 summary['Beta'] = params.beta
