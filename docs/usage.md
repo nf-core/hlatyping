@@ -1,4 +1,44 @@
-# hlatyping Usage
+# nf-core/hlatyping: Usage
+
+## Table of contents
+
+* [Introduction](#general-nextflow-info)
+* [Running the pipeline](#running-the-pipeline)
+* [Updating the pipeline](#updating-the-pipeline)
+* [Reproducibility](#reproducibility)
+* [Main arguments](#main-arguments)
+    * [`-profile`](#-profile-single-dash)
+        * [`docker`](#docker)
+        * [`awsbatch`](#awsbatch)
+        * [`standard`](#standard)
+        * [`binac`](#binac)
+        * [`cfc`](#cfc)
+        * [`none`](#none)
+    * [`--reads`](#--reads)
+    * [`--singleEnd`](#--singleend)
+* [Reference Genomes](#reference-genomes)
+    * [`--genome`](#--genome)
+    * [`--fasta`](#--fasta)
+* [Job Resources](#job-resources)
+* [Automatic resubmission](#automatic-resubmission)
+* [Custom resource requests](#custom-resource-requests)
+* [AWS batch specific parameters](#aws-batch-specific-parameters)
+    * [`-awsbatch`](#-awsbatch)
+    * [`--awsqueue`](#--awsqueue)
+    * [`--awsregion`](#--awsregion)
+* [Other command line parameters](#other-command-line-parameters)
+    * [`--outdir`](#--outdir)
+    * [`--email`](#--email)
+    * [`-name`](#-name-single-dash)
+    * [`-resume`](#-resume-single-dash)
+    * [`-c`](#-c-single-dash)
+    * [`--max_memory`](#--max_memory)
+    * [`--max_time`](#--max_time)
+    * [`--max_cpus`](#--max_cpus)
+    * [`--plaintext_emails`](#--plaintext_emails)
+    * [`--sampleLevel`](#--sampleLevel)
+    * [`--multiqc_config`](#--multiqc_config)
+
 
 ## General Nextflow info
 Nextflow handles job submissions on SLURM or other environments, and supervises running the jobs. Thus the Nextflow process must run until the pipeline is finished. We recommend that you put the process running in the background through `screen` / `tmux` or similar tool. Alternatively you can run nextflow within a cluster job submitted your job scheduler.
@@ -12,7 +52,7 @@ NXF_OPTS='-Xms1g -Xmx4g'
 ## Running the pipeline
 The typical command for running the pipeline is as follows:
 ```bash
-nextflow run nf-core/hlatyping --reads '*_R{1,2}.fastq.gz' -profile docker
+nextflow run nf-core/hlatyping --reads '*_R{1,2}.fastq.gz' -profile standard,docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
@@ -36,7 +76,7 @@ nextflow pull nf-core/hlatyping
 ### Reproducibility
 It's a good idea to specify a pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
 
-First, go to the [hlatyping releases page](https://github.com/nf-core/hlatyping/releases) and find the latest version number - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`.
+First, go to the [nf-core/hlatyping releases page](https://github.com/nf-core/hlatyping/releases) and find the latest version number - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`.
 
 This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future.
 
@@ -44,19 +84,35 @@ This version number will be logged in reports when you run the pipeline, so that
 ## Main Arguments
 
 ### `-profile`
-Use this parameter to choose a configuration profile. Each profile is designed for a different compute environment - follow the links below to see instructions for running on that system. Available profiles are:
+Use this parameter to choose a configuration profile. Profiles can give configuration presets for different compute environments. Note that multiple profiles can be loaded, for example: `-profile standard,docker` - the order of arguments is important!
 
+* `standard`
+    * The default profile, used if `-profile` is not specified at all.
+    * Runs locally and expects all software to be installed and available on the `PATH`.
 * `docker`
     * A generic configuration profile to be used with [Docker](http://docker.com/)
-    * Runs using the `local` executor and pulls software from dockerhub: [`hlatyping`](http://hub.docker.com/r/hlatyping/)
+    * Pulls software from dockerhub: [`nfcore/hlatyping`](http://hub.docker.com/r/nfcore/hlatyping/)
+* `singularity`
+    * A generic configuration profile to be used with [Singularity](http://singularity.lbl.gov/)
+    * Pulls software from singularity-hub
+* `conda`
+    * A generic configuration profile to be used with [conda](https://conda.io/docs/)
+    * Pulls most software from [Bioconda](https://bioconda.github.io/)
+* `binac`
+    * A profile for the [BinAC](https://www.bwhpc-c5.de/wiki/index.php/Category:BwForCluster_BinAC) cluster
+    * Pulls images via Singularity from Dockerhub automatically
+* `cfc`
+    * A profile for the Core Facility Cluster at QBiC Tuebingen
+    * Pulls images via Singularity from Dockerhub automatically
 * `awsbatch`
     * A generic configuration profile to be used with AWS Batch.
-* `standard`
-    * The default profile, used if `-profile` is not specified at all. Runs locally and expects all software to be installed and available on the `PATH`.
-    * This profile is mainly designed to be used as a starting point for other configurations and is inherited by most of the other profiles.
+* `test`
+    * A profile with a complete configuration for automated testing
+    * Includes links to test data so needs no other parameters
 * `none`
     * No configuration at all. Useful if you want to build your own config from scratch and want to avoid loading in the default `base` config profile (not recommended).
 
+<!-- TODO nf-core: Document required command line parameters -->
 ### `--reads`
 Use this to specify the location of your input FastQ files. For example:
 
@@ -106,6 +162,7 @@ Note that you can use the same configuration setup to save sets of reference fil
 
 The syntax for this reference configuration is as follows:
 
+<!-- TODO nf-core: Update reference genome example according to what is needed -->
 ```nextflow
 params {
   genomes {
@@ -117,6 +174,7 @@ params {
 }
 ```
 
+<!-- TODO nf-core: Describe reference path flags -->
 ### `--fasta`
 If you prefer, you can specify the full path to your reference genome when you run the pipeline:
 
@@ -141,6 +199,9 @@ The AWS region to run your job in. Default is set to `eu-west-1` but can be adju
 Please make sure to also set the `-w/--work-dir` and `--outdir` parameters to a S3 storage bucket of your choice - you'll get an error message notifying you if you didn't.
 
 ## Other command line parameters
+
+<!-- TODO nf-core: Describe any other command line flags here -->
+
 ### `--outdir`
 The output directory where the results will be saved.
 
@@ -166,11 +227,7 @@ Specify the path to a specific config file (this is a core NextFlow command).
 
 **NB:** Single hyphen (core Nextflow option)
 
-Note - you can use this to override defaults. For example, you can specify a config file using `-c` that contains the following:
-
-```nextflow
-process.$multiqc.module = []
-```
+Note - you can use this to override pipeline defaults.
 
 ### `--max_memory`
 Use to set a top-limit for the default memory requirement for each process.
@@ -187,8 +244,5 @@ Should be a string in the format integer-unit. eg. `--max_cpus 1`
 ### `--plaintext_email`
 Set to receive plain-text e-mails instead of HTML formatted.
 
-### `--sampleLevel`
-Used to turn of the edgeR MDS and heatmap. Set automatically when running on fewer than 3 samples.
-
 ### `--multiqc_config`
-If you would like to supply a custom config file to MultiQC, you can specify a path with `--multiqc_config`. This is used instead of the config file specific to the pipeline.
+Specify a path to a custom MultiQC configuration file.

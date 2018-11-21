@@ -1,9 +1,9 @@
 #!/usr/bin/env nextflow
 /*
 ========================================================================================
-                         hlatyping
+                         nf-core/hlatyping
 ========================================================================================
- hlatyping Analysis Pipeline.
+ nf-core/hlatyping Analysis Pipeline.
  #### Homepage / Documentation
  https://github.com/nf-core/hlatyping
 ----------------------------------------------------------------------------------------
@@ -11,15 +11,23 @@
 
 
 def helpMessage() {
+    // TODO nf-core: Add to this help message with new command line parameters
     log.info"""
-    =========================================
-     hlatyping v${params.version}
-    =========================================
+    =======================================================
+                                              ,--./,-.
+              ___     __   __   __   ___     /,-._.--~\'
+        |\\ | |__  __ /  ` /  \\ |__) |__         }  {
+        | \\| |       \\__, \\__/ |  \\ |___     \\`-._,-`-,
+                                              `._,._,\'
+
+     nf-core/hlatyping v${workflow.manifest.version}
+    =======================================================
+
     Usage:
 
     The typical command for running the pipeline is as follows:
 
-    nextflow run nf-core/hlatyping --reads '*_R{1,2}.fastq.gz' -profile docker
+    nextflow run nf-core/hlatyping --reads '*_R{1,2}.fastq.gz' -profile standard,docker
 
     Mandatory arguments:
       --reads                       Path to input data (must be surrounded with quotes)
@@ -54,25 +62,12 @@ if (params.help){
     exit 0
 }
 
-// Configurable variables
-params.name = false
-params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
-params.multiqc_config = "$baseDir/conf/multiqc_config.yaml"
-params.email = false
-params.plaintext_email = false
-
-multiqc_config = file(params.multiqc_config)
-output_docs = file("$baseDir/docs/output.md")
-
-// Validate inputs
+// TODO nf-core: Add any reference files that are needed
+// Configurable reference genomes
+fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
 if ( params.fasta ){
     fasta = file(params.fasta)
     if( !fasta.exists() ) exit 1, "Fasta file not found: ${params.fasta}"
-}
-// AWSBatch sanity checking
-if(workflow.profile == 'awsbatch'){
-    if (!params.awsqueue || !params.awsregion) exit 1, "Specify correct --awsqueue and --awsregion parameters on AWSBatch!"
-    if (!workflow.workDir.startsWith('s3') || !params.outdir.startsWith('s3')) exit 1, "Specify S3 URLs for workDir and outdir parameters on AWSBatch!"
 }
 //
 // NOTE - THIS IS NOT USED IN THIS PIPELINE, EXAMPLE ONLY
@@ -89,11 +84,19 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
   custom_runName = workflow.runName
 }
 
-// Check workDir/outdir paths to be S3 buckets if running on AWSBatch
-// related: https://github.com/nextflow-io/nextflow/issues/813
+
 if( workflow.profile == 'awsbatch') {
-    if(!workflow.workDir.startsWith('s3:') || !params.outdir.startsWith('s3:')) exit 1, "Workdir or Outdir not on S3 - specify S3 Buckets for each to run on AWSBatch!"
+  // AWSBatch sanity checking
+  if (!params.awsqueue || !params.awsregion) exit 1, "Specify correct --awsqueue and --awsregion parameters on AWSBatch!"
+  if (!workflow.workDir.startsWith('s3') || !params.outdir.startsWith('s3')) exit 1, "Specify S3 URLs for workDir and outdir parameters on AWSBatch!"
+  // Check workDir/outdir paths to be S3 buckets if running on AWSBatch
+  // related: https://github.com/nextflow-io/nextflow/issues/813
+  if (!workflow.workDir.startsWith('s3:') || !params.outdir.startsWith('s3:')) exit 1, "Workdir or Outdir not on S3 - specify S3 Buckets for each to run on AWSBatch!"
 }
+
+// Stage config files
+multiqc_config = file(params.multiqc_config)
+output_docs = file("$baseDir/docs/output.md")
 
 /*
  * Create a channel for input read files
@@ -128,12 +131,13 @@ log.info """=======================================================
     | \\| |       \\__, \\__/ |  \\ |___     \\`-._,-`-,
                                           `._,._,\'
 
-hlatyping v${params.version}"
+nf-core/hlatyping v${workflow.manifest.version}"
 ======================================================="""
 def summary = [:]
-summary['Pipeline Name']  = 'hlatyping'
-summary['Pipeline Version'] = params.version
+summary['Pipeline Name']  = 'nf-core/hlatyping'
+summary['Pipeline Version'] = workflow.manifest.version
 summary['Run Name']     = custom_runName ?: workflow.runName
+// TODO nf-core: Report custom parameters here
 summary['Reads']        = params.reads
 summary['Fasta Ref']    = params.fasta
 summary['Data Type']    = params.singleEnd ? 'Single-End' : 'Paired-End'
@@ -159,6 +163,25 @@ if(params.email) summary['E-mail Address'] = params.email
 log.info summary.collect { k,v -> "${k.padRight(15)}: $v" }.join("\n")
 log.info "========================================="
 
+
+def create_workflow_summary(summary) {
+    def yaml_file = workDir.resolve('workflow_summary_mqc.yaml')
+    yaml_file.text  = """
+    id: 'nf-core-hlatyping-summary'
+    description: " - this information is collected when the pipeline is started."
+    section_name: 'nf-core/hlatyping Workflow Summary'
+    section_href: 'https://github.com/nf-core/hlatyping'
+    plot_type: 'html'
+    data: |
+        <dl class=\"dl-horizontal\">
+${summary.collect { k,v -> "            <dt>$k</dt><dd><samp>${v ?: '<span style=\"color:#999999;\">N/A</a>'}</samp></dd>" }.join("\n")}
+        </dl>
+    """.stripIndent()
+
+   return yaml_file
+}
+
+
 /*
  * Parse software version numbers
  */
@@ -168,8 +191,9 @@ process get_software_versions {
     file 'software_versions_mqc.yaml' into software_versions_yaml
 
     script:
+    // TODO nf-core: Get all tools to print their version number here
     """
-    echo $params.version > v_pipeline.txt
+    echo $workflow.manifest.version > v_pipeline.txt
     echo $workflow.nextflow.version > v_nextflow.txt
     fastqc --version > v_fastqc.txt
     multiqc --version > v_multiqc.txt
@@ -209,8 +233,10 @@ process multiqc {
 
     input:
     file multiqc_config
-    file ('fastqc/*') from fastqc_results.collect()
+    // TODO nf-core: Add in log files from your new processes for MultiQC to find!
+    file ('fastqc/*') from fastqc_results.collect().ifEmpty([])
     file ('software_versions/*') from software_versions_yaml
+    file workflow_summary from create_workflow_summary(summary)
 
     output:
     file "*multiqc_report.html" into multiqc_report
@@ -219,6 +245,7 @@ process multiqc {
     script:
     rtitle = custom_runName ? "--title \"$custom_runName\"" : ''
     rfilename = custom_runName ? "--filename " + custom_runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report" : ''
+    // TODO nf-core: Specify which MultiQC modules to use with -m for a faster run time
     """
     multiqc -f $rtitle $rfilename --config $multiqc_config .
     """
@@ -230,7 +257,6 @@ process multiqc {
  * STEP 3 - Output Description HTML
  */
 process output_documentation {
-    tag "$prefix"
     publishDir "${params.outdir}/Documentation", mode: 'copy'
 
     input:
@@ -253,12 +279,12 @@ process output_documentation {
 workflow.onComplete {
 
     // Set up the e-mail variables
-    def subject = "[hlatyping] Successful: $workflow.runName"
+    def subject = "[nf-core/hlatyping] Successful: $workflow.runName"
     if(!workflow.success){
-      subject = "[hlatyping] FAILED: $workflow.runName"
+      subject = "[nf-core/hlatyping] FAILED: $workflow.runName"
     }
     def email_fields = [:]
-    email_fields['version'] = params.version
+    email_fields['version'] = workflow.manifest.version
     email_fields['runName'] = custom_runName ?: workflow.runName
     email_fields['success'] = workflow.success
     email_fields['dateComplete'] = workflow.complete
@@ -303,11 +329,11 @@ workflow.onComplete {
           if( params.plaintext_email ){ throw GroovyException('Send plaintext e-mail, not HTML') }
           // Try to send HTML e-mail using sendmail
           [ 'sendmail', '-t' ].execute() << sendmail_html
-          log.info "[hlatyping] Sent summary e-mail to $params.email (sendmail)"
+          log.info "[nf-core/hlatyping] Sent summary e-mail to $params.email (sendmail)"
         } catch (all) {
           // Catch failures and try with plaintext
           [ 'mail', '-s', subject, params.email ].execute() << email_txt
-          log.info "[hlatyping] Sent summary e-mail to $params.email (mail)"
+          log.info "[nf-core/hlatyping] Sent summary e-mail to $params.email (mail)"
         }
     }
 
@@ -321,6 +347,6 @@ workflow.onComplete {
     def output_tf = new File( output_d, "pipeline_report.txt" )
     output_tf.withWriter { w -> w << email_txt }
 
-    log.info "[hlatyping] Pipeline Complete"
+    log.info "[nf-core/hlatyping] Pipeline Complete"
 
 }

@@ -1,3 +1,4 @@
+# nf-core/hlatyping: Changelog
 
-## 1.1.0 - <date>
-Initial release of hlatyping, created with the NGI-NFcookiecutter template: https://github.com/ewels/NGI-NFcookiecutter.
+## vNone - <date>
+Initial release of nf-core/hlatyping, created with the [nf-core](http://nf-co.re/) template.

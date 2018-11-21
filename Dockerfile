@@ -1,5 +1,7 @@
 FROM nfcore/base
-LABEL description="Docker image containing all requirements for hlatyping pipeline"
+LABEL authors="No author provided" \
+      description="Docker image containing all requirements for nf-core/hlatyping pipeline"
 
 COPY environment.yml /
-RUN conda env update -n root -f /environment.yml && conda clean -a
+RUN conda env create -f /environment.yml && conda clean -a
+ENV PATH /opt/conda/envs/nf-core-hlatyping-None/bin:$PATH
