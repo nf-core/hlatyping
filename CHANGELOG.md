@@ -1,3 +1,7 @@
+## 1.1.2 - Patch release - 2018-12-12
+
+- Fix [#37](https://github.com/nf-core/hlatyping/issues/37)
+
 ## 1.1.1 - Patch release - 2018-08-21
 
 - Fix [#30](https://github.com/nf-core/hlatyping/issues/30)
