@@ -87,7 +87,7 @@ def create_workflow_summary(summary) {
     yaml_file.text  = """
     id: 'nf-core-hlatypting-summary'
     description: " - this information is collected when the pipeline is started."
-    section_name: 'nf-core/eager Workflow Summary'
+    section_name: 'nf-core/hlatyping Workflow Summary'
     section_href: 'https://github.com/nf-core/eager'
     plot_type: 'html'
     data: |
