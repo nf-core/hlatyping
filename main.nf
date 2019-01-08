@@ -9,6 +9,7 @@
  #### Authors
  Sven Fillinger sven1103 <sven.fillinger@qbic.uni-tuebingen.de> - https://github.com/sven1103>
  Christopher Mohr christopher-mohr <christopher.mohr@uni-tuebingen.de>
+ Alexander Peltzer <alexander.peltzer@qbic.uni-tuebingen.de> - https://github.com/apeltzer
 ----------------------------------------------------------------------------------------
 */
 
@@ -59,11 +60,12 @@ if (params.help){
 
 // Configurable variables
 params.name = false
-params.multiqc_config = "$baseDir/conf/multiqc_config.yaml"
 params.email = false
 params.plaintext_email = false
 
-output_docs = file("$baseDir/docs/output.md")
+ch_output_docs = Channel.fromPath("$baseDir/docs/output.md")
+ch_multiqc_config = Channel.fromPath(params.multiqc_config)
+
 
 // Validate inputs
 params.reads ?: params.readPaths ?: { log.error "No read data privided. Make sure you have used the '--reads' option."; exit 1 }()
@@ -78,6 +80,24 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
   custom_runName = workflow.runName
 }
 
+
+def create_workflow_summary(summary) {
+
+    def yaml_file = workDir.resolve('workflow_summary_mqc.yaml')
+    yaml_file.text  = """
+    id: 'nf-core-hlatypting-summary'
+    description: " - this information is collected when the pipeline is started."
+    section_name: 'nf-core/hlatyping Workflow Summary'
+    section_href: 'https://github.com/nf-core/hlatyping'
+    plot_type: 'html'
+    data: |
+        <dl class=\"dl-horizontal\">
+${summary.collect { k,v -> "            <dt>$k</dt><dd><samp>${v ?: '<span style=\"color:#999999;\">N/A</a>'}</samp></dd>" }.join("\n")}
+        </dl>
+    """.stripIndent()
+
+   return yaml_file
+}
 
 
 // Header log info
@@ -109,21 +129,6 @@ summary['Config Profile'] = workflow.profile
 if(params.email) summary['E-mail Address'] = params.email
 log.info summary.collect { k,v -> "${k.padRight(15)}: $v" }.join("\n")
 log.info "========================================="
-
-
-// Check that Nextflow version is up to date enough
-// try / throw / catch works for NF versions < 0.25 when this was implemented
-try {
-    if( ! nextflow.version.matches(">= $params.nf_required_version") ){
-        throw GroovyException('Nextflow version too old')
-    }
-} catch (all) {
-    log.error "====================================================\n" +
-              "  Nextflow version $params.nf_required_version required! You are running v$workflow.nextflow.version.\n" +
-              "  Pipeline execution will continue, but things may break.\n" +
-              "  Please run `nextflow self-update` to update Nextflow.\n" +
-              "============================================================"
-}
 
 
 if( params.readPaths ){
@@ -296,6 +301,68 @@ process run_optitype {
     OptiTypePipeline.py -i ${reads} -e ${params.enumerations} -b ${params.beta} \\
         -p "${pattern}" -c config.ini --${params.seqtype} --outdir ${pattern}
     """
+}
+
+/*
+ *
+ * Output Description HTML
+ */
+process output_documentation {
+    publishDir "${params.outdir}/Documentation", mode: 'copy'
+
+    input:
+    file output_docs from ch_output_docs
+
+    output:
+    file "results_description.html"
+
+    script:
+    """
+    markdown_to_html.r $output_docs results_description.html
+    """
+}
+
+
+/*
+ * Parse software version numbers
+ */
+process get_software_versions {
+
+    output:
+    file 'software_versions_mqc.yaml' into software_versions_yaml
+
+    script:
+    """
+    echo $workflow.manifest.version &> v_pipeline.txt
+    echo $workflow.nextflow.version &> v_nextflow.txt
+    multiqc --version &> v_multiqc.txt 2>&1 || true
+    samtools --version &> v_samtools.txt 2>&1 || true
+    yara_mapper --help  &> v_yara.txt 2>&1 || true
+    cat \$(which OptiTypePipeline.py) &> v_optitype.txt 2>&1 || true
+    scrape_software_versions.py &> software_versions_mqc.yaml
+    """
+}
+
+process multiqc {
+    publishDir "${params.outdir}/MultiQC", mode: 'copy'
+
+    input:
+    file multiqc_config from ch_multiqc_config.collect().ifEmpty([])
+    file ('software_versions/*') from software_versions_yaml.collect().ifEmpty([])
+
+    file workflow_summary from create_workflow_summary(summary)
+
+    output:
+    file "*multiqc_report.html" into ch_multiqc_report
+    file "*_data"
+
+    script:
+    rtitle = custom_runName ? "--title \"$custom_runName\"" : ''
+    rfilename = custom_runName ? "--filename " + custom_runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report" : ''
+    """
+    multiqc -f $rtitle $rfilename --config $multiqc_config .
+    """
+
 }
 
 
