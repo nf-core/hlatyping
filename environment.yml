@@ -11,3 +11,4 @@ dependencies:
   - samtools=1.9
   - conda-forge::coincbc=2.9.9
   - conda-forge::r-rmarkdown=1.10
+  - conda-forge::libiconv=1.15
