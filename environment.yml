@@ -5,8 +5,9 @@ channels:
   - defaults
 dependencies:
   - fastqc=0.11.8
-  - multiqc=1.6
+  - multiqc=1.7
   - optitype=1.3.2
   - yara=1.0.2
   - samtools=1.9
   - conda-forge::coincbc=2.9.9
+  - conda-forge::r-rmarkdown=1.10
