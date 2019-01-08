@@ -9,6 +9,7 @@
  #### Authors
  Sven Fillinger sven1103 <sven.fillinger@qbic.uni-tuebingen.de> - https://github.com/sven1103>
  Christopher Mohr christopher-mohr <christopher.mohr@uni-tuebingen.de>
+ Alexander Peltzer <alexander.peltzer@qbic.uni-tuebingen.de> - https://github.com/apeltzer
 ----------------------------------------------------------------------------------------
 */
 
