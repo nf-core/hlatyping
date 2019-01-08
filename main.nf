@@ -88,7 +88,7 @@ def create_workflow_summary(summary) {
     id: 'nf-core-hlatypting-summary'
     description: " - this information is collected when the pipeline is started."
     section_name: 'nf-core/hlatyping Workflow Summary'
-    section_href: 'https://github.com/nf-core/eager'
+    section_href: 'https://github.com/nf-core/hlatyping'
     plot_type: 'html'
     data: |
         <dl class=\"dl-horizontal\">
