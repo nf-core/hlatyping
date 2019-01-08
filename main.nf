@@ -85,7 +85,7 @@ def create_workflow_summary(summary) {
 
     def yaml_file = workDir.resolve('workflow_summary_mqc.yaml')
     yaml_file.text  = """
-    id: 'nf-core-eager-summary'
+    id: 'nf-core-hlatypting-summary'
     description: " - this information is collected when the pipeline is started."
     section_name: 'nf-core/eager Workflow Summary'
     section_href: 'https://github.com/nf-core/eager'
