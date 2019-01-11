@@ -145,11 +145,19 @@ if( params.readPaths ){
             .ifEmpty { exit 1, "params.readPaths or params.bams was empty - no input files supplied!" }
             .set { input_data }
     }
+} else if (!params.bam){
+     Channel
+        .fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
+        .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs" +
+            "to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --singleEnd on the command line." }
+        .set { input_data }
 } else {
      Channel
-        .fromFilePairs( params.reads, size: (params.singleEnd || params.bam) ? 1 : 2 )
-        .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs" +
-            "to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end or bam data, please specify --singleEnd or --bam on the command line." }
+        .fromPath( params.reads )
+        .map { row -> [ file(row).baseName, [ file( row ) ] ] }
+        .ifEmpty { exit 1, "Cannot find any bam file matching: ${params.reads}\nNB: Path needs" +
+            "to be enclosed in quotes!\n" }
+        .dump() //For debugging purposes
         .set { input_data }
 }
 
