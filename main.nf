@@ -147,9 +147,9 @@ if( params.readPaths ){
     }
 } else {
      Channel
-        .fromFilePairs( params.reads, size: params.singleEnd || params.bam ? 1 : 2 )
+        .fromFilePairs( params.reads, size: (params.singleEnd || params.bam) ? 1 : 2 )
         .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs" +
-            "to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --singleEnd on the command line." }
+            "to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end or bam data, please specify --singleEnd or --bam on the command line." }
         .set { input_data }
 }
 
