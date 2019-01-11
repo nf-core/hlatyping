@@ -102,7 +102,7 @@ ${summary.collect { k,v -> "            <dt>$k</dt><dd><samp>${v ?: '<span style
 
 // Header log info
 log.info "========================================="
-log.info " nf-core/hlatyping v${$workflow.manifest.version}"
+log.info " nf-core/hlatyping v${workflow.manifest.version}"
 log.info "========================================="
 def summary = [:]
 summary['Run Name']     = custom_runName ?: workflow.runName
