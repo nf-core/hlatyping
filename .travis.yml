@@ -12,8 +12,8 @@ matrix:
 before_install:
   # PRs made to 'master' branch should always orginate from another repo or the 'dev' branch
   - '[ $TRAVIS_PULL_REQUEST = "false" ] || [ $TRAVIS_BRANCH != "master" ] || ([ $TRAVIS_PULL_REQUEST_SLUG = $TRAVIS_REPO_SLUG ] && [ $TRAVIS_PULL_REQUEST_BRANCH = "dev" ])'
-  - docker pull nfcore/hlatyping:dev
-  - docker tag nfcore/hlatyping:dev nfcore/hlatyping:latest
+  - docker pull nfcore/hlatyping
+  - docker tag nfcore/hlatyping nfcore/hlatyping:latest
 
 install:
   # Install Nextflow
