@@ -76,7 +76,8 @@
             "usage": "Yara HLA dna reference index location.",
             "type": "string",
             "render": "file",
-            "default_value": "$baseDir/data/indices/yara/hla_reference_dna"
+            "default_value": "$baseDir/data/indices/yara/hla_reference_dna",
+            "pattern": ".*"
         }
         
     ]
