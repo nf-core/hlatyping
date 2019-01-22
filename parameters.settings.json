@@ -21,7 +21,7 @@
             "label": "Sequence type",
             "usage": "Tells hlatyping if input is of type DNA or RNA.",
             "type": "string",
-            "render": "radio-box",
+            "render": "radio-button",
             "choices": ["dna", "rna"],
             "default_value": "dna"
         },
@@ -30,7 +30,7 @@
             "label": "IP solver alghorithm",
             "usage": "Selects an IP solver alghorithm for hlatyping.",
             "type": "string",
-            "render": "radio-box",
+            "render": "radio-button",
             "choices": ["glpk", "cbc"],
             "default_value": "glpk"
         },
