@@ -58,7 +58,8 @@
             "usage": "Adds a string prefix to the output files.",
             "type": "string",
             "render": "textfield",
-            "default_value": "hla_run"
+            "default_value": "hla_run",
+            "pattern": ".*"
         },
         {
             "name": "reads",
