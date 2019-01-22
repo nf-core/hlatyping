@@ -50,7 +50,7 @@
             "type": "decimal",
             "render": "range",
             "choices": [0.0, 0.1],
-            "default_value:": 0.009
+            "default_value": 0.009
         },
         {
             "name": "prefix",
