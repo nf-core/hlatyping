@@ -14,7 +14,7 @@
             "usage": "Flag if input data is of type singleEnd.",
             "type": "boolean",
             "render": "check-box",
-            "default_value:": false
+            "default_value": false
         },
         {
             "name": "seqtype",
@@ -23,7 +23,7 @@
             "type": "string",
             "render": "radio-box",
             "choices": ["dna", "rna"],
-            "default_value:": "dna"
+            "default_value": "dna"
         },
         {
             "name": "solver",
@@ -32,7 +32,7 @@
             "type": "string",
             "render": "radio-box",
             "choices": ["glpk", "cbc"],
-            "default_value:": "glpk"
+            "default_value": "glpk"
         },
         {
             "name": "enumerations",
@@ -41,7 +41,7 @@
             "type": "integer",
             "render": "range",
             "choices": [1,150],
-            "default_value:": 1
+            "default_value": 1
         },
         {
             "name": "beta",
