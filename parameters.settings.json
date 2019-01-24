@@ -6,7 +6,8 @@
             "usage": "Hlatyping will extract the reads and remap.",
             "type": "boolean",
             "render": "check-box",
-            "default_value": false
+            "default_value": false,
+            "group": "input"
         },
         {
             "name": "singleEnd",
@@ -14,7 +15,8 @@
             "usage": "Flag if input data is of type singleEnd.",
             "type": "boolean",
             "render": "check-box",
-            "default_value": false
+            "default_value": false,
+            "group": "input"
         },
         {
             "name": "seqtype",
@@ -23,7 +25,8 @@
             "type": "string",
             "render": "radio-button",
             "choices": ["dna", "rna"],
-            "default_value": "dna"
+            "default_value": "dna",
+            "group": "input"
         },
         {
             "name": "solver",
@@ -32,7 +35,8 @@
             "type": "string",
             "render": "radio-button",
             "choices": ["glpk", "cbc"],
-            "default_value": "glpk"
+            "default_value": "glpk",
+            "group": "prediction"
         },
         {
             "name": "enumerations",
@@ -41,7 +45,8 @@
             "type": "integer",
             "render": "range",
             "choices": [1,150],
-            "default_value": 1
+            "default_value": 1,
+            "group": "prediction"
         },
         {
             "name": "beta",
@@ -50,7 +55,8 @@
             "type": "decimal",
             "render": "range",
             "choices": [0.0, 0.1],
-            "default_value": 0.009
+            "default_value": 0.009,
+            "group": "prediction"
         },
         {
             "name": "prefix",
@@ -59,7 +65,8 @@
             "type": "string",
             "render": "textfield",
             "default_value": "hla_run",
-            "pattern": ".*"
+            "pattern": ".*",
+            "group": "prediction"
         },
         {
             "name": "reads",
@@ -68,7 +75,8 @@
             "type": "string",
             "render": "file",
             "default_value": "path/to/reads.fastq.gz",
-            "pattern": ".*(\\.fastq$|\\.fastq\\.gz$|\\.bam$)"
+            "pattern": ".*(\\.fastq$|\\.fastq\\.gz$|\\.bam$)",
+            "group": "input"
         },
         {
             "name": "index",
@@ -77,7 +85,8 @@
             "type": "string",
             "render": "file",
             "default_value": "$baseDir/data/indices/yara/hla_reference_dna",
-            "pattern": ".*"
+            "pattern": ".*",
+            "group": "input"
         }
         
     ]
