@@ -1,0 +1,93 @@
+{
+    "parameters": [
+        {
+            "name": "bam",
+            "label": "BAM file format flag",
+            "usage": "Hlatyping will extract the reads and remap.",
+            "type": "boolean",
+            "render": "check-box",
+            "default_value": false,
+            "group": "input"
+        },
+        {
+            "name": "singleEnd",
+            "label": "Sequencing strategy",
+            "usage": "Flag if input data is of type singleEnd.",
+            "type": "boolean",
+            "render": "check-box",
+            "default_value": false,
+            "group": "input"
+        },
+        {
+            "name": "seqtype",
+            "label": "Sequence type",
+            "usage": "Tells hlatyping if input is of type DNA or RNA.",
+            "type": "string",
+            "render": "radio-button",
+            "choices": ["dna", "rna"],
+            "default_value": "dna",
+            "group": "input"
+        },
+        {
+            "name": "solver",
+            "label": "IP solver alghorithm",
+            "usage": "Selects an IP solver alghorithm for hlatyping.",
+            "type": "string",
+            "render": "radio-button",
+            "choices": ["glpk", "cbc"],
+            "default_value": "glpk",
+            "group": "prediction"
+        },
+        {
+            "name": "enumerations",
+            "label": "Number of OptiType enumerations",
+            "usage": "Shows additional n-1 suboptimal solutions from OptiType.",
+            "type": "integer",
+            "render": "range",
+            "choices": [1,150],
+            "default_value": 1,
+            "group": "prediction"
+        },
+        {
+            "name": "beta",
+            "label": "Weight for homozygosity accounting",
+            "usage": "Shows additional n-1 suboptimal solutions from OptiType-",
+            "type": "decimal",
+            "render": "range",
+            "choices": [0.0, 0.1],
+            "default_value": 0.009,
+            "group": "prediction"
+        },
+        {
+            "name": "prefix",
+            "label": "Output file prefix.",
+            "usage": "Adds a string prefix to the output files.",
+            "type": "string",
+            "render": "textfield",
+            "default_value": "hla_run",
+            "pattern": ".*",
+            "group": "prediction"
+        },
+        {
+            "name": "reads",
+            "label": "Mapped or unmapped reads",
+            "usage": "HLA typing workflow input data.",
+            "type": "string",
+            "render": "file",
+            "default_value": "path/to/reads.fastq.gz",
+            "pattern": ".*(\\.fastq$|\\.fastq\\.gz$|\\.bam$)",
+            "group": "input"
+        },
+        {
+            "name": "index",
+            "label": "Reference index URI",
+            "usage": "Yara HLA dna reference index location.",
+            "type": "string",
+            "render": "file",
+            "default_value": "$baseDir/data/indices/yara/hla_reference_dna",
+            "pattern": ".*",
+            "group": "input"
+        }
+        
+    ]
+}
