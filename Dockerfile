@@ -5,4 +5,4 @@ LABEL authors="sven.fillinger@qbic.uni-tuebingen.de" \
 
 COPY environment.yml /
 RUN conda env create -f /environment.yml && conda clean -a
-ENV PATH /opt/conda/envs/nf-core-hlatyping-1.2dev/bin:$PATH
+ENV PATH /opt/conda/envs/nf-core-hlatyping-1.1.3/bin:$PATH
