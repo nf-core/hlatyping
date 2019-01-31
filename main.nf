@@ -27,7 +27,7 @@ def helpMessage() {
 
     Mandatory arguments:
       --reads                       Path to input data (must be surrounded with quotes)
-      --rna/--dna                   Use with RNA/DNA sequencing data.
+      --seqtype rna/dna             Use with RNA/DNA sequencing data.
       --outdir OUTDIR               The output directory where the results will be saved
       -profile                      Hardware config to use. docker / aws
 
@@ -207,10 +207,12 @@ if ( !params.bam  ) { // FASTQ files processing
         set val(pattern), "mapped_{1,2}.bam" into fished_reads
 
         script:
+        index = (params.seqtype =='dna') ?  "$baseDir/data/indices/yara/hla_reference_dna" :  "$baseDir/data/indices/yara/hla_reference_rna"
+
         if (params.singleEnd)
         """
         samtools bam2fq $bams > output_1.fastq
-        yara_mapper -e 3 -t ${params.max_cpus} -f bam ${params.index} output_1.fastq > output_1.bam
+        yara_mapper -e 3 -t ${params.max_cpus} -f bam $index output_1.fastq > output_1.bam
         samtools view -h -F 4 -b1 output_1.bam > mapped_1.bam
         """
         else
@@ -219,7 +221,7 @@ if ( !params.bam  ) { // FASTQ files processing
         samtools view -h -f 0x80 $bams > output_2.bam
         samtools bam2fq output_1.bam > output_1.fastq
         samtools bam2fq output_2.bam > output_2.fastq
-        yara_mapper -e 3 -t ${params.max_cpus} -f bam ${params.index} output_1.fastq output_2.fastq > output.bam
+        yara_mapper -e 3 -t ${params.max_cpus} -f bam $index output_1.fastq output_2.fastq > output.bam
         samtools view -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
         samtools view -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
         """
@@ -271,14 +273,15 @@ process pre_map_hla {
     set val(pattern), "mapped_{1,2}.bam" into fished_reads
 
     script:
+    index = (params.seqtype =='dna') ?  "$baseDir/data/indices/yara/hla_reference_dna" :  "$baseDir/data/indices/yara/hla_reference_rna"
     if (params.singleEnd)
     """
-    yara_mapper -e 3 -t ${params.max_cpus} -f bam ${params.index} $reads > output_1.bam
+    yara_mapper -e 3 -t ${params.max_cpus} -f bam $index $reads > output_1.bam
     samtools view -h -F 4 -b1 output_1.bam > mapped_1.bam
     """
     else
     """
-    yara_mapper -e 3 -t ${params.max_cpus} -f bam ${params.index} $reads > output.bam
+    yara_mapper -e 3 -t ${params.max_cpus} -f bam $index $reads > output.bam
     samtools view -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
     samtools view -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
     """
