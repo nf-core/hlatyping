@@ -69,7 +69,7 @@ ch_multiqc_config = Channel.fromPath(params.multiqc_config)
 
 // Validate inputs
 params.reads ?: params.readPaths ?: { log.error "No read data privided. Make sure you have used the '--reads' option."; exit 1 }()
-params.seqtype ?: { log.error "No sequence type provided, you need to add '--dna/--rna.'"; exit 1 }()
+(params.seqtype == 'rna' || params.seqtype == 'dna') ?: { log.error "No or incorrect sequence type provided, you need to add '--seqtype 'dna'' or '--seqtype 'rna''."; exit 1 }()
 if( params.bam ) params.index ?: { log.error "For BAM option, you need to provide a path to the HLA reference index (yara; --index) "; exit 1 }()
 params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
 
