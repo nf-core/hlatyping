@@ -109,7 +109,8 @@ summary['Run Name']     = custom_runName ?: workflow.runName
 summary['Reads']        = params.readPaths? params.readPaths : params.reads
 summary['Data Type']    = params.singleEnd ? 'Single-End' : 'Paired-End'
 summary['File Type']    = params.bam ? 'BAM' : 'Other (fastq, fastq.gz, ...)'
-summary['Index Location'] = params.index ?: { log.error "You did not provide any path to the mapper indices."; exit 1 }
+summary['Seq Type']   = params.seqtype
+summary['Index Location'] = params.base_index + params.seqtype
 summary['IP solver']    = params.solver
 summary['Enumerations'] = params.enumerations
 summary['Beta'] = params.beta
@@ -207,12 +208,11 @@ if ( !params.bam  ) { // FASTQ files processing
         set val(pattern), "mapped_{1,2}.bam" into fished_reads
 
         script:
-        index = (params.seqtype =='dna') ?  "$baseDir/data/indices/yara/hla_reference_dna" :  "$baseDir/data/indices/yara/hla_reference_rna"
-
+        full_index = params.base_index + params.seqtype
         if (params.singleEnd)
         """
         samtools bam2fq $bams > output_1.fastq
-        yara_mapper -e 3 -t ${params.max_cpus} -f bam $index output_1.fastq > output_1.bam
+        yara_mapper -e 3 -t ${params.max_cpus} -f bam $full_index output_1.fastq > output_1.bam
         samtools view -h -F 4 -b1 output_1.bam > mapped_1.bam
         """
         else
@@ -221,7 +221,7 @@ if ( !params.bam  ) { // FASTQ files processing
         samtools view -h -f 0x80 $bams > output_2.bam
         samtools bam2fq output_1.bam > output_1.fastq
         samtools bam2fq output_2.bam > output_2.fastq
-        yara_mapper -e 3 -t ${params.max_cpus} -f bam $index output_1.fastq output_2.fastq > output.bam
+        yara_mapper -e 3 -t ${params.max_cpus} -f bam $full_index output_1.fastq output_2.fastq > output.bam
         samtools view -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
         samtools view -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
         """
@@ -273,15 +273,15 @@ process pre_map_hla {
     set val(pattern), "mapped_{1,2}.bam" into fished_reads
 
     script:
-    index = (params.seqtype =='dna') ?  "$baseDir/data/indices/yara/hla_reference_dna" :  "$baseDir/data/indices/yara/hla_reference_rna"
+    full_index = params.base_index + params.seqtype
     if (params.singleEnd)
     """
-    yara_mapper -e 3 -t ${params.max_cpus} -f bam $index $reads > output_1.bam
+    yara_mapper -e 3 -t ${params.max_cpus} -f bam $full_index $reads > output_1.bam
     samtools view -h -F 4 -b1 output_1.bam > mapped_1.bam
     """
     else
     """
-    yara_mapper -e 3 -t ${params.max_cpus} -f bam $index $reads > output.bam
+    yara_mapper -e 3 -t ${params.max_cpus} -f bam $full_index $reads > output.bam
     samtools view -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
     samtools view -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
     """
