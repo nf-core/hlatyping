@@ -27,7 +27,7 @@ def helpMessage() {
 
     Mandatory arguments:
       --reads                       Path to input data (must be surrounded with quotes)
-      --rna/--dna                   Use with RNA/DNA sequencing data.
+      --seqtype rna/dna             Use with RNA/DNA sequencing data.
       --outdir OUTDIR               The output directory where the results will be saved
       -profile                      Hardware config to use. docker / aws
 
@@ -69,7 +69,7 @@ ch_multiqc_config = Channel.fromPath(params.multiqc_config)
 
 // Validate inputs
 params.reads ?: params.readPaths ?: { log.error "No read data privided. Make sure you have used the '--reads' option."; exit 1 }()
-params.seqtype ?: { log.error "No sequence type provided, you need to add '--dna/--rna.'"; exit 1 }()
+(params.seqtype == 'rna' || params.seqtype == 'dna') ?: { log.error "No or incorrect sequence type provided, you need to add '--seqtype 'dna'' or '--seqtype 'rna''."; exit 1 }()
 if( params.bam ) params.index ?: { log.error "For BAM option, you need to provide a path to the HLA reference index (yara; --index) "; exit 1 }()
 params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
 
@@ -109,13 +109,14 @@ summary['Run Name']     = custom_runName ?: workflow.runName
 summary['Reads']        = params.readPaths? params.readPaths : params.reads
 summary['Data Type']    = params.singleEnd ? 'Single-End' : 'Paired-End'
 summary['File Type']    = params.bam ? 'BAM' : 'Other (fastq, fastq.gz, ...)'
-summary['Index Location'] = params.index ?: { log.error "You did not provide any path to the mapper indices."; exit 1 }
+summary['Seq Type']   = params.seqtype
+summary['Index Location'] = params.base_index + params.seqtype
 summary['IP solver']    = params.solver
 summary['Enumerations'] = params.enumerations
 summary['Beta'] = params.beta
 summary['Prefix'] = params.prefix
 summary['Max Memory']   = params.max_memory
-summary['Max CP Us']     = params.max_cpus
+summary['Max CPUs']     = params.max_cpus
 summary['Max Time']     = params.max_time
 summary['Output dir']   = params.outdir
 summary['Working dir']  = workflow.workDir
@@ -207,21 +208,22 @@ if ( !params.bam  ) { // FASTQ files processing
         set val(pattern), "mapped_{1,2}.bam" into fished_reads
 
         script:
+        full_index = params.base_index + params.seqtype
         if (params.singleEnd)
         """
         samtools bam2fq $bams > output_1.fastq
-        yara_mapper -e 3 -t ${params.max_cpus} -f bam ${params.index} output_1.fastq > output_1.bam
-        samtools view -h -F 4 -b1 output_1.bam > mapped_1.bam
+        yara_mapper -e 3 -t ${task.cpus} -f bam $full_index output_1.fastq > output_1.bam
+        samtools view -@ ${task.cpus} -h -F 4 -b1 output_1.bam > mapped_1.bam
         """
         else
         """
-        samtools view -h -f 0x40 $bams > output_1.bam
-        samtools view -h -f 0x80 $bams > output_2.bam
+        samtools view -@ ${task.cpus} -h -f 0x40 $bams > output_1.bam
+        samtools view -@ ${task.cpus} -h -f 0x80 $bams > output_2.bam
         samtools bam2fq output_1.bam > output_1.fastq
         samtools bam2fq output_2.bam > output_2.fastq
-        yara_mapper -e 3 -t ${params.max_cpus} -f bam ${params.index} output_1.fastq output_2.fastq > output.bam
-        samtools view -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
-        samtools view -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
+        yara_mapper -e 3 -t ${task.cpus} -f bam $full_index output_1.fastq output_2.fastq > output.bam
+        samtools view -@ ${task.cpus} -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
+        samtools view -@ ${task.cpus} -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
         """
 
     }
@@ -271,16 +273,17 @@ process pre_map_hla {
     set val(pattern), "mapped_{1,2}.bam" into fished_reads
 
     script:
+    full_index = params.base_index + params.seqtype
     if (params.singleEnd)
     """
-    yara_mapper -e 3 -t ${params.max_cpus} -f bam ${params.index} $reads > output_1.bam
-    samtools view -h -F 4 -b1 output_1.bam > mapped_1.bam
+    yara_mapper -e 3 -t ${task.cpus} -f bam $full_index $reads > output_1.bam
+    samtools view -@ ${task.cpus} -h -F 4 -b1 output_1.bam > mapped_1.bam
     """
     else
     """
-    yara_mapper -e 3 -t ${params.max_cpus} -f bam ${params.index} $reads > output.bam
-    samtools view -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
-    samtools view -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
+    yara_mapper -e 3 -t ${task.cpus} -f bam $full_index $reads > output.bam
+    samtools view -@ ${task.cpus} -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
+    samtools view -@ ${task.cpus} -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
     """
 
 }
