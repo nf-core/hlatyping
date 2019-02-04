@@ -1,4 +1,4 @@
-## 1.1.3 - Patch release - 2018-12-12
+## 1.1.3 - Patch release - 2019-02-04
 
 - Multiple smaller bugfixes, cleaned up code basis
 - [#48](https://github.com/nf-core/hlatyping/issues/48) - Utilizes RNA/DNA reference genome for remapping correctly
