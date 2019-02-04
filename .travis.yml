@@ -28,7 +28,7 @@ install:
   - bash Miniconda3-latest-Linux-x86_64.sh -b -f -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   # Reset
-  - mkdir ${TRAVIS_BUILD_DIR}/tests && cd ${TRAVIS_BUILD_DIR}/tests
+  - mkdir -p ${TRAVIS_BUILD_DIR}/tests && cd ${TRAVIS_BUILD_DIR}/tests
 
 
 env:
