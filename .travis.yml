@@ -36,3 +36,4 @@ script:
   # Run the pipeline with the test profile
   - nextflow run ${TRAVIS_BUILD_DIR} -profile test,docker
   - nextflow run ${TRAVIS_BUILD_DIR} -profile test_fastq,docker
+  - nextflow run ${TRAVIS_BUILD_DIR} -profile test_rna,docker
