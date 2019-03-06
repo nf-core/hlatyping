@@ -1,3 +1,6 @@
+## 1.1.4 - Patch release - 2019-03-06
+- Fix issues with [centralized configs](https://github.com/nf-core/hlatyping/issues/51)
+
 ## 1.1.3 - Patch release - 2019-02-04
 
 - Multiple smaller bugfixes, cleaned up code basis
