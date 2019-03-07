@@ -1,3 +1,7 @@
+## 1.1.4 - Patch release - 2019-03-06
+- Fix issues with [centralized configs](https://github.com/nf-core/hlatyping/issues/51)
+- Fix with pandas, pinning to numpy 1.15.4 instead of 1.16.0
+
 ## 1.1.3 - Patch release - 2019-02-04
 
 - Multiple smaller bugfixes, cleaned up code basis
