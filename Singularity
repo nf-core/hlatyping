@@ -4,7 +4,7 @@ Bootstrap:docker
 %labels
     MAINTAINER Sven Fillinger <sven.fillinger@qbic.uni-tuebingen.de>
     DESCRIPTION Singularity image containing all requirements for nf-core/hlatyping pipeline
-    VERSION 1.1.4dev
+    VERSION 1.1.4
 
 %files
     environment.yml /
@@ -12,7 +12,7 @@ Bootstrap:docker
 %post
     /opt/conda/bin/conda env create -f /environment.yml
     /opt/conda/bin/conda clean -a
-    PATH=/opt/conda/envs/nf-core-hlatyping-1.1.4dev/bin:$PATH
+    PATH=/opt/conda/envs/nf-core-hlatyping-1.1.4/bin:$PATH
     export PATH
 
     
