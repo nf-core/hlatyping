@@ -14,7 +14,34 @@
 */
 
 
-def helpMessage() {
+def readParamsFromJsonSettings() {
+    List paramsWithUsage
+    try {
+        paramsWithUsage = tryReadParamsFromJsonSettings()
+    } catch (Exception e) {
+        println "Could not read parameters settings from Json. $e"
+        paramsWithUsage = Collections.emptyMap()
+    }
+    return paramsWithUsage
+}
+
+def tryReadParamsFromJsonSettings() throws Exception{
+    def paramsContent = new File(config.params_description.path).text
+    def paramsWithUsage = new groovy.json.JsonSlurper().parseText(paramsContent)
+    return paramsWithUsage.get('parameters')
+}
+
+def paramsWithUsage = readParamsFromJsonSettings()
+
+def prettyFormatParams(List paramsWithUsage, Integer paddingSpace=2) {
+    def maxParamLength = paramsWithUsage.collect { it.name.size() }.max()
+    def optionsFormattedList = paramsWithUsage.collect { Map param -> sprintf("%10s--%-${maxParamLength + paddingSpace}s %s\n", "", "${param.name}","${param.usage}") }
+    return """${ optionsFormattedList.join() }"""
+}
+
+println prettyFormatParams(paramsWithUsage, 4)
+
+def helpMessage(paramsWithUsage) {
     log.info"""
     =========================================
      nf-core/hlatyping v${workflow.manifest.version}
@@ -25,26 +52,10 @@ def helpMessage() {
 
     nextflow run nf-core/hlatyping --reads '*_R{1,2}.fastq.gz' -profile docker
 
-    Mandatory arguments:
-      --reads                       Path to input data (must be surrounded with quotes)
-      --seqtype rna/dna             Use with RNA/DNA sequencing data.
-      --outdir OUTDIR               The output directory where the results will be saved
-      -profile                      Hardware config to use. docker / aws
-
     Options:
-      --bam                         If the input format is of type BAM. A remapping step with yara mapper against the HLA
-                                    reference is performed in this case
-      --singleEnd                   Specifies that the input is single end reads
-      --beta B                      The beta value for for homozygosity detection (see paper). Default: 0.009. Handle with care.
-      --enumerate N                 Number of enumerations. OptiType will output the optimal solution and the top N-1 suboptimal solutions
-                                    in the results CSV. Default: 1
-      --solver SOLVER               Choose between different IP solver (glpk, cbc). Default: glpk
 
-    Other options:
-      --prefix PREFIX               Specifies a prefix of output files from Optitype
-      --verbose                     Activate verbose mode of Optitype
-      --email EMAIL                 Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits
-      -name NAME                    Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic.
+${ prettyFormatParams(paramsWithUsage, 4) }
+
     """.stripIndent()
 }
 
@@ -52,9 +63,10 @@ def helpMessage() {
  * SET UP CONFIGURATION VARIABLES
  */
 
+
 // Show help emssage
 if (params.help){
-    helpMessage()
+    helpMessage(paramsWithUsage)
     exit 0
 }
 

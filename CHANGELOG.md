@@ -1,3 +1,6 @@
+## 1.2.0 - Minor release 
+- Implements parameter.settings.json
+
 ## 1.1.4 - Patch release - 2019-03-06
 - Fix issues with [centralized configs](https://github.com/nf-core/hlatyping/issues/51)
 - Fix with pandas, pinning to numpy 1.15.4 instead of 1.16.0
