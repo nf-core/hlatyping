@@ -12,8 +12,6 @@
  Alexander Peltzer <alexander.peltzer@qbic.uni-tuebingen.de> - https://github.com/apeltzer
 ----------------------------------------------------------------------------------------
 */
-
-
 def readParamsFromJsonSettings() {
     List paramsWithUsage
     try {
@@ -31,15 +29,11 @@ def tryReadParamsFromJsonSettings() throws Exception{
     return paramsWithUsage.get('parameters')
 }
 
-def paramsWithUsage = readParamsFromJsonSettings()
-
-def prettyFormatParams(List paramsWithUsage, Integer paddingSpace=2) {
-    def maxParamLength = paramsWithUsage.collect { it.name.size() }.max()
-    def optionsFormattedList = paramsWithUsage.collect { Map param -> sprintf("%10s--%-${maxParamLength + paddingSpace}s %s\n", "", "${param.name}","${param.usage}") }
-    return """${ optionsFormattedList.join() }"""
+String prettyFormatParamsForDisplay(List paramsWithUsage, Integer padding=2) {
+    def maxParamNameLength = paramsWithUsage.collect { it.name.size() }.max()
+    def paramsFormattedList = paramsWithUsage.collect { Map param -> sprintf("%10s--%-${maxParamNameLength + padding}s %s\n", "", "${param.name}","${param.usage}") }
+    return """${ paramsFormattedList.join() }"""
 }
-
-println prettyFormatParams(paramsWithUsage, 4)
 
 def helpMessage(paramsWithUsage) {
     log.info"""
@@ -54,7 +48,7 @@ def helpMessage(paramsWithUsage) {
 
     Options:
 
-${ prettyFormatParams(paramsWithUsage, 4) }
+${ prettyFormatParamsForDisplay(paramsWithUsage, 4) }
 
     """.stripIndent()
 }
@@ -62,7 +56,7 @@ ${ prettyFormatParams(paramsWithUsage, 4) }
 /*
  * SET UP CONFIGURATION VARIABLES
  */
-
+def paramsWithUsage = readParamsFromJsonSettings()
 
 // Show help emssage
 if (params.help){
