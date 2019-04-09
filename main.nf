@@ -33,7 +33,13 @@ def tryReadParamsFromJsonSettings() throws Exception{
 // in this example there are 4 spaces for every intendation so we choose 4
 String prettyFormatParamsForDisplay(List paramsWithUsage, Integer padding=2, Integer indent=4) {
     def maxParamNameLength = paramsWithUsage.collect { it.name.size() }.max()
-    def paramsFormattedList = paramsWithUsage.collect { Map param -> sprintf("%${indent}s%-${maxParamNameLength + padding}s %s\n", "", "--${param.name}","${param.usage}") }
+		// get all available choices that are not null
+		def paramChoices = paramsWithUsage.collect { it.choices }.findAll { it }
+		def maxChoiceStringLength = paramChoices.collect { it.toString().size() }.max()
+		def maxTypeLength = "mem unit".size()
+    def paramsFormattedList = paramsWithUsage.collect {
+			Map param -> sprintf("%${indent}s%-${maxParamNameLength + padding}s%-${maxTypeLength + padding}s%-${maxChoiceStringLength + padding}s %s\n", "", "--${param.name}", "${param.type}","${param.choices ?: ''}", "${param.usage}")
+		}
 		return "${ paramsFormattedList.join() }"
 }
 
