@@ -30,41 +30,41 @@ def tryReadParamsFromJsonSettings() throws Exception{
     return paramsWithUsage.get('parameters')
 }
 
-// format data to make formatted string insertion easier
 def formatParameterHelpData(param) {
 	result = [ name: param.name, value: '', usage: param.usage ]
 	// value descibes the expected input for the param
 	result.value = (param.type == boolean.toString()) ? '' : param.choices ?: param.type ?: ''
-
 	return result
 }
 
-// generate a help message for the parameter group
-String prettyFormatParamGroupHelp (List paramGroup, String groupName, Integer padding=2, Integer indent=4) {
-	    def maxParamNameLength = paramGroup.collect { it.name.size() + 2 }.max()  // +2 because of -- in front of the name
-			// get all available choices that are not null
-			def paramChoices = paramGroup.collect { it.choices }.findAll { it }
-			def maxChoiceStringLength = paramChoices.collect { it.toString().size()}.max()
-			def maxTypeLength = "mem unit".size()
+String prettyFormatParamGroupWithPaddingAndIndent (List paramGroup,
+                                                   String groupName,
+                                                   Integer padding=2,
+                                                   Integer indent=4) {
+	    def maxParamNameLength = paramGroup.collect { it.name.size() }.max()
+        def paramChoices = paramGroup.findAll{ it.choices }.collect { it.choices }
+        def maxChoiceStringLength = paramChoices.collect { it.toString().size()}.max()
+        def maxTypeLength = paramGroup.collect { (it.type as String).size() }.max()
+
+        print maxChoiceStringLength
 
 	    def paramsFormattedList = paramGroup.sort { it.name }.collect {
 				Map param ->
 					paramHelpData = formatParameterHelpData(param)
 					sprintf("%${indent}s%-${maxParamNameLength + padding}s%-${maxChoiceStringLength + padding}s %s\n", "", "--${paramHelpData.name}","${paramHelpData.value}", "${paramHelpData.usage}")
 			}
-
-			return String.format("%s:\n%s", groupName.toUpperCase(), paramsFormattedList.join()).stripIndent()
+		return String.format("%s:\n%s", groupName.toUpperCase(), paramsFormattedList.join()).stripIndent()
 }
 
 // choose the indent depending on the spacing in this file
 // in this example there are 4 spaces for every intendation so we choose 4
-String prettyFormatParamsForDisplay(List paramsWithUsage, Integer padding=2, Integer indent=4) {
+String prettyFormatParamsWithPaddingAndIndent(List paramsWithUsage, Integer padding=2, Integer indent=4) {
 
 		def groupedParamsWithUsage = paramsWithUsage.groupBy { it.group }
-		def formattedGroupStrings = groupedParamsWithUsage.collect {
-			prettyFormatParamGroupHelp ( it.value, it.key, padding, indent)
+		def formattedParamsGroups = groupedParamsWithUsage.collect {
+			prettyFormatParamGroupWithPaddingAndIndent ( it.value, it.key, padding, indent)
 		}
-		return formattedGroupStrings.join('\n')
+		return formattedParamsGroups.join('\n')
 }
 
 def helpMessage(paramsWithUsage) {
@@ -81,7 +81,7 @@ def helpMessage(paramsWithUsage) {
     Options:
 
     %s
-    """.stripIndent(), prettyFormatParamsForDisplay(paramsWithUsage, 2, 4))
+    """.stripIndent(), prettyFormatParamsWithPaddingAndIndent(paramsWithUsage, 2, 4))
     log.info helpMessage
 }
 
