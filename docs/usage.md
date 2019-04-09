@@ -157,8 +157,7 @@ By default, the pipeline expects input data as **.fastq{.gz}**. You can also pro
 ## Reference genomes
 >>>>>>> TEMPLATE
 
-This will trigger the pipeline to extract the reads from the bam file and remap them against the HLA reference sequence, using the [`yara`]
-https://github.com/seqan/seqan/tree/master/apps/yara) mapper. Indices and references are shipped with this pipeline, have a look in the [`./data`](https://github.com/nf-core/hlatyping/tree/master/data) folder of this repository.
+This will trigger the pipeline to extract the reads from the bam file and remap them against the HLA reference sequence, using the [`yara`](https://github.com/seqan/seqan/tree/master/apps/yara) mapper. Indices and references are shipped with this pipeline, have a look in the [`./data`](https://github.com/nf-core/hlatyping/tree/master/data) folder of this repository.
 
 ### `--seqtype`
 
