@@ -31,7 +31,7 @@ def tryReadParamsFromJsonSettings() throws Exception{
 
 String prettyFormatParamsForDisplay(List paramsWithUsage, Integer padding=2) {
     def maxParamNameLength = paramsWithUsage.collect { it.name.size() }.max()
-    def paramsFormattedList = paramsWithUsage.collect { Map param -> sprintf("%10s--%-${maxParamNameLength + padding}s %s\n", "", "${param.name}","${param.usage}") }
+    def paramsFormattedList = paramsWithUsage.collect { Map param -> sprintf("\t%-${maxParamNameLength + padding}s %s\n", "--${param.name}","${param.usage}") }
     return """${ paramsFormattedList.join() }"""
 }
 
@@ -50,7 +50,7 @@ def helpMessage(paramsWithUsage) {
 
 ${ prettyFormatParamsForDisplay(paramsWithUsage, 4) }
 
-    """.stripIndent()
+    """
 }
 
 /*
@@ -173,9 +173,9 @@ if( params.bam ) log.info "BAM file format detected. Initiate remapping to HLA a
 
 /*
  * Preparation - Unpack files if packed.
- * 
- * OptiType cannot handle *.gz archives as input files, 
- * So we have to unpack first, if this is the case. 
+ *
+ * OptiType cannot handle *.gz archives as input files,
+ * So we have to unpack first, if this is the case.
  */
 if ( !params.bam  ) { // FASTQ files processing
     process unzip {
@@ -206,7 +206,7 @@ if ( !params.bam  ) { // FASTQ files processing
      * is then done against the HLA reference sequence.
      */
     process remap_to_hla {
-        
+
         input:
         set val(pattern), file(bams) from input_data
 
@@ -235,7 +235,7 @@ if ( !params.bam  ) { // FASTQ files processing
     }
 
 }
- 
+
 
 /*
  * STEP 1 - Create config.ini for Optitype
@@ -263,15 +263,15 @@ process make_ot_config {
 
 /*
  * Preparation Step - Pre-mapping against HLA
- * 
- * In order to avoid the internal usage of RazerS from within OptiType when 
+ *
+ * In order to avoid the internal usage of RazerS from within OptiType when
  * the input files are of type `fastq`, we perform a pre-mapping step
- * here with the `yara` mapper, and map against the HLA reference only. 
+ * here with the `yara` mapper, and map against the HLA reference only.
  *
  */
 if (!params.bam)
 process pre_map_hla {
-    
+
     input:
     set val(pattern), file(reads) from raw_reads
 
@@ -296,10 +296,10 @@ process pre_map_hla {
 
 /*
  * STEP 2 - Run Optitype
- * 
+ *
  * This is the major process, that formulates the IP and calls the selected
  * IP solver.
- *  
+ *
  * Ouput formats: <still to enter>
  */
 process run_optitype {
