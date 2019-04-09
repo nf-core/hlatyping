@@ -26,7 +26,8 @@ Precision HLA typing from next-generation sequencing data using [OptiType](https
 ### <a name="introduction"></a>Introduction
 OptiType is a HLA genotyping algorithm based on integer linear programming. Reads of whole exome/genome/transcriptome sequencing data are mapped against a reference of known MHC class I alleles. To produce accurate 4-digit HLA genotyping predictions, all major and minor HLA-I loci are considered simultaneously to find an allele combination that maximizes the number of explained reads.  
 
-The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker / singularity containers making installation trivial and results highly reproducible.
+## Introduction
+The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
 
 ### <a name="hotrun"></a>Quick Start
 
@@ -45,15 +46,18 @@ nextflow run nf-core/hlatyping -profile singularity,test --outdir $PWD/results
 ```
 
 ### <a name="documentation"></a>Documentation
+
 The nf-core/hlatyping pipeline comes with documentation about the pipeline, found in the `docs/` directory:
 
-1. [Installation](docs/installation.md)
+1. [Installation](https://nf-co.re/usage/installation)
 2. Pipeline configuration
-    * [Local installation](docs/configuration/local.md)
-    * [Adding your own system](docs/configuration/adding_your_own.md)
+    * [Local installation](https://nf-co.re/usage/local_installation)
+    * [Adding your own system config](https://nf-co.re/usage/adding_own_config)
+    * [Reference genomes](https://nf-co.re/usage/reference_genomes)
 3. [Running the pipeline](docs/usage.md)
 4. [Output and how to interpret the results](docs/output.md)
-5. [Troubleshooting](docs/troubleshooting.md)
+5. [Troubleshooting](https://nf-co.re/usage/troubleshooting)
+
 
 ### <a name="dag"></a> Pipeline DAG
 
@@ -73,7 +77,7 @@ Creates a config file from the command line arguments, which is then passed to O
 
 ### <a name="credits"></a>Credits
 
-This pipeline was written by:
+This pipeline was originally written by:
 
 * Sven Fillinger ([sven1103](https://github.com/sven1103)) at [QBiC](http://qbic.life)
 * Christopher Mohr ([christopher-mohr](https://github.com/christopher-mohr)) at [QBiC](http://qbic.life).
