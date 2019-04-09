@@ -29,16 +29,28 @@ def tryReadParamsFromJsonSettings() throws Exception{
     return paramsWithUsage.get('parameters')
 }
 
+def formatParameterHelpData(param) {
+	result = [ name: param.name, value: '', usage: param.usage ]
+	// value descibes the expected input for the param
+	result.value = (param.type == boolean.toString()) ? '' : param.choices ?: param.type ?: ''
+
+	return result
+}
+
 // choose the indent depending on the spacing in this file
 // in this example there are 4 spaces for every intendation so we choose 4
 String prettyFormatParamsForDisplay(List paramsWithUsage, Integer padding=2, Integer indent=4) {
+
     def maxParamNameLength = paramsWithUsage.collect { it.name.size() }.max()
 		// get all available choices that are not null
 		def paramChoices = paramsWithUsage.collect { it.choices }.findAll { it }
 		def maxChoiceStringLength = paramChoices.collect { it.toString().size() }.max()
 		def maxTypeLength = "mem unit".size()
     def paramsFormattedList = paramsWithUsage.collect {
-			Map param -> sprintf("%${indent}s%-${maxParamNameLength + padding}s%-${maxTypeLength + padding}s%-${maxChoiceStringLength + padding}s %s\n", "", "--${param.name}", "${param.type}","${param.choices ?: ''}", "${param.usage}")
+			Map param ->
+				paramHelpData = formatParameterHelpData(param)
+				sprintf("%${indent}s%-${maxParamNameLength + padding}s%-${maxChoiceStringLength + padding}s %s\n", "", "--${paramHelpData.name}","${paramHelpData.value}", "${paramHelpData.usage}")
+
 		}
 		return "${ paramsFormattedList.join() }"
 }
