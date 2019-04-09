@@ -12,14 +12,14 @@ Precision HLA typing from next-generation sequencing data using [OptiType](https
 
 # Table of Contents
 
-1. [Introduction](#Introduction)
-2. [Quick Start](#Quick Start)
-   * [With Docker](#Docker)
-   * [With Singularity](#Singularity)
+1. [Introduction](#introduction)
+2. [Quick Start](#quick-start)
+   * [With Docker](#docker)
+   * [With Singularity](#singularity)
 3. [Documentation](docs/README.md)
-4. [Pipeline DAG](#Pipeline DAG)
-   * [Input `fastq`](#DAG with `.fastq{.gz}` as input)
-   * [Input `bam`](#DAG with `.bam` as input)
+4. [Pipeline DAG](#pipeline-dag)
+   * [Input `fastq`](#dag-with-`.fastq{.gz}`-as-input)
+   * [Input `bam`](#dag-with-`.bam`-as-input)
 5. [Credits](#credits)
 
 
