@@ -29,10 +29,12 @@ def tryReadParamsFromJsonSettings() throws Exception{
     return paramsWithUsage.get('parameters')
 }
 
-String prettyFormatParamsForDisplay(List paramsWithUsage, Integer padding=2) {
+// choose the indent depending on the spacing in this file
+// in this example there are 4 spaces for every intendation so we choose 4
+String prettyFormatParamsForDisplay(List paramsWithUsage, Integer padding=2, Integer indent=4) {
     def maxParamNameLength = paramsWithUsage.collect { it.name.size() }.max()
-    def paramsFormattedList = paramsWithUsage.collect { Map param -> sprintf("\t%-${maxParamNameLength + padding}s %s\n", "--${param.name}","${param.usage}") }
-    return """${ paramsFormattedList.join() }"""
+    def paramsFormattedList = paramsWithUsage.collect { Map param -> sprintf("%${indent}s%-${maxParamNameLength + padding}s %s\n", "", "--${param.name}","${param.usage}") }
+		return "${ paramsFormattedList.join() }"
 }
 
 def helpMessage(paramsWithUsage) {
@@ -48,9 +50,9 @@ def helpMessage(paramsWithUsage) {
 
     Options:
 
-${ prettyFormatParamsForDisplay(paramsWithUsage, 4) }
+${ prettyFormatParamsForDisplay(paramsWithUsage, 4, 8) }
 
-    """
+    """.stripIndent()
 }
 
 /*
