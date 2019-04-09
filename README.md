@@ -18,8 +18,8 @@ Precision HLA typing from next-generation sequencing data using [OptiType](https
    * [With Singularity](#singularity)
 3. [Documentation](docs/README.md)
 4. [Pipeline DAG](#pipeline-dag)
-   * [Input `fastq`](#dag-with-`.fastq{.gz}`-as-input)
-   * [Input `bam`](#dag-with-`.bam`-as-input)
+   * [Input `fastq`](#dag-with-fastqgz-as-input)
+   * [Input `bam`](#dag-with-bam-as-input)
 5. [Credits](#credits)
 
 
