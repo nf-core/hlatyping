@@ -29,9 +29,9 @@ Additionally, a coverage plot of the predicted HLA genotype is produced for qual
 **Output directory: `results/{timestamp}`**
 
 * `{prefix}_{timestamp}_result.tsv`
-    * TSV file, containing the predicted optimal (anf if enumerated, sub-optimal) HLA genotype
+  * TSV file, containing the predicted optimal (anf if enumerated, sub-optimal) HLA genotype
 * `{prefix}_{timestamp}_coverage_plot.pdf`
-    * pdf file, containing a coverage plot of the predicted alleles
+  * pdf file, containing a coverage plot of the predicted alleles
 
 ## MultiQC
 [MultiQC](http://multiqc.info) is a visualisation tool that generates a single HTML report summarising all samples in your project. Most of the pipeline QC results are visualised in the report and further statistics are available in within the report data directory.
