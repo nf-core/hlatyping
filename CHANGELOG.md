@@ -1,5 +1,5 @@
 # nf-core/hlatyping: Changelog
--	Dynamic helpMessage based on parameter.settings.json file
+- Dynamic helpMessage based on parameter.settings.json file
 
 ## 1.2.0 - Minor release
 - Implements parameter.settings.json
@@ -31,4 +31,4 @@
 - New profile `cfc` with setups for the core facility cluster at QBiC
 
 ## 1.0.0 - 2018-07-17
-Initial release of nf-core/hlatyping, created with the NGI-NF cookiecutter template: https://github.com/ewels/NGI-NFcookiecutter.
+Initial release of nf-core/hlatyping, created with the [NGI-NF cookiecutter template](https://github.com/ewels/NGI-NFcookiecutter).

@@ -10,7 +10,7 @@ Precision HLA typing from next-generation sequencing data using [OptiType](https
 [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/1251)
 
 
-# Table of Contents
+## Table of Contents
 
 1. [Introduction](#introduction)
 2. [Quick Start](#quick-start)
