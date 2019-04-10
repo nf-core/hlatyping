@@ -108,19 +108,19 @@ If `-profile` is not specified at all the pipeline will be run locally and expec
   * A generic configuration profile to be used with [conda](https://conda.io/docs/)
   * Pulls most software from [Bioconda](https://bioconda.github.io/)
 * `docker`
-    * A generic configuration profile to be used with [Docker](http://docker.com/)
-    * Runs using the `local` executor and pulls software from dockerhub: [`nfcore/hlatyping`](http://hub.docker.com/r/nfcore/hlatyping/)
+  * A generic configuration profile to be used with [Docker](http://docker.com/)
+  * Runs using the `local` executor and pulls software from dockerhub: [`nfcore/hlatyping`](http://hub.docker.com/r/nfcore/hlatyping/)
 * `singularity`
-   * A generic configuration profile to be used with [Singularity](https://www.sylabs.io/guides/2.5.1/user-guide/)
-   * Runs using the `local` executor and pulls software from Singularity Hub: [`nf-core/hlatyping`](https://singularity-hub.org/collections/1251)
+  * A generic configuration profile to be used with [Singularity](https://www.sylabs.io/guides/2.5.1/user-guide/)
+  * Runs using the `local` executor and pulls software from Singularity Hub: [`nf-core/hlatyping`](https://singularity-hub.org/collections/1251)
 * `aws`
-    * A starter configuration for running the pipeline on Amazon Web Services. Uses docker and Spark.
-    * See [`docs/configuration/aws.md`](configuration/aws.md)
+  * A starter configuration for running the pipeline on Amazon Web Services. Uses docker and Spark.
+  * See [`docs/configuration/aws.md`](configuration/aws.md)
 * `standard`
-    * The default profile, used if `-profile` is not specified at all. Runs locally and expects all software to be installed and available on the `PATH`.
-    * This profile is mainly designed to be used as a starting point for other configurations and is inherited by most of the other profiles.
+  * The default profile, used if `-profile` is not specified at all. Runs locally and expects all software to be installed and available on the `PATH`.
+  * This profile is mainly designed to be used as a starting point for other configurations and is inherited by most of the other profiles.
 * `none`
-    * No configuration at all. Useful if you want to build your own config from scratch and want to avoid loading in the default `base` config profile (not recommended).
+  * No configuration at all. Useful if you want to build your own config from scratch and want to avoid loading in the default `base` config profile (not recommended).
 * `test`
   * A profile with a complete configuration for automated testing
   * Includes links to test data so needs no other parameters
@@ -151,13 +151,9 @@ It is not possible to run a mixture of single-end and paired-end files in one ru
 
 ### `--bam`
 
-<<<<<<< HEAD
-By default, the pipeline expects input data as **.fastq{.gz}**. You can also provide **.bam** files as input and combine it with the `--singleEnd` option, if necessary. 
-=======
-## Reference genomes
->>>>>>> TEMPLATE
+By default, the pipeline expects input data as **.fastq{.gz}**. You can also provide **.bam** files as input and combine it with the `--singleEnd` option, if necessary.
 
-This will trigger the pipeline to extract the reads from the bam file and remap them against the HLA reference sequence, using the [`yara`](https://github.com/seqan/seqan/tree/master/apps/yara) mapper. Indices and references are shipped with this pipeline, have a look in the [`./data`](https://github.com/nf-core/hlatyping/tree/master/data) folder of this repository. 
+This will trigger the pipeline to extract the reads from the bam file and remap them against the HLA reference sequence, using the [`yara`](https://github.com/seqan/seqan/tree/master/apps/yara) mapper. Indices and references are shipped with this pipeline, have a look in the [`./data`](https://github.com/nf-core/hlatyping/tree/master/data) folder of this repository.
 
 ### `--seqtype`
 
@@ -171,31 +167,11 @@ If you want to use a different solver, then you have to provide it in the `./env
 
 ### `--enumerations`
 
-<<<<<<< HEAD
 By default, the pipeline will do one enumeration (`--enumerations 1`). If you want OptiType to output the optimal solution and the top N-1 suboptimal solutions in the result file, specify the number of enumerations accordingly.
 
 ### `--beta`
-=======
-<!-- TODO nf-core: Update reference genome example according to what is needed -->
 
-```nextflow
-params {
-  genomes {
-    'GRCh37' {
-      fasta   = '<path to the genome fasta file>' // Used if no star index given
-    }
-    // Any number of additional genomes, key is used with --genome
-  }
-}
-```
-
-<!-- TODO nf-core: Describe reference path flags -->
-### `--fasta`
-If you prefer, you can specify the full path to your reference genome when you run the pipeline:
->>>>>>> TEMPLATE
-
-By default, the pipeline uses a beta value of 0.009. The constant beta weights the regularization term of the underlying integer linear program to account for homozygosity since the formulation favors heterozygous allele combinations. Beta represents the proportion of reads that need to be additionally explained by a chosen allele combination in order to choose heterzygous solutions over homzygous solutions. Evaluation of different values for beta showed the best performance with 0.009. Please refer to the original publication 
-of OptiType (doi: 10.1093/bioinformatics/btu548) for details.
+By default, the pipeline uses a beta value of 0.009. The constant beta weights the regularization term of the underlying integer linear program to account for homozygosity since the formulation favors heterozygous allele combinations. Beta represents the proportion of reads that need to be additionally explained by a chosen allele combination in order to choose heterzygous solutions over homzygous solutions. Evaluation of different values for beta showed the best performance with 0.009. Please refer to the original publication of OptiType (doi: 10.1093/bioinformatics/btu548) for details.
 
 ### `--prefix`
 A string prefix for the output directory used. The default String is empty.

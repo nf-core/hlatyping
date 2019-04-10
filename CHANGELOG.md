@@ -1,4 +1,8 @@
 # nf-core/hlatyping: Changelog
+- Dynamic helpMessage based on parameter.settings.json file
+
+## 1.2.0 - Minor release
+- Implements parameter.settings.json
 
 ## 1.1.4 - Patch release - 2019-03-06
 - Fix issues with [centralized configs](https://github.com/nf-core/hlatyping/issues/51)
@@ -16,7 +20,7 @@
 ## 1.1.1 - Patch release - 2018-08-21
 
 - Fix [#30](https://github.com/nf-core/hlatyping/issues/30)
-- Removed support to pull from Singularity Hub directly, when using the profile `singularity`. For now, Nextflow will pull the container image from Docker Hub and create the Singularity container on the local host. 
+- Removed support to pull from Singularity Hub directly, when using the profile `singularity`. For now, Nextflow will pull the container image from Docker Hub and create the Singularity container on the local host.
 
 ## 1.1.0 - aqua-titanium-crab - 2018-08-14
 
@@ -27,4 +31,4 @@
 - New profile `cfc` with setups for the core facility cluster at QBiC
 
 ## 1.0.0 - 2018-07-17
-Initial release of nf-core/hlatyping, created with the NGI-NF cookiecutter template: https://github.com/ewels/NGI-NFcookiecutter.
+Initial release of nf-core/hlatyping, created with the [NGI-NF cookiecutter template](https://github.com/ewels/NGI-NFcookiecutter).

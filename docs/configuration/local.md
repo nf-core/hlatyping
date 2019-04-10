@@ -5,11 +5,12 @@ If running the pipeline in a local environment, we highly recommend using either
 ## Docker
 Docker is a great way to run nf-core/hlatyping, as it manages all software installations and allows the pipeline to be run in an identical software environment across a range of systems.
 
-Nextflow has [excellent integration](https://www.nextflow.io/docs/latest/docker.html) with Docker, and beyond installing the two tools, not much else is required. The nf-core/hlatyping profile comes with a configuration profile for docker, making it very easy to use. 
+Nextflow has [excellent integration](https://www.nextflow.io/docs/latest/docker.html) with Docker, and beyond installing the two tools, not much else is required. The nf-core/hlatyping profile comes with a configuration profile for docker, making it very easy to use.
 
 First, install docker on your system: [Docker Installation Instructions](https://docs.docker.com/engine/installation/)
 
 Then, simply run the analysis pipeline:
+
 ```bash
 nextflow run nf-core/hlatyping -profile docker --reads '<path to your reads>'
 ```
@@ -30,7 +31,7 @@ There are **two** possibilities, how you can run the pipeline with the dependent
 ### From Docker Hub
 To use the singularity image for a single run, use:
 
-```
+```bash
 nextflow run nf-core/hlatyping -profile test_fastq -with-singularity 'docker://nfcore/hlatyping'
 ```
 
@@ -39,9 +40,10 @@ This will download the docker container from dockerhub and create a singularity 
 ### From Singularity Hub
 To use an existing container build from Singularity Hub directly, just pass the url:
 
-```
+```bash
 nextflow run nf-core/hlatyping -profile test_fastq -with-singularity 'shub://nf-core/hlatyping'
 ```
+
 This will pull the built container directly, without the CPU overhead and time for the container conversion.
 
 
