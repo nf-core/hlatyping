@@ -2,12 +2,13 @@
 import groovy.json.JsonSlurper
 
 @groovy.util.logging.Slf4j
+@CompileStatic
 class CommonFunctions {
 
-    static List readParamsFromJsonSettings(config) {
+    private static List readParamsFromJsonSettings(String path) {
         def paramsWithUsage = [:]
         try {
-            paramsWithUsage = tryReadParamsFromJsonSettings(config)
+            paramsWithUsage = tryReadParamsFromJsonSettings(path)
         } catch (Exception e) {
             println "Could not read parameters settings from Json. $e"
             paramsWithUsage = Collections.emptyMap()
@@ -15,8 +16,8 @@ class CommonFunctions {
         return paramsWithUsage
     }
 
-    static List tryReadParamsFromJsonSettings(config) throws Exception{
-        def paramsContent = new File(config.params_description.path).text
+    private static List tryReadParamsFromJsonSettings(String path) throws Exception{
+        def paramsContent = new File(path).text
         def paramsWithUsage = new JsonSlurper().parseText(paramsContent)
         paramsWithUsage.get('parameters')
     }
@@ -28,7 +29,7 @@ class CommonFunctions {
         return result
     }
 
-    static String prettyFormatParamGroupWithPaddingAndIndent (List paramGroup,
+    private static String prettyFormatParamGroupWithPaddingAndIndent (List paramGroup,
                                                     String groupName,
                                                     Integer padding=2,
                                                     Integer indent=4) {
@@ -37,7 +38,6 @@ class CommonFunctions {
             def maxChoiceStringLength = paramChoices.collect { it.toString().size()}.max()
             def maxTypeLength = paramGroup.collect { (it.type as String).size() }.max()
 
-            print maxChoiceStringLength
 
             def paramsFormattedList = paramGroup.sort { it.name }.collect {
                     Map param ->
@@ -49,7 +49,7 @@ class CommonFunctions {
 
     // choose the indent depending on the spacing in this file
     // in this example there are 4 spaces for every intendation so we choose 4
-    static String prettyFormatParamsWithPaddingAndIndent(List paramsWithUsage, Integer padding=2, Integer indent=4) {
+    private static String prettyFormatParamsWithPaddingAndIndent(List paramsWithUsage, Integer padding=2, Integer indent=4) {
             def groupedParamsWithUsage = paramsWithUsage.groupBy { it.group }
             def formattedParamsGroups = groupedParamsWithUsage.collect {
                 prettyFormatParamGroupWithPaddingAndIndent ( it.value, it.key, padding, indent)
@@ -68,7 +68,7 @@ class CommonFunctions {
         """.stripIndent(), prettyFormatParamsWithPaddingAndIndent(paramsWithUsage, 2, 4))
     }
 
-    static def nfcoreHeader(params, workflow) {
+    static String createNfcoreHeader(params, workflow) {
         // Log colors ANSI codes
         def c_reset = params.monochrome_logs ? '' : "\033[0m"
         def c_dim = params.monochrome_logs ? '' : "\033[2m"
@@ -92,7 +92,23 @@ class CommonFunctions {
         ${c_dim}----------------------------------------------------${c_reset}
         """.stripIndent())
     }
+static inner class ProfileHostNameValidator {
+    final Map profileForHosts
 
+    ProfileHostNameValidator(Map profileForHosts) {
+        this.profileForHosts = profileForHosts
+    }
+    
+    List findProfilesForHost(String observedHost ) {
+        def matchingProfiles = []
+        profileForHosts.each { profile, hosts -> 
+            if ( hosts.findAll { observedHost.contains(it) } ) {
+                matchingProfiles << profile
+            }
+        }
+        return matchingProfiles   
+    }
+}
     static def checkHostname(params) {
         
         def c_reset = params.monochrome_logs ? '' : "\033[0m"
