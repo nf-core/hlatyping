@@ -18,7 +18,7 @@
  * SET UP CONFIGURATION VARIABLES
  */
 
-def paramsWithUsage = CommonFunctions.readParamsFromJsonSettings(config)
+def paramsWithUsage = CommonFunctions.readParamsFromJsonSettings(config.params_description.path)
 
 // Show help message
 if (params.help){

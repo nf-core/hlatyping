@@ -2,27 +2,30 @@
 import groovy.json.JsonSlurper
 
 @groovy.util.logging.Slf4j
-@CompileStatic
+//@CompileStatic
 class CommonFunctions {
 
     private static List readParamsFromJsonSettings(String path) {
+
         def paramsWithUsage = [:]
         try {
             paramsWithUsage = tryReadParamsFromJsonSettings(path)
         } catch (Exception e) {
-            println "Could not read parameters settings from Json. $e"
+            println "Could not read parameters settings from JSON. $e"
             paramsWithUsage = Collections.emptyMap()
         }
         return paramsWithUsage
     }
 
-    private static List tryReadParamsFromJsonSettings(String path) throws Exception{
+    private static List tryReadParamsFromJsonSettings(String path) throws Exception {
+
         def paramsContent = new File(path).text
         def paramsWithUsage = new JsonSlurper().parseText(paramsContent)
         paramsWithUsage.get('parameters')
     }
 
-    static Map formatParameterHelpData(param) {
+    private static Map formatParameterHelpData(param) {
+
         Map result = [ name: param.name, value: '', usage: param.usage ]
         // value describes the expected input for the param
         result.value = (param.type == boolean.toString()) ? '' : param.choices ?: param.type ?: ''
@@ -33,6 +36,7 @@ class CommonFunctions {
                                                     String groupName,
                                                     Integer padding=2,
                                                     Integer indent=4) {
+
             def maxParamNameLength = paramGroup.collect { it.name.size() }.max()
             def paramChoices = paramGroup.findAll{ it.choices }.collect { it.choices }
             def maxChoiceStringLength = paramChoices.collect { it.toString().size()}.max()
@@ -50,6 +54,7 @@ class CommonFunctions {
     // choose the indent depending on the spacing in this file
     // in this example there are 4 spaces for every intendation so we choose 4
     private static String prettyFormatParamsWithPaddingAndIndent(List paramsWithUsage, Integer padding=2, Integer indent=4) {
+
             def groupedParamsWithUsage = paramsWithUsage.groupBy { it.group }
             def formattedParamsGroups = groupedParamsWithUsage.collect {
                 prettyFormatParamGroupWithPaddingAndIndent ( it.value, it.key, padding, indent)
@@ -58,6 +63,7 @@ class CommonFunctions {
     }
 
     static String helpMessage(paramsWithUsage, workflow) {
+
         def usageHelp = String.format(
         """\
         Usage:
@@ -68,7 +74,7 @@ class CommonFunctions {
         """.stripIndent(), prettyFormatParamsWithPaddingAndIndent(paramsWithUsage, 2, 4))
     }
 
-    static String createNfcoreHeader(params, workflow) {
+    static String nfcoreHeader(params, workflow) {
         // Log colors ANSI codes
         def c_reset = params.monochrome_logs ? '' : "\033[0m"
         def c_dim = params.monochrome_logs ? '' : "\033[2m"
@@ -92,24 +98,28 @@ class CommonFunctions {
         ${c_dim}----------------------------------------------------${c_reset}
         """.stripIndent())
     }
-static inner class ProfileHostNameValidator {
-    final Map profileForHosts
 
-    ProfileHostNameValidator(Map profileForHosts) {
-        this.profileForHosts = profileForHosts
-    }
-    
-    List findProfilesForHost(String observedHost ) {
-        def matchingProfiles = []
-        profileForHosts.each { profile, hosts -> 
-            if ( hosts.findAll { observedHost.contains(it) } ) {
-                matchingProfiles << profile
-            }
-        }
-        return matchingProfiles   
-    }
-}
-    static def checkHostname(params) {
+//
+//   static inner class ProfileHostNameValidator {
+//       final Map profileForHosts
+//
+//       ProfileHostNameValidator(Map profileForHosts) {
+//           this.profileForHosts = profileForHosts
+//       }
+//       
+//       List findProfilesForHost(String observedHost) {
+//           def matchingProfiles = []
+//           profileForHosts.each { profile, hosts -> 
+//               if ( hosts.findAll { observedHost.contains(it) } ) {
+//                   matchingProfiles << profile
+//               }
+//           }
+//           return matchingProfiles   
+//       }
+//   }
+//
+
+    static void checkHostname(params) {
         
         def c_reset = params.monochrome_logs ? '' : "\033[0m"
         def c_white = params.monochrome_logs ? '' : "\033[0;37m"
@@ -132,6 +142,7 @@ static inner class ProfileHostNameValidator {
     }
 
     static void checkAWSbatch(params, workflow) {
+
         assert !params.awsqueue || !params.awsregion : "Specify correct --awsqueue and --awsregion parameters on AWSBatch!"
         // Check outdir paths to be S3 buckets if running on AWSBatch
         // related: https://github.com/nextflow-io/nextflow/issues/813
@@ -158,6 +169,7 @@ static inner class ProfileHostNameValidator {
     }
 
     static void workflowReport(summary, workflow, params, baseDir, mqc_report) {
+
         // Set up the e-mail variables
         def subject = "[$workflow.manifest.name] Successful: $workflow.runName"
         if(!workflow.success){
@@ -239,7 +251,7 @@ static inner class ProfileHostNameValidator {
             log.info "${c_green}Number of successfully ran process(es) : ${workflow.stats.succeedCountFmt} ${c_reset}"
         }
 
-        if(workflow.success){
+        if(workflow.success) {
             log.info "${c_purple}[$workflow.manifest.name]${c_green} Pipeline completed successfully${c_reset}"
         } else {
             checkHostname(params)
