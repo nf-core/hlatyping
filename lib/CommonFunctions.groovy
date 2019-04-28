@@ -1,9 +1,67 @@
 @Grab('ch.qos.logback:logback-classic:1.2.1') 
+
+import groovy.transform.CompileStatic
 import groovy.json.JsonSlurper
+
+//interface LogFormatPresets {
+//    String reset()
+//    String dim()
+//    String black()
+//    String green()
+//    String yellow()
+//    String yellow_bold()
+//    String blue()
+//    String purple()
+//    String cyan()
+//    String white()
+//    String red()
+//}
+//class ColorLogFormat implements LogFormatPresets {
+//    String reset() { "\033[0m" }
+//    String dim() { "\033[2m" }
+//    String black () { "\033[0;30m" }
+//    String green () { "\033[0;32m" }
+//    String yellow() { "\033[0;33m" }
+//    String yellow_bold() { "\033[1;93m" }
+//    String blue() { "\033[0;34m" }
+//    String purple() { "\033[0;35m" }
+//    String cyan() { "\033[0;36m" }
+//    String white() { "\033[0;37m" }
+//    String red() { "\033[1;91m" }
+//}
+//class MonochromeLogFormat implements LogFormatPresets {
+//    String reset() { "" }
+//    String dim() { "" }
+//    String black () { "" }
+//    String green () { "" }
+//    String yellow() { "" }
+//    String yellow_bold() { "" }
+//    String blue() { "" }
+//    String purple() { "" }
+//    String cyan() { "" }
+//    String white() { "" }
+//    String red() { "" }
+//}
 
 @groovy.util.logging.Slf4j
 //@CompileStatic
 class CommonFunctions {
+
+    private static Map generateLogColors(Boolean monochromeLogs) {
+        Map colorcodes = [:]
+        colorcodes['reset'] = monochromeLogs ? '' : "\033[0m"
+        colorcodes['dim'] = monochromeLogs ? '' : "\033[2m"
+        colorcodes['black'] = monochromeLogs ? '' : "\033[0;30m"
+        colorcodes['green'] = monochromeLogs ? '' : "\033[0;32m"
+        colorcodes['yellow'] = monochromeLogs ? '' :  "\033[0;33m"
+        colorcodes['yellow_bold'] = monochromeLogs ? '' : "\033[1;93m"
+        colorcodes['blue'] = monochromeLogs ? '' : "\033[0;34m"
+        colorcodes['purple'] = monochromeLogs ? '' : "\033[0;35m"
+        colorcodes['cyan'] = monochromeLogs ? '' : "\033[0;36m"
+        colorcodes['white'] = monochromeLogs ? '' : "\033[0;37m"
+        colorcodes['red'] = monochromeLogs ? '' : "\033[1;91m"
+        return colorcodes
+    }
 
     private static List readParamsFromJsonSettings(String path) {
 
@@ -75,27 +133,17 @@ class CommonFunctions {
     }
 
     static String nfcoreHeader(params, workflow) {
-        // Log colors ANSI codes
-        def c_reset = params.monochrome_logs ? '' : "\033[0m"
-        def c_dim = params.monochrome_logs ? '' : "\033[2m"
-        def c_black = params.monochrome_logs ? '' : "\033[0;30m"
-        def c_green = params.monochrome_logs ? '' : "\033[0;32m"
-        def c_yellow = params.monochrome_logs ? '' : "\033[0;33m"
-        def c_blue = params.monochrome_logs ? '' : "\033[0;34m"
-        def c_purple = params.monochrome_logs ? '' : "\033[0;35m"
-        def c_cyan = params.monochrome_logs ? '' : "\033[0;36m"
-        def c_white = params.monochrome_logs ? '' : "\033[0;37m"
-
+        Map colors = generateLogColors(params.monochrome_logs)
         def showHeader = String.format(
         """\
-        ${c_dim}----------------------------------------------------${c_reset}
-                                                ${c_green},--.${c_black}/${c_green},-.${c_reset}
-        ${c_blue}        ___     __   __   __   ___     ${c_green}/,-._.--~\'${c_reset}
-        ${c_blue}  |\\ | |__  __ /  ` /  \\ |__) |__         ${c_yellow}}  {${c_reset}
-        ${c_blue}  | \\| |       \\__, \\__/ |  \\ |___     ${c_green}\\`-._,-`-,${c_reset}
-                                                ${c_green}`._,._,\'${c_reset}
-        ${c_purple}  ${workflow.manifest.name} v${workflow.manifest.version}${c_reset}
-        ${c_dim}----------------------------------------------------${c_reset}
+        ${colors.dim}----------------------------------------------------${colors.reset}
+                                                ${colors.green},--.${colors.black}/${colors.green},-.${colors.reset}
+        ${colors.blue}        ___     __   __   __   ___     ${colors.green}/,-._.--~\'${colors.reset}
+        ${colors.blue}  |\\ | |__  __ /  ` /  \\ |__) |__         ${colors.yellow}}  {${colors.reset}
+        ${colors.blue}  | \\| |       \\__, \\__/ |  \\ |___     ${colors.green}\\`-._,-`-,${colors.reset}
+                                                ${colors.green}`._,._,\'${colors.reset}
+        ${colors.purple}  ${workflow.manifest.name} v${workflow.manifest.version}${colors.reset}
+        ${colors.dim}----------------------------------------------------${colors.reset}
         """.stripIndent())
     }
 
@@ -120,20 +168,17 @@ class CommonFunctions {
 //
 
     static void checkHostname(params) {
-        
-        def c_reset = params.monochrome_logs ? '' : "\033[0m"
-        def c_white = params.monochrome_logs ? '' : "\033[0;37m"
-        def c_red = params.monochrome_logs ? '' : "\033[1;91m"
-        def c_yellow_bold = params.monochrome_logs ? '' : "\033[1;93m"
+        Map colors = generateLogColors(params.monochrome_logs)
+//        LogFormatPresets colors = params.monochrome_logs ? new MonochromeLogFormat() : new ColorLogFormat()
         if(params.hostnames){
             def hostname = "hostname".execute().text.trim()
             params.hostnames.each { prof, hnames ->
                 hnames.each { hname ->
                     if(hostname.contains(hname) && !workflow.profile.contains(prof)){
                         log.error "====================================================\n" +
-                                "  ${c_red}WARNING!${c_reset} You are running with `-profile $workflow.profile`\n" +
-                                "  but your machine hostname is ${c_white}'$hostname'${c_reset}\n" +
-                                "  ${c_yellow_bold}It's highly recommended that you use `-profile $prof${c_reset}`\n" +
+                                "  ${colors.red}WARNING!${colors.reset} You are running with `-profile $workflow.profile`\n" +
+                                "  but your machine hostname is ${colors.white}'$hostname'${colors.reset}\n" +
+                                "  ${colors.yellow_bold}It's highly recommended that you use `-profile $prof${colors.reset}`\n" +
                                 "============================================================"
                     }
                 }
@@ -240,22 +285,20 @@ class CommonFunctions {
         def output_tf = new File( output_d, "pipeline_report.txt" )
         output_tf.withWriter { w -> w << email_txt }
 
-        def c_reset = params.monochrome_logs ? '' : "\033[0m"
-        def c_purple = params.monochrome_logs ? '' : "\033[0;35m"
-        def c_green = params.monochrome_logs ? '' : "\033[0;32m"
-        def c_red = params.monochrome_logs ? '' : "\033[0;31m"
+//        LogFormatPresets colors = params.monochrome_logs ? new MonochromeLogFormat() : new ColorLogFormat()
+        Map colors = generateLogColors(params.monochrome_logs)
 
         if (workflow.stats.ignoredCountFmt > 0 && workflow.success) {
-            log.info "${c_purple}Warning, pipeline completed, but with errored process(es) ${c_reset}"
-            log.info "${c_red}Number of ignored errored process(es) : ${workflow.stats.ignoredCountFmt} ${c_reset}"
-            log.info "${c_green}Number of successfully ran process(es) : ${workflow.stats.succeedCountFmt} ${c_reset}"
+            log.info "${colors.purple}Warning, pipeline completed, but with errored process(es) ${colors.reset}"
+            log.info "${colors.red}Number of ignored errored process(es) : ${workflow.stats.ignoredCountFmt} ${colors.reset}"
+            log.info "${colors.green}Number of successfully ran process(es) : ${workflow.stats.succeedCountFmt} ${colors.reset}"
         }
 
-        if(workflow.success) {
-            log.info "${c_purple}[$workflow.manifest.name]${c_green} Pipeline completed successfully${c_reset}"
+        if (workflow.success) {
+            log.info "${colors.purple}[$workflow.manifest.name]${colors.green} Pipeline completed successfully${colors.reset}"
         } else {
             checkHostname(params)
-            log.info "${c_purple}[$workflow.manifest.name]${c_red} Pipeline completed with errors${c_reset}"
+            log.info "${colors.purple}[$workflow.manifest.name]${colors.red} Pipeline completed with errors${colors.reset}"
         }
     }
 }
