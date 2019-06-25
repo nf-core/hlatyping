@@ -16,7 +16,6 @@ For further reading and documentation see the [OptiType documentation](https://g
 
 The pipeline results contain a CSV file with the predicted HLA genotype. Each line contains one solution with the predicted HLA alleles in 4-digit nomenclature, the number of reads that are covered by this solution and the objective function value. If the number of enumerations (--enumerate N) is higher than 1, the CSV file will contain the optimal and sub-optimal solutions.
 
-
 ```tsv
     A1  A2  B1  B2  C1  C2  Reads   Objective
 0   A*01:01 A*01:01 B*08:01 B*57:01 C*07:01 C*06:02 1127.0  1106.7139999999997
