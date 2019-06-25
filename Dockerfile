@@ -1,5 +1,5 @@
 FROM nfcore/base
-LABEL authors="No author provided" \
+LABEL authors="Sven Fillinger, Christopher Mohr, Alexander Peltzer" \
       description="Docker image containing all requirements for nf-core/hlatyping pipeline"
 
 COPY environment.yml /
