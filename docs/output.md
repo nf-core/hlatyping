@@ -2,15 +2,15 @@
 
 This document describes the output produced by the pipeline.
 
-<!-- TODO nf-core: Write this documentation describing your workflow's output -->
-
 ## Pipeline overview
+
 The pipeline is built using [Nextflow](https://www.nextflow.io/)
 and processes data using the following steps:
 
 * [OptiType](#optitype) - HLA genotyping based on integer linear programming
 
 ## OptiType
+
 [OptiType](https://github.com/FRED-2/OptiType) is an HLA genotyping algorithm based on linear integer programming. It provides accurate 4-digit HLA genotyping predictions from NGS data.
 For further reading and documentation see the [OptiType documentation](https://github.com/FRED-2/OptiType).
 
@@ -34,6 +34,7 @@ Additionally, a coverage plot of the predicted HLA genotype is produced for qual
   * pdf file, containing a coverage plot of the predicted alleles
 
 ## MultiQC
+
 [MultiQC](http://multiqc.info) is a visualisation tool that generates a single HTML report summarising all samples in your project. Most of the pipeline QC results are visualised in the report and further statistics are available in within the report data directory.
 
 The pipeline has special steps which allow the software versions used to be reported in the MultiQC output for future traceability.
