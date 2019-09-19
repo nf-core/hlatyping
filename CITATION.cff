@@ -1,0 +1,23 @@
+# YAML 1.2
+# Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
+cff-version: 1.0.3
+message: If you use this software, please cite it using these metadata.
+title: 'nf-core/hlatyping - Precision HLA typing from next-generation sequencing data using OptiType'
+doi: 10.5281/zenodo.3258050
+authors:
+- given-names: Sven
+  family-names: Fillinger
+  affiliation: QBiC @qbicsoftware
+- given-names: Alexander
+  family-names: Peltzer
+  affiliation: '@qbicsoftware'
+- given-names: Christopher
+  family-names: Mohr
+- given-names: Phil
+  family-names: Ewels
+  affiliation: Science for Life Laboratory
+version: 1.1.5
+date-released: 2019-06-27
+repository-code: https://github.com/nf-core/hlatyping
+license: MIT
+software-container: https://hub.docker.com/r/nfcore/hlatyping
