@@ -1,1 +1,2 @@
 *.config linguist-language=nextflow
+*.cff linguist-language=yaml
