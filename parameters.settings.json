@@ -28,7 +28,7 @@
                 "reads": {
                     "type": "string",
                     "description": "Mapped or unmapped reads - HLA typing workflow input data.",
-                    "default": "path/to/reads.fastq.gz",
+                    "default": "data/test*{1,2}.fq.gz",
                     "pattern": ".*(\\.fastq$|\\.fastq\\.gz$|\\.bam$)",
                 },
                 "index": {
@@ -69,6 +69,5 @@
                 }
             }
         }
-    },
-    "required": ["reads"]
+    }
 }
