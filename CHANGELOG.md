@@ -1,6 +1,7 @@
 # nf-core/hlatyping: Changelog
 
 - Dynamic helpMessage based on parameter.settings.json file
+- Add social preview image
 
 ## 1.1.5 - Patch release - 2019-06-24
 
