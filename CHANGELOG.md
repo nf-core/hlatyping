@@ -2,6 +2,10 @@
 
 - Dynamic helpMessage based on parameter.settings.json file
 
+# 1.1.6dev - 
+
+- [#78](https://github.com/nf-core/hlatyping/pull/78) Added GitHub actions instead of Travis CI
+
 ## 1.1.5 - Patch release - 2019-06-24
 
 - Mini Bugfix Release for MultiQC running in local execution mode
