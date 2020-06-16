@@ -31,7 +31,7 @@ jobs:
         run: |
           nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.tests }},docker
 
-push_dockerhub:
+  push_dockerhub:
     name: Push new Docker image to Docker Hub
     runs-on: ubuntu-latest
     # Only run if the tests passed
