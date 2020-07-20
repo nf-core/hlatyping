@@ -3,17 +3,12 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## 1.1.x
-
-- Stick to new format for next release?
+## 1.1.6dev - 
 
 ### `Added`
 
-### `Fixed`
-
-### `Dependencies`
-
-### `Deprecated`
+- [#78](https://github.com/nf-core/hlatyping/pull/78) Added GitHub actions instead of Travis CI
+- Add social preview image
 
 ## 1.1.5 - Patch release - 2019-06-24
 
