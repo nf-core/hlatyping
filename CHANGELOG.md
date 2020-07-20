@@ -1,6 +1,19 @@
 # nf-core/hlatyping: Changelog
 
-- Dynamic helpMessage based on parameter.settings.json file
+The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+## 1.1.x
+
+- Stick to new format for next release?
+
+### `Added`
+
+### `Fixed`
+
+### `Dependencies`
+
+### `Deprecated`
 
 ## 1.1.5 - Patch release - 2019-06-24
 
@@ -36,3 +49,7 @@
 ## 1.0.0 - 2018-07-17
 
 Initial release of nf-core/hlatyping, created with the [NGI-NF cookiecutter template](https://github.com/ewels/NGI-NFcookiecutter).
+
+## v1.1.5 - [date]
+
+Initial release of nf-core/hlatyping, created with the [nf-core](http://nf-co.re/) template.
