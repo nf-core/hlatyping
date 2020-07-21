@@ -8,7 +8,7 @@ COPY environment.yml /
 RUN conda env create -f /environment.yml && conda clean -a
 
 # Add conda installation dir to PATH (instead of doing 'conda activate')
-ENV PATH /opt/conda/envs/nf-core-hlatyping-1.1.5/bin:$PATH
+ENV PATH /opt/conda/envs/nf-core-hlatyping-1.1.6dev/bin:$PATH
 
 # Dump the details of the installed packages to a file for posterity
-RUN conda env export --name nf-core-hlatyping-1.1.5 > nf-core-hlatyping-1.1.5.yml
+RUN conda env export --name nf-core-hlatyping-1.1.6dev > nf-core-hlatyping-1.1.6dev.yml
