@@ -41,6 +41,7 @@ def helpMessage() {
       --awsregion [str]               The AWS Region for your AWS Batch job to run on
       --awscli [str]                  Path to the AWS CLI tool
     """.stripIndent()
+}
 
 // Show help message
 if (params.help) {
