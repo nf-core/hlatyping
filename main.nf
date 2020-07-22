@@ -110,7 +110,7 @@ if ( params.fasta ){
 
 
 // Validate inputs
-params.reads ?: params.readPaths ?: { log.error "No read data privided. Make sure you have used the '--reads' option."; exit 1 }()
+params.input ?: params.readPaths ?: { log.error "No read data privided. Make sure you have used the '--input' option."; exit 1 }()
 (params.seqtype == 'rna' || params.seqtype == 'dna') ?: { log.error "No or incorrect sequence type provided, you need to add '--seqtype 'dna'' or '--seqtype 'rna''."; exit 1 }()
 if( params.bam ) params.index ?: { log.error "For BAM option, you need to provide a path to the HLA reference index (yara; --index) "; exit 1 }()
 params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
@@ -155,15 +155,15 @@ if( params.readPaths ){
         }
 } else if (!params.bam){
     Channel
-    .fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
-    .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs" +
+    .fromFilePairs( params.input, size: params.singleEnd ? 1 : 2 )
+    .ifEmpty { exit 1, "Cannot find any reads matching: ${params.input}\nNB: Path needs" +
     "to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --singleEnd on the command line." }
     .set { input_data }
 } else {
     Channel
-    .fromPath( params.reads )
+    .fromPath( params.input )
     .map { row -> [ file(row).baseName, [ file( row ) ] ] }
-    .ifEmpty { exit 1, "Cannot find any bam file matching: ${params.reads}\nNB: Path needs" +
+    .ifEmpty { exit 1, "Cannot find any bam file matching: ${params.input}\nNB: Path needs" +
     "to be enclosed in quotes!\n" }
     .dump() //For debugging purposes
     .set { input_data }
@@ -188,7 +188,7 @@ summary['Max CPUs']     = params.max_cpus
 summary['Max Time']     = params.max_time
 summary['Output dir']   = params.outdir
 summary['Working dir']  = workflow.workDir
-summary['Reads']            = params.reads
+summary['Input']            = params.input
 summary['Fasta Ref']        = params.fasta
 summary['Max Resources']    = "$params.max_memory memory, $params.max_cpus cpus, $params.max_time time per job"
 if(workflow.containerEngine) summary['Container'] = "$workflow.containerEngine - $workflow.container"
