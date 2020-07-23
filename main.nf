@@ -76,7 +76,7 @@ def helpMessage(paramsWithUsage) {
     Usage:
 
     The typical command for running the pipeline is as follows:
-    nextflow run nf-core/hlatyping --reads '*_R{1,2}.fastq.gz' -profile docker
+    nextflow run nf-core/hlatyping --input '*_R{1,2}.fastq.gz' -profile docker
 
     Options:
 
@@ -110,7 +110,7 @@ if ( params.fasta ){
 
 
 // Validate inputs
-params.input ?: params.readPaths ?: { log.error "No read data privided. Make sure you have used the '--input' option."; exit 1 }()
+params.input ?: { log.error "No read data privided. Make sure you have used the '--input' option."; exit 1 }()
 (params.seqtype == 'rna' || params.seqtype == 'dna') ?: { log.error "No or incorrect sequence type provided, you need to add '--seqtype 'dna'' or '--seqtype 'rna''."; exit 1 }()
 if( params.bam ) params.index ?: { log.error "For BAM option, you need to provide a path to the HLA reference index (yara; --index) "; exit 1 }()
 params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
@@ -139,21 +139,8 @@ ch_output_docs = Channel.fromPath("$baseDir/docs/output.md")
 /*
  * Create a channel for input read files
  */
-if( params.readPaths ){
-    if( params.singleEnd || params.bam) {
-        Channel
-            .from( params.readPaths )
-            .map { row -> [ row[0], [ file( row[1][0] ) ] ] }
-            .ifEmpty { exit 1, "params.readPaths or params.bams was empty - no input files supplied!" }
-            .set { input_data }
-    } else {
-        Channel
-            .from( params.readPaths )
-            .map { row -> [ row[0], [ file( row[1][0] ), file( row[1][1] ) ] ] }
-            .ifEmpty { exit 1, "params.readPaths or params.bams was empty - no input files supplied!" }
-            .set { input_data }
-        }
-} else if (!params.bam){
+
+if (!params.bam){
     Channel
     .fromFilePairs( params.input, size: params.singleEnd ? 1 : 2 )
     .ifEmpty { exit 1, "Cannot find any reads matching: ${params.input}\nNB: Path needs" +
@@ -321,7 +308,6 @@ process make_ot_config {
     configbuilder --max-cpus ${params.max_cpus} --solver ${params.solver} > config.ini
     """
 }
-
 
 
 /*
