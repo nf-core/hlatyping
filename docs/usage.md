@@ -183,7 +183,6 @@ By default, the pipeline uses a beta value of 0.009. The constant beta weights t
 ### `--fasta`
 
 If you prefer, you can specify the full path to your reference genome when you run the pipeline:
->>>>>>> 8ce1f79570f2b7ce7e9c78cd82303d3ed458714c
 
 ### `--prefix`
 
