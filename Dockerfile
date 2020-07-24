@@ -1,4 +1,3 @@
-
 FROM nfcore/base:1.9
 LABEL authors="Christopher Mohr, Alexander Peltzer, Sven Fillinger" \
       description="Docker image containing all software requirements for the nf-core/hlatyping pipeline"
