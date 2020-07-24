@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [#78](https://github.com/nf-core/hlatyping/pull/78) Added GitHub actions instead of Travis CI
 - Add social preview image
+- [#82](https://github.com/nf-core/hlatyping/pull/82) Updated to nf-core template v1.9
 
 ## 1.1.5 - Patch release - 2019-06-24
 
