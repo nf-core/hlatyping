@@ -1,10 +1,10 @@
-# ![nfcore/hlatyping](docs/images/hlatyping_logo.png)
+# ![nf-core/hlatyping](docs/images/nf-core-hlatyping_logo.png)
 
 Precision HLA typing from next-generation sequencing data using [OptiType](https://github.com/FRED-2/OptiType).
 
-[![Build Status](https://travis-ci.org/nf-core/hlatyping.svg?branch=master)](https://travis-ci.org/nf-core/hlatyping)
-[![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A518.10.1-brightgreen.svg)](https://www.nextflow.io/)
-[![DOI](https://zenodo.org/badge/140573587.svg)](https://zenodo.org/badge/latestdoi/140573587)
+[![GitHub Actions CI Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/hlatyping/actions)
+[![GitHub Actions Linting Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/hlatyping/actions)
+[![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A519.10.0-brightgreen.svg)](https://www.nextflow.io/)
 
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](http://bioconda.github.io/)
 [![Docker](https://img.shields.io/docker/automated/nfcore/hlatyping.svg)](https://hub.docker.com/r/nfcore/hlatyping)
@@ -22,31 +22,37 @@ Precision HLA typing from next-generation sequencing data using [OptiType](https
    * [Input `bam`](#dag-with-bam-as-input)
 5. [Credits](#credits)
 
-### Introduction
-
-OptiType is a HLA genotyping algorithm based on integer linear programming. Reads of whole exome/genome/transcriptome sequencing data are mapped against a reference of known MHC class I alleles. To produce accurate 4-digit HLA genotyping predictions, all major and minor HLA-I loci are considered simultaneously to find an allele combination that maximizes the number of explained reads.  
-
 ## Introduction
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
 
-### Quick Start
+The pipeline does next-generation sequencing-based Human Leukozyte Antigen (HLA) typing using OptiType. OptiType is a HLA genotyping algorithm based on integer linear programming. Reads of whole exome/genome/transcriptome sequencing data are mapped against a reference of known MHC class I alleles. To produce accurate 4-digit HLA genotyping predictions, all major and minor HLA-I loci are considered simultaneously to find an allele combination that maximizes the number of explained reads.
 
-If you want to test with a single line, if the pipeline works on your system, follow the next commands, with pre-configured test data-sets.
+## Quick Start
 
-#### Docker
+i. Install [`nextflow`](https://nf-co.re/usage/installation)
 
-```bash
-nextflow run nf-core/hlatyping -profile docker,test --outdir $PWD/results
-```
+ii. Install either [`Docker`](https://docs.docker.com/engine/installation/) or [`Singularity`](https://www.sylabs.io/guides/3.0/user-guide/) for full pipeline reproducibility (please only use [`Conda`](https://conda.io/miniconda.html) as a last resort; see [docs](https://nf-co.re/usage/configuration#basic-configuration-profiles))
 
-#### Singularity
+iii. Download the pipeline and test it on a minimal dataset with a single command
 
 ```bash
-nextflow run nf-core/hlatyping -profile singularity,test --outdir $PWD/results
+nextflow run nf-core/hlatyping -profile test,<docker/singularity/conda/institute>
 ```
 
-### Documentation
+> Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
+
+iv. Start running your own analysis!
+
+<!-- TODO nf-core: Update the default command above used to run the pipeline -->
+
+```bash
+nextflow run nf-core/hlatyping -profile <docker/singularity/conda/institute> --reads '*_R{1,2}.fastq.gz'
+```
+
+See [usage docs](docs/usage.md) for all of the available options when running the pipeline.
+
+## Documentation
 
 The nf-core/hlatyping pipeline comes with documentation about the pipeline, found in the `docs/` directory:
 
@@ -75,10 +81,26 @@ Creates a config file from the command line arguments, which is then passed to O
 
 ![DAG with `.bam` file](docs/images/hlatyping_dag_bam.png)
 
-### Credits
+## Credits
 
-This pipeline was originally written by:
+nf-core/hlatyping was originally written by Christopher Mohr (<https://github.com/christopher-mohr>), Alexander Peltzer (<https://github.com/apeltzer>), and Sven Fillinger (<https://github.com/sven1103>).
 
-* Sven Fillinger ([sven1103](https://github.com/sven1103)) at [QBiC](http://qbic.life)
-* Christopher Mohr ([christopher-mohr](https://github.com/christopher-mohr)) at [QBiC](http://qbic.life)
-* Alexander Peltzer ([apeltzer](https://github.com/apeltzer)) at [QBiC](http://qbic.life)
+## Contributions and Support
+
+If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
+
+For further information or help, don't hesitate to get in touch on [Slack](https://nfcore.slack.com/channels/hlatyping) (you can join with [this invite](https://nf-co.re/join/slack)).
+
+## Citation
+
+<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi. -->
+<!-- If you use  nf-core/hlatyping for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+
+You can cite the `nf-core` publication as follows:
+
+> **The nf-core framework for community-curated bioinformatics pipelines.**
+>
+> Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
+>
+> _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).  
+> ReadCube: [Full Access Link](https://rdcu.be/b1GjZ)
