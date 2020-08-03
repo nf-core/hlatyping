@@ -133,7 +133,6 @@ if( params.bam ) log.info "BAM file format detected. Initiate remapping to HLA a
 // Header log info
 log.info nfcoreHeader()
 def summary = [:]
-<<<<<<< HEAD
 if (workflow.revision) summary['Pipeline Release'] = workflow.revision
 summary['Run Name']         = custom_runName ?: workflow.runName
 summary['File Type']    = params.bam ? 'BAM' : 'Other (fastq, fastq.gz, ...)'

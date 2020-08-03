@@ -1,4 +1,3 @@
-
 # nf-core/hlatyping: Documentation
 
 The nf-core/hlatyping documentation is split into the following pages:
