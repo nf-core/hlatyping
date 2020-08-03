@@ -271,7 +271,7 @@ if ( !params.bam  ) { // FASTQ files processing
  * and create a small config.ini as first stepm which is then passed to Optitype.
  */
 process make_ot_config {
-    publishDir "${params.outdir}/config", mode: 'copy'
+    publishDir "${params.outdir}/config", mode: params.publish_dir_mode
 
     output:
     file 'config.ini' into config
