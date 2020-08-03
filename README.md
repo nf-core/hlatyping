@@ -44,8 +44,6 @@ The pipeline does next-generation sequencing-based Human Leukozyte Antigen (HLA)
 
 4. Start running your own analysis!
 
-    <!-- TODO nf-core: Update the example "typical command" below used to run the pipeline -->
-
     ```bash
     nextflow run nf-core/hlatyping -profile <docker/singularity/conda/institute> --input '*_R{1,2}.fastq.gz'
     ```
@@ -84,8 +82,7 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 ## Citation
 
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi. -->
-<!-- If you use  nf-core/hlatyping for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+If you use  nf-core/hlatyping for your analysis, please cite it using the following doi: [10.5281/zenodo.3258050](https://doi.org/10.5281/zenodo.3258050) 
 
 You can cite the `nf-core` publication as follows:
 
