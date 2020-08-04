@@ -1,23 +1,6 @@
 # nf-core/hlatyping: Usage
 
-## Table of contents
-
-* [Table of contents](#table-of-contents)
-* [Introduction](#introduction)
-* [Running the pipeline](#running-the-pipeline)
-  * [Updating the pipeline](#updating-the-pipeline)
-  * [Reproducibility](#reproducibility)
-* [Main arguments](#main-arguments)
-  * [`-profile`](#-profile)
-  * [`--reads`](#--reads)
-  * [`--single_end`](#--single_end)
-* [Job resources](#job-resources)
-  * [Automatic resubmission](#automatic-resubmission)
-  * [Custom resource requests](#custom-resource-requests)
-
 ## Introduction
-
-Nextflow handles job submissions on SLURM or other environments, and supervises running the jobs. Thus the Nextflow process must run until the pipeline is finished. We recommend that you put the process running in the background through `screen` / `tmux` or similar tool. Alternatively you can run nextflow within a cluster job submitted your job scheduler.
 
 ## Running the pipeline
 
@@ -38,6 +21,14 @@ results         # Finished results (configurable, see below)
 # Other nextflow hidden files, eg. history of pipeline runs and old logs.
 ```
 
+### HLA references
+
+The **nf-core/hlatyping** pipeline uses a default HLA reference which is located in the pipelines root directory in `./data/references` and the corresponding mapper indices in `./data/indices/yara`. The references are based on the IMGT/HLA Release 3.14.0, July 2013, and have been processed as described in the [publication](https://doi.org/10.1093/bioinformatics/btu548) of OptiType.
+
+You can always download new versions from the [HLA database](https://www.ebi.ac.uk/ipd/imgt/hla/docs/release.html), but be aware that these allele sets are missing intron sequence information, which will have a negative influence in the HLA typing outcome in case of DNAseq.
+
+We are currently looking into a dynamic solution, in order to build pre-processed input HLA references from current HLA allele information from the IPD-IMGT/HLA database.
+
 ### Updating the pipeline
 
 When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
@@ -46,21 +37,11 @@ When you run the above command, Nextflow automatically pulls the pipeline code f
 nextflow pull nf-core/hlatyping
 ```
 
-or run it with:
-
-```bash
-nextflow run -latest nf-core/hlatyping
-```
-
 ### Reproducibility
 
 It's a good idea to specify a pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
 
-First, go to the [nf-core/hlatyping releases page](https://github.com/nf-core/hlatyping/releases) and find the latest version number - numeric only (eg. `1.0.0`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.0.0`. An example run command could look like this:
-
-```bash
-nextflow run -r 1.0.0 nf-core/hlatyping -profile docker,test
-```
+First, go to the nf-core/hlatyping releases page and find the latest version number - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`.
 
 This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future.
 
@@ -89,14 +70,6 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 * `singularity`
   * A generic configuration profile to be used with [Singularity](https://sylabs.io/docs/)
   * Pulls software from Docker Hub: [`nfcore/hlatyping`](https://hub.docker.com/r/nfcore/hlatyping/)
-* `aws`
-  * A starter configuration for running the pipeline on Amazon Web Services. Uses docker and Spark.
-  * See [`docs/configuration/aws.md`](configuration/aws.md)
-* `standard`
-  * The default profile, used if `-profile` is not specified at all. Runs locally and expects all software to be installed and available on the `PATH`.
-  * This profile is mainly designed to be used as a starting point for other configurations and is inherited by most of the other profiles.
-* `none`
-  * No configuration at all. Useful if you want to build your own config from scratch and want to avoid loading in the default `base` config profile (not recommended).
 * `conda`
   * Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker or Singularity.
   * A generic configuration profile to be used with [Conda](https://conda.io/docs/)
@@ -114,60 +87,6 @@ You can also supply a run name to resume a specific run: `-resume [run-name]`. U
 ### `-c`
 
 Specify the path to a specific config file (this is a core Nextflow command). See the [nf-core website documentation](https://nf-co.re/usage/configuration) for more information.
-
-### `--reads`
-
-Use this to specify the location of your input FastQ files. For example:
-
-```bash
---reads 'path/to/data/sample_*_{1,2}.fastq'
-```
-
-Please note the following requirements:
-
-1. The path must be enclosed in quotes
-2. The path must have at least one `*` wildcard character
-3. When using the pipeline with paired end data, the path must use `{1,2}` notation to specify read pairs.
-
-If left unspecified, a default pattern is used: `data/*{1,2}.fastq.gz`
-
-### `--single_end`
-
-By default, the pipeline expects paired-end data. If you have single-end data, you need to specify `--single_end` on the command line when you launch the pipeline. A normal glob pattern, enclosed in quotation marks, can then be used for `--reads`. For example:
-
-```bash
---single_end --reads '*.fastq'
-```
-
-It is not possible to run a mixture of single-end and paired-end files in one run.
-
-### `--bam`
-
-By default, the pipeline expects input data as **.fastq{.gz}**. You can also provide **.bam** files as input and combine it with the `--single_end` option, if necessary.
-
-This will trigger the pipeline to extract the reads from the bam file and remap them against the HLA reference sequence, using the [`yara`](https://github.com/seqan/seqan/tree/master/apps/yara) mapper. Indices and references are shipped with this pipeline, have a look in the [`./data`](https://github.com/nf-core/hlatyping/tree/master/data) folder of this repository.
-
-### `--seq_type`
-
-By default, the pipeline assumes DNA as sequence type. In case you are having RNA, just provide the option with `--seq_type 'rna'`.
-
-### `--solver`
-
-By default, the pipeline uses the [`glpk`](https://www.gnu.org/software/glpk/) IP solver. With this pipeline, there is also native support for the [`cbc`](https://projects.coin-or.org/Cbc) solver, just pass it as argument with `--solver 'cbc'`, and the pipeline will run OptiType using this IP solver.
-
-If you want to use a different solver, then you have to provide it in the `./environment.yml` conda cofiguration file, which is used in the container built. This requires a valid conda recipe of course, and we encourage the creation of one, if not already present on Anaconda cloud.
-
-### `--enumerations`
-
-By default, the pipeline will do one enumeration (`--enumerations 1`). If you want OptiType to output the optimal solution and the top N-1 suboptimal solutions in the result file, specify the number of enumerations accordingly.
-
-### `--beta`
-
-By default, the pipeline uses a beta value of 0.009. The constant beta weights the regularization term of the underlying integer linear program to account for homozygosity since the formulation favors heterozygous allele combinations. Beta represents the proportion of reads that need to be additionally explained by a chosen allele combination in order to choose heterzygous solutions over homzygous solutions. Evaluation of different values for beta showed the best performance with 0.009. Please refer to the original publication of OptiType (doi: 10.1093/bioinformatics/btu548) for details.
-
-### `--prefix`
-
-A string prefix for the output directory used. The default String is empty.
 
 #### Custom resource requests
 
@@ -206,11 +125,3 @@ We recommend adding the following line to your environment to limit this (typica
 ```bash
 NXF_OPTS='-Xms1g -Xmx4g'
 ```
-
-## HLA references
-
-The **nf-core/hlatyping** pipeline uses a default HLA reference which is located in the pipelines root directory in `./data/references` and the corresponding mapper indices in `./data/indices/yara`. The references are based on the IMGT/HLA Release 3.14.0, July 2013, and have been processed as described in the [publication](https://doi.org/10.1093/bioinformatics/btu548) of OptiType.
-
-You can always download new versions from the [HLA database](https://www.ebi.ac.uk/ipd/imgt/hla/docs/release.html), but be aware that these allele sets are missing intron sequence information, which will have a negative influence in the HLA typing outcome in case of DNAseq.
-
-We are currently looking into a dynamic solution, in order to build pre-processed input HLA references from current HLA allele information from the IPD-IMGT/HLA database.
