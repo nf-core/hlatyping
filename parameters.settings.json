@@ -69,12 +69,12 @@
             "group": "prediction"
         },
         {
-            "name": "reads",
+            "name": "input",
             "label": "Mapped or unmapped reads",
             "usage": "HLA typing workflow input data.",
             "type": "string",
             "render": "file",
-            "default_value": "path/to/reads.fastq.gz",
+            "default_value": "path/to/input.fastq.gz",
             "pattern": ".*(\\.fastq$|\\.fastq\\.gz$|\\.bam$)",
             "group": "input"
         },

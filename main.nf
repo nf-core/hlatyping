@@ -88,7 +88,21 @@ ch_output_docs = file("$baseDir/docs/output.md", checkIfExists: true)
 /*
  * Create a channel for input read files
  */
-if (!params.bam){
+if( params.input_paths ){
+    if( params.singleEnd || params.bam) {
+        Channel
+            .from( params.input_paths )
+            .map { row -> [ row[0], [ file( row[1][0] ) ] ] }
+            .ifEmpty { exit 1, "params.input_paths or params.bams was empty - no input files supplied!" }
+            .set { input_data }
+    } else {
+        Channel
+            .from( params.input_paths )
+            .map { row -> [ row[0], [ file( row[1][0] ), file( row[1][1] ) ] ] }
+            .ifEmpty { exit 1, "params.input_paths or params.bams was empty - no input files supplied!" }
+            .set { input_data }
+        }
+} else if (!params.bam){
     Channel
     .fromFilePairs( params.input, size: params.single_end ? 1 : 2 )
     .ifEmpty { exit 1, "Cannot find any reads matching: ${params.input}\nNB: Path needs" +
