@@ -1,11 +1,13 @@
 # nf-core/hlatyping: Changelog
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
-and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.1.6dev -
+## v1.1.6dev - 2020-08-03
 
 ### `Added`
+
+- Template update to v1.10.2
 
 - [#78](https://github.com/nf-core/hlatyping/pull/78) Added GitHub actions instead of Travis CI
 - Add social preview image

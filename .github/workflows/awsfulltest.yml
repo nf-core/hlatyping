@@ -1,15 +1,14 @@
-name: nf-core AWS test
+name: nf-core AWS full size tests
 # This workflow is triggered on push to the master branch.
-# It runs the -profile 'test' on AWS batch
+# It runs the -profile 'test_full' on AWS batch
 
 on:
-  push:
-    branches:
-      - master
+  release:
+    types: [published]
 
 jobs:
   run-awstest:
-    name: Run AWS tests
+    name: Run AWS full tests
     if: github.repository == 'nf-core/hlatyping'
     runs-on: ubuntu-latest
     steps:
@@ -30,8 +29,8 @@ jobs:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
         run: |
           aws batch submit-job \
-          --region eu-west-1 \
-          --job-name nf-core-hlatyping \
-          --job-queue $AWS_JOB_QUEUE \
-          --job-definition $AWS_JOB_DEFINITION \
-          --container-overrides '{"command": ["nf-core/hlatyping", "-r '"${GITHUB_SHA}"' -profile test --outdir s3://'"${AWS_S3_BUCKET}"'/hlatyping/results-'"${GITHUB_SHA}"' -w s3://'"${AWS_S3_BUCKET}"'/hlatyping/work-'"${GITHUB_SHA}"' -with-tower"], "environment": [{"name": "TOWER_ACCESS_TOKEN", "value": "'"$TOWER_ACCESS_TOKEN"'"}]}'
+            --region eu-west-1 \
+            --job-name nf-core-hlatyping \
+            --job-queue $AWS_JOB_QUEUE \
+            --job-definition $AWS_JOB_DEFINITION \
+            --container-overrides '{"command": ["nf-core/hlatyping", "-r '"${GITHUB_SHA}"' -profile test_full --outdir s3://'"${AWS_S3_BUCKET}"'/hlatyping/results-'"${GITHUB_SHA}"' -w s3://'"${AWS_S3_BUCKET}"'/hlatyping/work-'"${GITHUB_SHA}"' -with-tower"], "environment": [{"name": "TOWER_ACCESS_TOKEN", "value": "'"$TOWER_ACCESS_TOKEN"'"}]}'
