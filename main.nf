@@ -58,7 +58,7 @@ if (params.genomes && params.genome && !params.genomes.containsKey(params.genome
 }
 
 // Validate inputs
-params.input ?: { log.error "No read data privided. Make sure you have used the '--input' option."; exit 1 }()
+params.input ?: params.input_paths ?: { log.error "No read data privided. Make sure you have used the '--input' option."; exit 1 }()
 (params.seqtype == 'rna' || params.seqtype == 'dna') ?: { log.error "No or incorrect sequence type provided, you need to add '--seqtype 'dna'' or '--seqtype 'rna''."; exit 1 }()
 if( params.bam ) params.index ?: { log.error "For BAM option, you need to provide a path to the HLA reference index (yara; --index) "; exit 1 }()
 params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
@@ -92,13 +92,13 @@ if( params.input_paths ){
     if( params.singleEnd || params.bam) {
         Channel
             .from( params.input_paths )
-            .map { row -> [ row[0], [ file( row[1][0] ) ] ] }
+            .map { row -> [ row[0], [ file( row[1][0], checkIfExists: true ) ] ] }
             .ifEmpty { exit 1, "params.input_paths or params.bams was empty - no input files supplied!" }
             .set { input_data }
     } else {
         Channel
             .from( params.input_paths )
-            .map { row -> [ row[0], [ file( row[1][0] ), file( row[1][1] ) ] ] }
+            .map { row -> [ row[0], [ file( row[1][0] ), file( row[1][1], checkIfExists: true ) ] ] }
             .ifEmpty { exit 1, "params.input_paths or params.bams was empty - no input files supplied!" }
             .set { input_data }
         }
