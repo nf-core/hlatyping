@@ -68,7 +68,6 @@ if (params.genomes && params.genome && !params.genomes.containsKey(params.genome
 // Validate inputs
 params.reads ?: params.readPaths ?: { log.error "No read data privided. Make sure you have used the '--reads' option."; exit 1 }()
 (params.seqtype == 'rna' || params.seqtype == 'dna') ?: { log.error "No or incorrect sequence type provided, you need to add '--seqtype 'dna'' or '--seqtype 'rna''."; exit 1 }()
-if( params.bam ) params.index ?: { log.error "For BAM option, you need to provide a path to the HLA reference index (yara; --index) "; exit 1 }()
 params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
 
 // Has the run name been specified by the user?
@@ -137,7 +136,7 @@ if (workflow.revision) summary['Pipeline Release'] = workflow.revision
 summary['Run Name']         = custom_runName ?: workflow.runName
 summary['File Type']    = params.bam ? 'BAM' : 'Other (fastq, fastq.gz, ...)'
 summary['Seq Type']   = params.seqtype
-summary['Index Location'] = params.base_index + params.seqtype
+summary['Index Location'] = "$params.base_index_path/$params.base_index_name"
 summary['IP solver']    = params.solver
 summary['Enumerations'] = params.enumerations
 summary['Beta'] = params.beta
@@ -232,14 +231,15 @@ if ( !params.bam  ) { // FASTQ files processing
     process remap_to_hla {
 
         input:
+        path(data_index) from params.base_index_path
         set val(pattern), file(bams) from input_data
-
         output:
         set val(pattern), "mapped_{1,2}.bam" into fished_reads
 
         script:
-        full_index = params.base_index + params.seqtype
+        def full_index = "$data_index/$params.base_index_name"
         if (params.single_end)
+
         """
         samtools bam2fq $bams > output_1.fastq
         yara_mapper -e 3 -t ${task.cpus} -f bam $full_index output_1.fastq > output_1.bam
@@ -293,14 +293,16 @@ process make_ot_config {
 if (!params.bam)
 process pre_map_hla {
     input:
+    path(data_index) from params.base_index_path
     set val(pattern), file(reads) from raw_reads
 
     output:
     set val(pattern), "mapped_{1,2}.bam" into fished_reads
 
     script:
-    full_index = params.base_index + params.seqtype
+    def full_index = "$data_index/$params.base_index_name"
     if (params.single_end)
+
     """
     yara_mapper -e 3 -t ${task.cpus} -f bam $full_index $reads > output_1.bam
     samtools view -@ ${task.cpus} -h -F 4 -b1 output_1.bam > mapped_1.bam
