@@ -140,7 +140,6 @@ summary['Index Location'] = "$params.base_index_path/$params.base_index_name"
 summary['IP solver']    = params.solver
 summary['Enumerations'] = params.enumerations
 summary['Beta'] = params.beta
-summary['Prefix'] = params.prefix
 summary['Max Memory']   = params.max_memory
 summary['Max CPUs']     = params.max_cpus
 summary['Max Time']     = params.max_time

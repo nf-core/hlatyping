@@ -17,14 +17,34 @@
                 "input": {
                     "type": "string",
                     "fa_icon": "fas fa-dna",
-                    "description": "Input FastQ files.",
+                    "description": "Input FastQ or BAM files.",
                     "help_text": "Use this to specify the location of your input FastQ files. For example:\n\n```bash\n--input 'path/to/data/sample_*_{1,2}.fastq'\n```\n\nPlease note the following requirements:\n\n1. The path must be enclosed in quotes\n2. The path must have at least one `*` wildcard character\n3. When using the pipeline with paired end data, the path must use `{1,2}` notation to specify read pairs.\n\nIf left unspecified, a default pattern is used: `data/*{1,2}.fastq.gz`"
+                },
+                "input_paths": {
+                    "type": "string",
+                    "fa_icon": "fas fa-dna",
+                    "description": "Input multiple FastQ or BAM files.",
+                    "help_text": "Use this to specify the location of your input files, e.g.:\n`--input_paths 'path/to/data/sample_*_{1,2}.fastq'`\n\nPlease note the following requirements:\n* The path must be enclosed in quotes\n* The path must have at least one `*` wildcard character\n* When using the pipeline with paired end data, the path must use `{1,2}` notation to specify read pairs.\n* If left unspecified, a default pattern is used: `data/*{1,2}.fastq.gz`",
+                    "default": "undefined"
                 },
                 "single_end": {
                     "type": "boolean",
                     "description": "Specifies that the input is single-end reads.",
                     "fa_icon": "fas fa-align-center",
                     "help_text": "By default, the pipeline expects paired-end data. If you have single-end data, you need to specify `--single_end` on the command line when you launch the pipeline. A normal glob pattern, enclosed in quotation marks, can then be used for `--input`. For example:\n\n```bash\n--single_end --input '*.fastq'\n```\n\nIt is not possible to run a mixture of single-end and paired-end files in one run."
+                },
+                "bam": {
+                    "type": "boolean",
+                    "description": "Specifies that the input is in BAM format.",
+                    "help_text": "By default, the pipeline expects input data as `.fastq{.gz}`. You can also provide `.bam` files as input and combine it with the `--single_end` option, if necessary.\n\nThis will trigger the pipeline to extract the reads from the `.bam` file and remap them against the HLA reference sequence, using the `yara` mapper. Indices and references are shipped with this pipeline.",
+                    "fa_icon": "fas fa-file-archive"
+                },
+                "seqtype": {
+                    "type": "string",
+                    "default": "dna",
+                    "description": "Specifies whether the input is DNA or RNA.",
+                    "help_text": "By default, the pipeline assumes `DNA` as input sequence type. In case you want to use `RNA` data as input, just provide the option with `--seqtype 'rna'`.",
+                    "fa_icon": "fas fa-vials"
                 },
                 "outdir": {
                     "type": "string",
@@ -38,6 +58,63 @@
                     "fa_icon": "fas fa-envelope",
                     "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
                     "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+                }
+            }
+        },
+        "new_group_1": {
+            "title": "New Group 1",
+            "type": "object",
+            "description": "Options for the optimisation step of the HLA typing pipeline.",
+            "default": "",
+            "fa_icon": "fas fa-calculator",
+            "properties": {
+                "solver": {
+                    "type": "string",
+                    "default": "glpk",
+                    "help_text": "By default, the pipeline uses the `glpk` integer programming (IP) solver. With this pipeline, there is also native support for the `cbc` solver, just pass it as argument with `--solver 'cbc'`, and the pipeline will run OptiType using this IP solver.",
+                    "description": "Specifies the integer programming solver.",
+                    "fa_icon": "fas fa-cogs"
+                },
+                "enumerations": {
+                    "type": "integer",
+                    "default": "1",
+                    "fa_icon": "fas fa-sort-amount-up",
+                    "help_text": "By default, the pipeline will do one enumeration (`--enumerations 1`). If you want OptiType to output the optimal solution and the top `N-1` suboptimal solutions in the result file, please specify the number of enumerations accordingly.",
+                    "description": "Number of output solutions."
+                },
+                "beta": {
+                    "type": "number",
+                    "default": 0.009,
+                    "fa_icon": "fas fa-braille",
+                    "help_text": "By default, the pipeline uses a beta value of `0.009`. The constant beta weights the regularisation term of the underlying integer linear program to account for homozygosity since the formulation favors heterozygous allele combinations. Beta represents the proportion of reads that need to be additionally explained by a chosen allele combination in order to choose heterzygous solutions over homzygous solutions. Evaluation of different values for beta showed the best performance with `0.009`. Please refer to the original publication of OptiType (doi: 10.1093/bioinformatics/btu548) for details.",
+                    "description": "Weight of the regularisation term."
+                }
+            }
+        },
+        "new_group_2": {
+            "title": "New Group 2",
+            "type": "object",
+            "description": "Options for the mapping reference.",
+            "default": "",
+            "fa_icon": "fas fa-align-center",
+            "properties": {
+                "base_index_type": {
+                    "type": "string",
+                    "default": "dna",
+                    "description": "Type of mapping reference index.",
+                    "fa_icon": "fas fa-text-width"
+                },
+                "base_index_path": {
+                    "type": "string",
+                    "default": "\"$baseDir/data/indices/yara\"",
+                    "description": "Path for the mapping reference index location.",
+                    "fa_icon": "far fa-folder"
+                },
+                "base_index_name": {
+                    "type": "string",
+                    "default": "hla_reference_$params.base_index_type",
+                    "description": "Name of the mapping reference index.",
+                    "fa_icon": "fas fa-file-signature"
                 }
             }
         },
@@ -244,6 +321,12 @@
             "$ref": "#/definitions/input_output_options"
         },
         {
+            "$ref": "#/definitions/new_group_1"
+        },
+        {
+            "$ref": "#/definitions/new_group_2"
+        },
+        {
             "$ref": "#/definitions/reference_genome_options"
         },
         {
@@ -255,45 +338,5 @@
         {
             "$ref": "#/definitions/institutional_config_options"
         }
-    ],
-    "properties": {
-        "reads": {
-            "type": "string",
-            "default": "data/*{1,2}.fastq.gz"
-        },
-        "bam": {
-            "type": "string"
-        },
-        "readPaths": {
-            "type": "string"
-        },
-        "seqtype": {
-            "type": "string",
-            "default": "dna"
-        },
-        "solver": {
-            "type": "string",
-            "default": "glpk"
-        },
-        "enumerations": {
-            "type": "integer",
-            "default": 1
-        },
-        "beta": {
-            "type": "number",
-            "default": 0.009
-        },
-        "prefix": {
-            "type": "string",
-            "default": "hla_run"
-        },
-        "base_index": {
-            "type": "string",
-            "default": "/Users/mohr/Projects/nf-core-hlatyping/data/indices/yara/hla_reference_"
-        },
-        "index": {
-            "type": "string",
-            "default": "/Users/mohr/Projects/nf-core-hlatyping/data/indices/yara/hla_reference_dna"
-        }
-    }
+    ]
 }
