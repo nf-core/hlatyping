@@ -66,7 +66,7 @@ if (params.genomes && params.genome && !params.genomes.containsKey(params.genome
 }
 
 // Validate inputs
-params.reads ?: params.readPaths ?: { log.error "No read data privided. Make sure you have used the '--reads' option."; exit 1 }()
+params.input ?: params.input_paths ?: { log.error "No read data privided. Make sure you have used the '--input' option."; exit 1 }()
 (params.seqtype == 'rna' || params.seqtype == 'dna') ?: { log.error "No or incorrect sequence type provided, you need to add '--seqtype 'dna'' or '--seqtype 'rna''."; exit 1 }()
 params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
 
@@ -100,28 +100,28 @@ ch_output_docs_images = file("$baseDir/docs/images/", checkIfExists: true)
 if( params.input_paths ){
     if( params.single_end || params.bam) {
         Channel
-            .from( params.readPaths )
-            .map { row -> [ row[0], [ file( row[1][0], checkIfExists: true) ] ] }
-            .ifEmpty { exit 1, "params.readPaths or params.bams was empty - no input files supplied!" }
+            .from( params.input_paths )
+            .map { row -> [ row[0], [ file( row[1][0], checkIfExists: true ) ] ] }
+            .ifEmpty { exit 1, "params.input_paths or params.bams was empty - no input files supplied!" }
             .set { input_data }
     } else {
         Channel
             .from( params.input_paths )
             .map { row -> [ row[0], [ file( row[1][0], checkIfExists: true), file( row[1][1], checkIfExists: true) ] ] }
-            .ifEmpty { exit 1, "params.readPaths or params.bams was empty - no input files supplied!" }
+            .ifEmpty { exit 1, "params.input_paths or params.bams was empty - no input files supplied!" }
             .set { input_data }
         }
 } else if (!params.bam){
     Channel
-    .fromFilePairs( params.reads, size: params.single_end ? 1 : 2 )
-    .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs" +
+    .fromFilePairs( params.input, size: params.single_end ? 1 : 2 )
+    .ifEmpty { exit 1, "Cannot find any reads matching: ${params.input}\nNB: Path needs" +
     "to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --single_end on the command line." }
     .set { input_data }
 } else {
     Channel
-    .fromPath( params.reads )
-    .map { row -> [ file(row).baseName, [ file( row, checkIfExists: true) ] ] }
-    .ifEmpty { exit 1, "Cannot find any bam file matching: ${params.reads}\nNB: Path needs" +
+    .fromPath( params.input )
+    .map { row -> [ file(row).baseName, [ file( row, checkIfExists: true ) ] ] }
+    .ifEmpty { exit 1, "Cannot find any bam file matching: ${params.input}\nNB: Path needs" +
     "to be enclosed in quotes!\n" }
     .dump() //For debugging purposes
     .set { input_data }
@@ -144,7 +144,6 @@ summary['Prefix'] = params.prefix
 summary['Max Memory']   = params.max_memory
 summary['Max CPUs']     = params.max_cpus
 summary['Max Time']     = params.max_time
-summary['Reads']            = params.reads
 summary['Input']            = params.input
 summary['Fasta Ref']        = params.fasta
 summary['Data Type']        = params.single_end ? 'Single-End' : 'Paired-End'
