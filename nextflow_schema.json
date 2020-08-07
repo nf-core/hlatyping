@@ -24,8 +24,8 @@
                     "type": "string",
                     "fa_icon": "fas fa-dna",
                     "description": "Input multiple FastQ or BAM files.",
-                    "help_text": "Use this to specify the location of your input files, e.g.:\n`--input_paths 'path/to/data/sample_*_{1,2}.fastq'`\n\nPlease note the following requirements:\n* The path must be enclosed in quotes\n* The path must have at least one `*` wildcard character\n* When using the pipeline with paired end data, the path must use `{1,2}` notation to specify read pairs.\n* If left unspecified, a default pattern is used: `data/*{1,2}.fastq.gz`",
-                    "default": "undefined"
+                    "default": "undefined",
+                    "hidden": true
                 },
                 "single_end": {
                     "type": "boolean",
@@ -61,8 +61,8 @@
                 }
             }
         },
-        "new_group_1": {
-            "title": "New Group 1",
+        "optimisation_step_options": {
+            "title": "Optimisation step options",
             "type": "object",
             "description": "Options for the optimisation step of the HLA typing pipeline.",
             "default": "",
@@ -97,7 +97,7 @@
             "fa_icon": "fas fa-dna",
             "description": "Options for the reference genome indices used to align reads.",
             "properties": {
-                 "igenomes_base": {
+                "igenomes_base": {
                     "type": "string",
                     "description": "Directory / URL base for iGenomes references.",
                     "default": "s3://ngi-igenomes/igenomes/",
@@ -300,7 +300,7 @@
             "$ref": "#/definitions/input_output_options"
         },
         {
-            "$ref": "#/definitions/new_group_1"
+            "$ref": "#/definitions/optimisation_step_options"
         },
         {
             "$ref": "#/definitions/reference_genome_options"
