@@ -7,11 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
-- Template update to v1.10.2
+- [#91](https://github.com/nf-core/hlatyping/pull/91) - Add pipeline parameter schema
+- [#78](https://github.com/nf-core/hlatyping/pull/78) - Add GitHub actions instead of Travis CI
+- [#73](https://github.com/nf-core/hlatyping/pull/73) - Add social preview image
 
-- [#78](https://github.com/nf-core/hlatyping/pull/78) Added GitHub actions instead of Travis CI
-- Add social preview image
-- [#82](https://github.com/nf-core/hlatyping/pull/82) Updated to nf-core template v1.9
+### `Changed`
+
+- [#84](https://github.com/nf-core/hlatyping/pull/84), [#91](https://github.com/nf-core/hlatyping/pull/91) - Change input parameters (`--input` instead of `--reads`, the parameters `--genome` and `--fasta` are deprecated for this pipeline)
+- [#89](https://github.com/nf-core/hlatyping/pull/89), [#90](https://github.com/nf-core/hlatyping/pull/90) - Update to nf-core template v1.10.2
+- [#81](https://github.com/nf-core/hlatyping/pull/81), [#82](https://github.com/nf-core/hlatyping/pull/82) - Update to nf-core template v1.9
+
+### `Fixed`
+
+- [#79](https://github.com/nf-core/hlatyping/pull/79) - Fix mapping index issue [#68](https://github.com/nf-core/hlatyping/issues/68)
 
 ## 1.1.5 - Patch release - 2019-06-24
 

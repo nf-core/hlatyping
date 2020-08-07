@@ -30,11 +30,7 @@ def helpMessage() {
                                       Available: conda, docker, singularity, test, awsbatch, <institute> and more
 
     Options:
-      --genome [str]                  Name of iGenomes reference
       --single_end [bool]             Specifies that the input is single-end reads
-
-    References                        If not specified in the configuration file or you wish to overwrite any of the references
-      --fasta [file]                  Path to fasta reference
 
     Other options:
       --outdir [file]                 The output directory where the results will be saved
@@ -60,11 +56,6 @@ if (params.help) {
 /*
  * SET UP CONFIGURATION VARIABLES
  */
-// Check if genome exists in the config file
-if (params.genomes && params.genome && !params.genomes.containsKey(params.genome)) {
-    exit 1, "The provided genome '${params.genome}' is not available in the iGenomes file. Currently the available genomes are ${params.genomes.keySet().join(", ")}"
-}
-
 // Validate inputs
 params.input ?: params.input_paths ?: { log.error "No read data privided. Make sure you have used the '--input' option."; exit 1 }()
 (params.seqtype == 'rna' || params.seqtype == 'dna') ?: { log.error "No or incorrect sequence type provided, you need to add '--seqtype 'dna'' or '--seqtype 'rna''."; exit 1 }()
@@ -140,7 +131,6 @@ summary['Index Location'] = "$params.base_index_path/$params.base_index_name"
 summary['IP solver']    = params.solver
 summary['Enumerations'] = params.enumerations
 summary['Beta'] = params.beta
-summary['Prefix'] = params.prefix
 summary['Max Memory']   = params.max_memory
 summary['Max CPUs']     = params.max_cpus
 summary['Max Time']     = params.max_time
