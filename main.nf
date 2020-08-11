@@ -135,7 +135,6 @@ summary['Max Memory']   = params.max_memory
 summary['Max CPUs']     = params.max_cpus
 summary['Max Time']     = params.max_time
 summary['Input']            = params.input_paths ? params.input_paths : params.input
-summary['Fasta Ref']        = params.fasta
 summary['Data Type']        = params.single_end ? 'Single-End' : 'Paired-End'
 summary['Output Dir']       = params.outdir
 summary['Launch Dir']       = workflow.launchDir
