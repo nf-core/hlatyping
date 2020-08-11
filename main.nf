@@ -128,19 +128,19 @@ summary['Run Name']         = custom_runName ?: workflow.runName
 summary['File Type']    = params.bam ? 'BAM' : 'Other (fastq, fastq.gz, ...)'
 summary['Seq Type']   = params.seqtype
 summary['Index Location'] = "$params.base_index_path/$params.base_index_name"
-summary['IP solver']    = params.solver
+summary['IP Solver']    = params.solver
 summary['Enumerations'] = params.enumerations
 summary['Beta'] = params.beta
 summary['Max Memory']   = params.max_memory
 summary['Max CPUs']     = params.max_cpus
 summary['Max Time']     = params.max_time
-summary['Input']            = params.input
+summary['Input']            = params.input_paths ? params.input_paths : params.input
 summary['Fasta Ref']        = params.fasta
 summary['Data Type']        = params.single_end ? 'Single-End' : 'Paired-End'
-summary['Output dir']       = params.outdir
-summary['Launch dir']       = workflow.launchDir
-summary['Working dir']      = workflow.workDir
-summary['Script dir']       = workflow.projectDir
+summary['Output Dir']       = params.outdir
+summary['Launch Dir']       = workflow.launchDir
+summary['Working Dir']      = workflow.workDir
+summary['Script Dir']       = workflow.projectDir
 summary['User']             = workflow.userName
 summary['Max Resources']    = "$params.max_memory memory, $params.max_cpus cpus, $params.max_time time per job"
 if(workflow.containerEngine) summary['Container'] = "$workflow.containerEngine - $workflow.container"
@@ -156,8 +156,8 @@ if (params.config_profile_url)         summary['Config Profile URL']         = p
 summary['Config Files'] = workflow.configFiles.join(', ')
 if (params.email || params.email_on_fail) {
     summary['E-mail Address']    = params.email
-    summary['E-mail on failure'] = params.email_on_fail
-    summary['MultiQC maxsize']   = params.max_multiqc_email_size
+    summary['E-mail on Failure'] = params.email_on_fail
+    summary['MultiQC Maxsize']   = params.max_multiqc_email_size
 }
 log.info summary.collect { k,v -> "${k.padRight(18)}: $v" }.join("\n")
 log.info "-\033[2m--------------------------------------------------\033[0m-"
