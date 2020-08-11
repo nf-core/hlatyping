@@ -51,7 +51,7 @@ jobs:
       - name: Run pipeline with test data
         run: |
           nextflow run ${GITHUB_WORKSPACE} -profile test,docker
-      - name: Run pipeline with additional tests
+      - name: Run pipeline with profile ${{ matrix.tests }}
         run: |
           nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.tests }},docker
 
