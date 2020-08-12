@@ -80,14 +80,14 @@
                     "default": "1",
                     "fa_icon": "fas fa-sort-amount-up",
                     "help_text": "By default, the pipeline will do one enumeration (`--enumerations 1`). If you want OptiType to output the optimal solution and the top `N-1` suboptimal solutions in the result file, please specify the number of enumerations accordingly.",
-                    "description": "Number of output solutions."
+                    "description": "Specifies the number of output solutions."
                 },
                 "beta": {
                     "type": "number",
                     "default": 0.009,
                     "fa_icon": "fas fa-braille",
                     "help_text": "By default, the pipeline uses a beta value of `0.009`. The constant beta weights the regularisation term of the underlying integer linear program to account for homozygosity since the formulation favors heterozygous allele combinations. Beta represents the proportion of reads that need to be additionally explained by a chosen allele combination in order to choose heterzygous solutions over homzygous solutions. Evaluation of different values for beta showed the best performance with `0.009`. Please refer to the original publication of OptiType (doi: 10.1093/bioinformatics/btu548) for details.",
-                    "description": "Weight of the regularisation term."
+                    "description": "Specifies the weight of the regularisation term."
                 }
             }
         },
@@ -221,7 +221,7 @@
             "properties": {
                 "max_cpus": {
                     "type": "integer",
-                    "description": "Maximum number of CPUs that can be requested    for any single job.",
+                    "description": "Maximum number of CPUs that can be requested for any single job.",
                     "default": 16,
                     "fa_icon": "fas fa-microchip",
                     "hidden": true,
