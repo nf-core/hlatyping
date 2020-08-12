@@ -42,7 +42,6 @@ def helpMessage() {
                                       Default: ${params.enumerations}
 
     Reference genome options:
-      --base_index_type [str]        Type of mapping reference index.
       --base_index_path [str]        Path for the mapping reference index location.
       --base_index_name [str]        Name of the mapping reference index.
 
@@ -89,6 +88,9 @@ if (params.help) {
 params.input ?: params.input_paths ?: { log.error "No read data privided. Make sure you have used the '--input' option."; exit 1 }()
 (params.seqtype == 'rna' || params.seqtype == 'dna') ?: { log.error "No or incorrect sequence type provided, you need to add '--seqtype 'dna'' or '--seqtype 'rna''."; exit 1 }()
 params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
+
+// Set mapping index base name according to sequencing type
+base_index_name = params.base_index_name ?  params.base_index_name :  "hla_reference_${params.seqtype}"
 
 // Has the run name been specified by the user?
 // this has the bonus effect of catching both -name and --name
@@ -156,7 +158,7 @@ if (workflow.revision) summary['Pipeline Release'] = workflow.revision
 summary['Run Name']         = custom_runName ?: workflow.runName
 summary['File Type']    = params.bam ? 'BAM' : 'Other (fastq, fastq.gz, ...)'
 summary['Seq Type']   = params.seqtype
-summary['Index Location'] = "$params.base_index_path/$params.base_index_name"
+summary['Index Location'] = "$params.base_index_path/$base_index_name"
 summary['IP Solver']    = params.solver
 summary['Enumerations'] = params.enumerations
 summary['Beta'] = params.beta
@@ -254,7 +256,7 @@ if ( !params.bam  ) { // FASTQ files processing
         set val(pattern), "mapped_{1,2}.bam" into fished_reads
 
         script:
-        def full_index = "$data_index/$params.base_index_name"
+        def full_index = "$data_index/$base_index_name"
         if (params.single_end)
 
         """
@@ -317,7 +319,7 @@ process pre_map_hla {
     set val(pattern), "mapped_{1,2}.bam" into fished_reads
 
     script:
-    def full_index = "$data_index/$params.base_index_name"
+    def full_index = "$data_index/$base_index_name"
     if (params.single_end)
 
     """
