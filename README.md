@@ -1,26 +1,15 @@
 # ![nf-core/hlatyping](docs/images/nf-core-hlatyping_logo.png)
 
-Precision HLA typing from next-generation sequencing data using [OptiType](https://github.com/FRED-2/OptiType).
+**Precision HLA typing from next-generation sequencing data using [OptiType](https://github.com/FRED-2/OptiType).**
 
 [![GitHub Actions CI Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/hlatyping/actions)
 [![GitHub Actions Linting Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/hlatyping/actions)
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A519.10.0-brightgreen.svg)](https://www.nextflow.io/)
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](https://bioconda.github.io/)
+
 [![Docker](https://img.shields.io/docker/automated/nfcore/hlatyping.svg)](https://hub.docker.com/r/nfcore/hlatyping)
 [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/1251)
 [![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23hlatyping-4A154B?logo=slack)](https://nfcore.slack.com/channels/hlatyping)
-
-## Table of Contents
-
-1. [Introduction](#introduction)
-2. [Quick Start](#quick-start)
-   * [With Docker](#docker)
-   * [With Singularity](#singularity)
-3. [Documentation](docs/README.md)
-4. [Pipeline DAG](#pipeline-dag)
-   * [Input `fastq`](#dag-with-fastqgz-as-input)
-   * [Input `bam`](#dag-with-bam-as-input)
-5. [Credits](#credits)
 
 ## Introduction
 

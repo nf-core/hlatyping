@@ -35,15 +35,15 @@ def helpMessage() {
       --bam [bool]                    Specifies that the input is in BAM format.
                                       Default: ${params.bam}
       --seqtype [str]                 Specifies whether the input is DNA or RNA. Options: 'dna', 'rna'
-                                      Default: ${params.seqtype}
+                                      Default: '${params.seqtype}'
       --solver [str]                  Specifies the integer programming solver. Options: 'glpk', 'cbc'
-                                      Default: ${params.solver}
+                                      Default: '${params.solver}'
       --enumerations [int]            Specifies the number of output solutions.
                                       Default: ${params.enumerations}
 
     Reference genome options:
-      --base_index_path [str]        Path for the mapping reference index location.
-      --base_index_name [str]        Name of the mapping reference index.
+      --base_index_path [str]         Path for the mapping reference index location.
+      --base_index_name [str]         Name of the mapping reference index.
 
     Resource options:
       --max_memory [str]              Maximum amount of memory that can be requested for any single job (format integer.unit). 
@@ -51,7 +51,7 @@ def helpMessage() {
       --max_time [str]                Maximum amount of time that can be requested for any single job (format integer.unit).
                                       Default: '${params.max_time}'
       --max_cpus [int]                Maximum number of CPUs that can be requested for any single job. 
-                                      Default: '${params.max_cpus}'
+                                      Default: ${params.max_cpus}
 
     Other options:
       --outdir [file]                 The output directory where the results will be saved.
