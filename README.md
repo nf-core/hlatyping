@@ -1,6 +1,5 @@
 # ![nf-core/hlatyping](docs/images/nf-core-hlatyping_logo.png)
 
-
 [![GitHub Actions CI Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/hlatyping/actions)
 [![GitHub Actions Linting Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/hlatyping/actions)
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A519.10.0-brightgreen.svg)](https://www.nextflow.io/)
