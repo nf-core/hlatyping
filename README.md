@@ -11,9 +11,9 @@
 
 ## Introduction
 
-The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
+The pipeline does next-generation sequencing-based Human Leukozyte Antigen (HLA) typing using [OptiType](https://github.com/FRED-2/OptiType). OptiType is a HLA genotyping algorithm based on integer linear programming. Reads of whole exome/genome/transcriptome sequencing data are mapped against a reference of known MHC class I alleles. To produce accurate 4-digit HLA genotyping predictions, all major and minor HLA-I loci are considered simultaneously to find an allele combination that maximizes the number of explained reads.
 
-The pipeline does next-generation sequencing-based Human Leukozyte Antigen (HLA) typing using OptiType. OptiType is a HLA genotyping algorithm based on integer linear programming. Reads of whole exome/genome/transcriptome sequencing data are mapped against a reference of known MHC class I alleles. To produce accurate 4-digit HLA genotyping predictions, all major and minor HLA-I loci are considered simultaneously to find an allele combination that maximizes the number of explained reads.
+The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
 
 ## Quick Start
 
@@ -59,7 +59,7 @@ Creates a config file from the command line arguments, which is then passed to O
 
 ## Credits
 
-nf-core/hlatyping was originally written by Christopher Mohr (<https://github.com/christopher-mohr>), Alexander Peltzer (<https://github.com/apeltzer>), and Sven Fillinger (<https://github.com/sven1103>).
+nf-core/hlatyping was originally written by [Christopher Mohr](https://github.com/christopher-mohr) from [Institute from Translational Bioinformatics](https://kohlbacherlab.org/team_tbi/) and [QBiC](https://uni-tuebingen.de/forschung/forschungsinfrastruktur/zentrum-fuer-quantitative-biologie-qbic/), [Alexander Peltzer](https://github.com/apeltzer) from [Boeheringer Ingelheim](https://www.boehringer-ingelheim.de), and [Sven Fillinger](https://github.com/sven1103) from [QBiC](https://uni-tuebingen.de/forschung/forschungsinfrastruktur/zentrum-fuer-quantitative-biologie-qbic/), University of Tuebingen.
 
 ## Contributions and Support
 

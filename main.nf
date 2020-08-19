@@ -6,11 +6,6 @@
  nf-core/hlatyping Analysis Pipeline.
  #### Homepage / Documentation
  https://github.com/nf-core/hlatyping
-
- #### Authors
- Christopher Mohr christopher-mohr <christopher.mohr@uni-tuebingen.de> - <https://github.com/christopher-mohr>
- Alexander Peltzer <alexander.peltzer@qbic.uni-tuebingen.de> - <https://github.com/apeltzer>
- Sven Fillinger <sven.fillinger@qbic.uni-tuebingen.de> - <https://github.com/sven1103>
 ----------------------------------------------------------------------------------------
 */
 
@@ -85,9 +80,8 @@ if (params.help) {
  * SET UP CONFIGURATION VARIABLES
  */
 // Validate inputs
-params.input ?: params.input_paths ?: { log.error "No read data privided. Make sure you have used the '--input' option."; exit 1 }()
+params.input ?: params.input_paths ?: { log.error "No read data provided. Make sure you have used the '--input' option."; exit 1 }()
 (params.seqtype == 'rna' || params.seqtype == 'dna') ?: { log.error "No or incorrect sequence type provided, you need to add '--seqtype 'dna'' or '--seqtype 'rna''."; exit 1 }()
-params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
 
 // Set mapping index base name according to sequencing type
 base_index_name = params.base_index_name ?  params.base_index_name :  "hla_reference_${params.seqtype}"
@@ -156,15 +150,15 @@ log.info nfcoreHeader()
 def summary = [:]
 if (workflow.revision) summary['Pipeline Release'] = workflow.revision
 summary['Run Name']         = custom_runName ?: workflow.runName
-summary['File Type']    = params.bam ? 'BAM' : 'Other (fastq, fastq.gz, ...)'
-summary['Seq Type']   = params.seqtype
-summary['Index Location'] = "$params.base_index_path/$base_index_name"
-summary['IP Solver']    = params.solver
-summary['Enumerations'] = params.enumerations
-summary['Beta'] = params.beta
-summary['Max Memory']   = params.max_memory
-summary['Max CPUs']     = params.max_cpus
-summary['Max Time']     = params.max_time
+summary['File Type']        = params.bam ? 'BAM' : 'Other (fastq, fastq.gz, ...)'
+summary['Seq Type']         = params.seqtype
+summary['Index Location']   = "$params.base_index_path/$base_index_name"
+summary['IP Solver']        = params.solver
+summary['Enumerations']     = params.enumerations
+summary['Beta']             = params.beta
+summary['Max Memory']       = params.max_memory
+summary['Max CPUs']         = params.max_cpus
+summary['Max Time']         = params.max_time
 summary['Input']            = params.input_paths ? params.input_paths : params.input
 summary['Data Type']        = params.single_end ? 'Single-End' : 'Paired-End'
 summary['Output Dir']       = params.outdir
@@ -222,18 +216,18 @@ if( params.bam ) log.info "BAM file format detected. Initiate remapping to HLA a
 if ( !params.bam  ) { // FASTQ files processing
     process unzip {
 
-            input:
-            set val(pattern), file(reads) from input_data
+        input:
+        set val(pattern), file(reads) from input_data
 
-            output:
-            set val(pattern), "unzipped_{1,2}.fastq" into raw_reads
+        output:
+        set val(pattern), "unzipped_{1,2}.fastq" into raw_reads
 
-            script:
-            if(params.single_end == true)
+        script:
+        if(params.single_end)
             """
             zcat ${reads[0]} > unzipped_1.fastq
             """
-            else
+        else
             """
             zcat ${reads[0]} > unzipped_1.fastq
             zcat ${reads[1]} > unzipped_2.fastq
@@ -248,6 +242,7 @@ if ( !params.bam  ) { // FASTQ files processing
      * is then done against the HLA reference sequence.
      */
     process remap_to_hla {
+        label 'process_medium'
 
         input:
         path(data_index) from params.base_index_path
@@ -258,23 +253,21 @@ if ( !params.bam  ) { // FASTQ files processing
         script:
         def full_index = "$data_index/$base_index_name"
         if (params.single_end)
-
-        """
-        samtools bam2fq $bams > output_1.fastq
-        yara_mapper -e 3 -t ${task.cpus} -f bam $full_index output_1.fastq > output_1.bam
-        samtools view -@ ${task.cpus} -h -F 4 -b1 output_1.bam > mapped_1.bam
-        """
+            """
+            samtools bam2fq $bams > output_1.fastq
+            yara_mapper -e 3 -t ${task.cpus} -f bam $full_index output_1.fastq > output_1.bam
+            samtools view -@ ${task.cpus} -h -F 4 -b1 output_1.bam > mapped_1.bam
+            """
         else
-        """
-        samtools view -@ ${task.cpus} -h -f 0x40 $bams > output_1.bam
-        samtools view -@ ${task.cpus} -h -f 0x80 $bams > output_2.bam
-        samtools bam2fq output_1.bam > output_1.fastq
-        samtools bam2fq output_2.bam > output_2.fastq
-        yara_mapper -e 3 -t ${task.cpus} -f bam $full_index output_1.fastq output_2.fastq > output.bam
-        samtools view -@ ${task.cpus} -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
-        samtools view -@ ${task.cpus} -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
-        """
-
+            """
+            samtools view -@ ${task.cpus} -h -f 0x40 $bams > output_1.bam
+            samtools view -@ ${task.cpus} -h -f 0x80 $bams > output_2.bam
+            samtools bam2fq output_1.bam > output_1.fastq
+            samtools bam2fq output_2.bam > output_2.fastq
+            yara_mapper -e 3 -t ${task.cpus} -f bam $full_index output_1.fastq output_2.fastq > output.bam
+            samtools view -@ ${task.cpus} -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
+            samtools view -@ ${task.cpus} -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
+            """
     }
 }
 
@@ -310,29 +303,30 @@ process make_ot_config {
  *
  */
 if (!params.bam)
-process pre_map_hla {
-    input:
-    path(data_index) from params.base_index_path
-    set val(pattern), file(reads) from raw_reads
+    process pre_map_hla {
+        label 'process_medium'
 
-    output:
-    set val(pattern), "mapped_{1,2}.bam" into fished_reads
+        input:
+        path(data_index) from params.base_index_path
+        set val(pattern), file(reads) from raw_reads
 
-    script:
-    def full_index = "$data_index/$base_index_name"
-    if (params.single_end)
+        output:
+        set val(pattern), "mapped_{1,2}.bam" into fished_reads
 
-    """
-    yara_mapper -e 3 -t ${task.cpus} -f bam $full_index $reads > output_1.bam
-    samtools view -@ ${task.cpus} -h -F 4 -b1 output_1.bam > mapped_1.bam
-    """
-    else
-    """
-    yara_mapper -e 3 -t ${task.cpus} -f bam $full_index $reads > output.bam
-    samtools view -@ ${task.cpus} -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
-    samtools view -@ ${task.cpus} -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
-    """
-}
+        script:
+        def full_index = "$data_index/$base_index_name"
+        if (params.single_end)
+            """
+            yara_mapper -e 3 -t ${task.cpus} -f bam $full_index $reads > output_1.bam
+            samtools view -@ ${task.cpus} -h -F 4 -b1 output_1.bam > mapped_1.bam
+            """
+        else
+            """
+            yara_mapper -e 3 -t ${task.cpus} -f bam $full_index $reads > output.bam
+            samtools view -@ ${task.cpus} -h -F 4 -f 0x40 -b1 output.bam > mapped_1.bam
+            samtools view -@ ${task.cpus} -h -F 4 -f 0x80 -b1 output.bam > mapped_2.bam
+            """
+    }
 
 /*
  * STEP 2 - Run Optitype
@@ -409,7 +403,7 @@ process multiqc {
     publishDir "${params.outdir}/MultiQC", mode: params.publish_dir_mode
 
     input:
-        file (multiqc_config) from ch_multiqc_config
+    file (multiqc_config) from ch_multiqc_config
     file mqc_custom_config from ch_multiqc_custom_config.collect().ifEmpty([])
     file ('software_versions/*') from ch_software_versions_yaml.collect()
     file workflow_summary from ch_workflow_summary.collectFile(name: "workflow_summary_mqc.yaml")
