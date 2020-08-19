@@ -89,4 +89,4 @@ jobs:
 
       - name: Run pipeline with profile ${{ matrix.tests }}
         run: |
-          nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.profiles }},docker
+          nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.tests }},docker
