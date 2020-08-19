@@ -1,6 +1,5 @@
 # ![nf-core/hlatyping](docs/images/nf-core-hlatyping_logo.png)
 
-**Precision HLA typing from next-generation sequencing data using [OptiType](https://github.com/FRED-2/OptiType).**
 
 [![GitHub Actions CI Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/hlatyping/actions)
 [![GitHub Actions Linting Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/hlatyping/actions)
