@@ -58,7 +58,7 @@ Creates a config file from the command line arguments, which is then passed to O
 
 ## Credits
 
-nf-core/hlatyping was originally written by [Christopher Mohr](https://github.com/christopher-mohr) from [Institute from Translational Bioinformatics](https://kohlbacherlab.org/team_tbi/) and [QBiC](https://uni-tuebingen.de/forschung/forschungsinfrastruktur/zentrum-fuer-quantitative-biologie-qbic/), [Alexander Peltzer](https://github.com/apeltzer) from [Boeheringer Ingelheim](https://www.boehringer-ingelheim.de), and [Sven Fillinger](https://github.com/sven1103) from [QBiC](https://uni-tuebingen.de/forschung/forschungsinfrastruktur/zentrum-fuer-quantitative-biologie-qbic/), University of Tuebingen.
+nf-core/hlatyping was originally written by [Christopher Mohr](https://github.com/christopher-mohr) from [Institute for Translational Bioinformatics](https://kohlbacherlab.org/team_tbi/) and [Quantitative Biology Center](https://uni-tuebingen.de/forschung/forschungsinfrastruktur/zentrum-fuer-quantitative-biologie-qbic/),  [Alexander Peltzer](https://github.com/apeltzer) from [Boeheringer Ingelheim](https://www.boehringer-ingelheim.de), and [Sven Fillinger](https://github.com/sven1103) from [Quantitative Biology Center](https://uni-tuebingen.de/forschung/forschungsinfrastruktur/zentrum-fuer-quantitative-biologie-qbic/).
 
 ## Contributions and Support
 
