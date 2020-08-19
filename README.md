@@ -7,7 +7,6 @@
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](https://bioconda.github.io/)
 
 [![Docker](https://img.shields.io/docker/automated/nfcore/hlatyping.svg)](https://hub.docker.com/r/nfcore/hlatyping)
-[![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/1251)
 [![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23hlatyping-4A154B?logo=slack)](https://nfcore.slack.com/channels/hlatyping)
 
 ## Introduction
