@@ -34,13 +34,13 @@ jobs:
 
       - name: Build new docker image
         if: env.GIT_DIFF
-        run: docker build --no-cache . -t nfcore/hlatyping:1.2.0
+        run: docker build --no-cache . -t nfcore/hlatyping:dev
 
       - name: Pull docker image
         if: ${{ !env.GIT_DIFF }}
         run: |
           docker pull nfcore/hlatyping:dev
-          docker tag nfcore/hlatyping:dev nfcore/hlatyping:1.2.0
+          docker tag nfcore/hlatyping:dev nfcore/hlatyping:dev
 
       - name: Install Nextflow
         run: |
@@ -74,13 +74,13 @@ jobs:
 
       - name: Build new docker image
         if: env.GIT_DIFF
-        run: docker build --no-cache . -t nfcore/hlatyping:1.2.0
+        run: docker build --no-cache . -t nfcore/hlatyping:dev
 
       - name: Pull docker image
         if: ${{ !env.GIT_DIFF }}
         run: |
           docker pull nfcore/hlatyping:dev
-          docker tag nfcore/hlatyping:dev nfcore/hlatyping:1.2.0
+          docker tag nfcore/hlatyping:dev nfcore/hlatyping:dev
 
       - name: Install Nextflow
         run: |
