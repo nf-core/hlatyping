@@ -3,8 +3,9 @@
 [![GitHub Actions CI Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/hlatyping/actions)
 [![GitHub Actions Linting Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/hlatyping/actions)
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A519.10.0-brightgreen.svg)](https://www.nextflow.io/)
-[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](https://bioconda.github.io/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1401039.svg)](https://doi.org/10.5281/zenodo.1401039)
 
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](https://bioconda.github.io/)
 [![Docker](https://img.shields.io/docker/automated/nfcore/hlatyping.svg)](https://hub.docker.com/r/nfcore/hlatyping)
 [![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23hlatyping-4A154B?logo=slack)](https://nfcore.slack.com/channels/hlatyping)
 
@@ -68,7 +69,7 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 ## Citation
 
-If you use  nf-core/hlatyping for your analysis, please cite it using the following doi: [10.5281/zenodo.3258050](https://doi.org/10.5281/zenodo.3258050)
+If you use  nf-core/hlatyping for your analysis, please cite it using the following doi: [10.5281/zenodo.1401039](https://doi.org/10.5281/zenodo.1401039)
 
 You can cite the `nf-core` publication as follows:
 
