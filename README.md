@@ -1,21 +1,19 @@
 # ![nf-core/hlatyping](docs/images/nf-core-hlatyping_logo.png)
 
-**Precision HLA typing from next-generation sequencing data using [OptiType](https://github.com/FRED-2/OptiType).**
-
 [![GitHub Actions CI Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/hlatyping/actions)
 [![GitHub Actions Linting Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/hlatyping/actions)
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A519.10.0-brightgreen.svg)](https://www.nextflow.io/)
-[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](https://bioconda.github.io/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1401039.svg)](https://doi.org/10.5281/zenodo.1401039)
 
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](https://bioconda.github.io/)
 [![Docker](https://img.shields.io/docker/automated/nfcore/hlatyping.svg)](https://hub.docker.com/r/nfcore/hlatyping)
-[![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/1251)
 [![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23hlatyping-4A154B?logo=slack)](https://nfcore.slack.com/channels/hlatyping)
 
 ## Introduction
 
-The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
+The pipeline does next-generation sequencing-based Human Leukozyte Antigen (HLA) typing using [OptiType](https://github.com/FRED-2/OptiType). OptiType is a HLA genotyping algorithm based on integer linear programming. Reads of whole exome/genome/transcriptome sequencing data are mapped against a reference of known MHC class I alleles. To produce accurate 4-digit HLA genotyping predictions, all major and minor HLA-I loci are considered simultaneously to find an allele combination that maximizes the number of explained reads.
 
-The pipeline does next-generation sequencing-based Human Leukozyte Antigen (HLA) typing using OptiType. OptiType is a HLA genotyping algorithm based on integer linear programming. Reads of whole exome/genome/transcriptome sequencing data are mapped against a reference of known MHC class I alleles. To produce accurate 4-digit HLA genotyping predictions, all major and minor HLA-I loci are considered simultaneously to find an allele combination that maximizes the number of explained reads.
+The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
 
 ## Quick Start
 
@@ -37,11 +35,11 @@ The pipeline does next-generation sequencing-based Human Leukozyte Antigen (HLA)
     nextflow run nf-core/hlatyping -profile <docker/singularity/conda/institute> --input '*_R{1,2}.fastq.gz'
     ```
 
-See [usage docs](docs/usage.md) for all of the available options when running the pipeline.
+See [usage docs](https://nf-co.re/hlatyping/usage) for all of the available options when running the pipeline.
 
 ## Documentation
 
-The nf-core/hlatyping pipeline comes with documentation about the pipeline which you can read at [https://nf-core/hlatyping/docs](https://nf-core/hlatyping/docs) or find in the [`docs/` directory](docs).
+The nf-core/hlatyping pipeline comes with documentation about the pipeline which you can read at [https://nf-co.re/hlatyping](https://nf-co.re/hlatyping).
 
 ### Pipeline DAG
 
@@ -61,7 +59,7 @@ Creates a config file from the command line arguments, which is then passed to O
 
 ## Credits
 
-nf-core/hlatyping was originally written by Christopher Mohr (<https://github.com/christopher-mohr>), Alexander Peltzer (<https://github.com/apeltzer>), and Sven Fillinger (<https://github.com/sven1103>).
+nf-core/hlatyping was originally written by [Christopher Mohr](https://github.com/christopher-mohr) from [Institute for Translational Bioinformatics](https://kohlbacherlab.org/team_tbi/) and [Quantitative Biology Center](https://uni-tuebingen.de/forschung/forschungsinfrastruktur/zentrum-fuer-quantitative-biologie-qbic/),  [Alexander Peltzer](https://github.com/apeltzer) from [Boeheringer Ingelheim](https://www.boehringer-ingelheim.de), and [Sven Fillinger](https://github.com/sven1103) from [Quantitative Biology Center](https://uni-tuebingen.de/forschung/forschungsinfrastruktur/zentrum-fuer-quantitative-biologie-qbic/).
 
 ## Contributions and Support
 
@@ -71,7 +69,7 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 ## Citation
 
-If you use  nf-core/hlatyping for your analysis, please cite it using the following doi: [10.5281/zenodo.3258050](https://doi.org/10.5281/zenodo.3258050)
+If you use  nf-core/hlatyping for your analysis, please cite it using the following doi: [10.5281/zenodo.1401039](https://doi.org/10.5281/zenodo.1401039)
 
 You can cite the `nf-core` publication as follows:
 
