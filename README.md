@@ -35,11 +35,11 @@ The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool
     nextflow run nf-core/hlatyping -profile <docker/singularity/conda/institute> --input '*_R{1,2}.fastq.gz'
     ```
 
-See [usage docs](docs/usage.md) for all of the available options when running the pipeline.
+See [usage docs](https://nf-co.re/hlatyping/usage) for all of the available options when running the pipeline.
 
 ## Documentation
 
-The nf-core/hlatyping pipeline comes with documentation about the pipeline which you can read at [https://nf-core/hlatyping/docs](https://nf-core/hlatyping/docs) or find in the [`docs/` directory](docs).
+The nf-core/hlatyping pipeline comes with documentation about the pipeline which you can read at [https://nf-co.re/hlatyping](https://nf-co.re/hlatyping).
 
 ### Pipeline DAG
 
