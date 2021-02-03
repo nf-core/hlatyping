@@ -10,37 +10,31 @@ This document describes the output produced by the pipeline. Most of the plots a
 
 The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
 
+<!-- TODO nf-core: Write this documentation describing your workflow's output -->
+
 ## Pipeline overview
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/)
 and processes data using the following steps:
 
-* [OptiType](#optitype) - HLA genotyping based on integer linear programming
+* [FastQC](#fastqc) - Read quality control
 * [MultiQC](#multiqc) - Aggregate report describing results from the whole pipeline
 * [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
-## OptiType
+## FastQC
 
-[OptiType](https://github.com/FRED-2/OptiType) is an HLA genotyping algorithm based on linear integer programming. It provides accurate 4-digit HLA genotyping predictions from NGS data.
-For further reading and documentation see the [OptiType documentation](https://github.com/FRED-2/OptiType).
+[FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) gives general quality metrics about your sequenced reads. It provides information about the quality score distribution across your reads, per base sequence content (%A/T/G/C), adapter contamination and overrepresented sequences.
 
-The pipeline results contain a CSV file with the predicted HLA genotype. Each line contains one solution with the predicted HLA alleles in 4-digit nomenclature, the number of reads that are covered by this solution and the objective function value. If the number of enumerations (--enumerate N) is higher than 1, the CSV file will contain the optimal and sub-optimal solutions.
+For further reading and documentation see the [FastQC help pages](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/).
 
-```tsv
-    A1  A2  B1  B2  C1  C2  Reads   Objective
-0   A*01:01 A*01:01 B*08:01 B*57:01 C*07:01 C*06:02 1127.0  1106.7139999999997
-```
+**Output files:**
 
-Additionally, a coverage plot of the predicted HLA genotype is produced for quality control purposes (see below). The coverage plot shows the amount of reads that cover every position of the selected HLA allele sequence. Further, the color encoding denotes if reads are paired or unpaired, contain mismatches, and if the matches are unique or ambiguous. In case of homozygous solutions, the coverage plot of the corresponding HLA allele will be shown once.
+* `fastqc/`
+  * `*_fastqc.html`: FastQC report containing quality metrics for your untrimmed raw fastq files.
+* `fastqc/zips/`
+  * `*_fastqc.zip`: Zip archive containing the FastQC report, tab-delimited data file and plot images.
 
-![coverage_plot](images/sample_coverage_plot.png)
-
-**Output directory: `results/{timestamp}`**
-
-* `{prefix}_{timestamp}_result.tsv`
-  * TSV file, containing the predicted optimal (anf if enumerated, sub-optimal) HLA genotype
-* `{prefix}_{timestamp}_coverage_plot.pdf`
-  * pdf file, containing a coverage plot of the predicted alleles
+> **NB:** The FastQC plots displayed in the MultiQC report shows _untrimmed_ reads. They may contain adapter sequence and potentially regions with low quality.
 
 ## MultiQC
 

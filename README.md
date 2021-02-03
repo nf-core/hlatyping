@@ -1,9 +1,10 @@
 # ![nf-core/hlatyping](docs/images/nf-core-hlatyping_logo.png)
 
+**Precision HLA typing from next-generation sequencing data.**.
+
 [![GitHub Actions CI Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/hlatyping/actions)
 [![GitHub Actions Linting Status](https://github.com/nf-core/hlatyping/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/hlatyping/actions)
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A520.04.0-brightgreen.svg)](https://www.nextflow.io/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1401039.svg)](https://doi.org/10.5281/zenodo.1401039)
 
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](https://bioconda.github.io/)
 [![Docker](https://img.shields.io/docker/automated/nfcore/hlatyping.svg)](https://hub.docker.com/r/nfcore/hlatyping)
@@ -11,7 +12,9 @@
 
 ## Introduction
 
-The pipeline does next-generation sequencing-based Human Leukocyte Antigen (HLA) typing using [OptiType](https://github.com/FRED-2/OptiType). OptiType is a HLA genotyping algorithm based on integer linear programming. Reads of whole exome/genome/transcriptome sequencing data are mapped against a reference of known MHC class I alleles. To produce accurate 4-digit HLA genotyping predictions, all major and minor HLA-I loci are considered simultaneously to find an allele combination that maximizes the number of explained reads.
+<!-- TODO nf-core: Write a 1-2 sentence summary of what data the pipeline is for and what it does -->
+**nf-core/hlatyping** is a bioinformatics best-practise analysis pipeline for
+
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
 
 ## Quick Start
@@ -30,35 +33,32 @@ The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool
 
 4. Start running your own analysis!
 
+    <!-- TODO nf-core: Update the example "typical command" below used to run the pipeline -->
+
     ```bash
-    nextflow run nf-core/hlatyping -profile <docker/singularity/podman/conda/institute> --input '*_R{1,2}.fastq.gz'
+    nextflow run nf-core/hlatyping -profile <docker/singularity/podman/conda/institute> --input '*_R{1,2}.fastq.gz' --genome GRCh37
     ```
 
 See [usage docs](https://nf-co.re/hlatyping/usage) for all of the available options when running the pipeline.
 
+## Pipeline Summary
+
+By default, the pipeline currently performs the following:
+
+<!-- TODO nf-core: Fill in short bullet-pointed list of default steps of pipeline -->
+
+* Sequencing quality control (`FastQC`)
+* Overall pipeline run summaries (`MultiQC`)
+
 ## Documentation
 
-The nf-core/hlatyping pipeline comes with documentation about the pipeline which you can read at [https://nf-co.re/hlatyping](https://nf-co.re/hlatyping).
+The nf-core/hlatyping pipeline comes with documentation about the pipeline: [usage](https://nf-co.re/hlatyping/usage) and [output](https://nf-co.re/hlatyping/output).
 
-### Pipeline DAG
-
-The hlatyping pipeline can currently deal with two input formats: `.fastq{.gz}` or `.bam`, not both at the same time however. If the input file type is `bam`, than the pipeline extracts all reads from it and performs an mapping additional step with the `yara` mapper against the HLA reference sequence. Indices are provided in the `./data` directory of this repository. Optitype uses [razers3](https://github.com/seqan/seqan/tree/master/apps/razers3), which is very memory consuming. In order to avoid memory issues during pipeline execution, we reduce the mapping information on the relevant HLA regions on chromosome 6.
-
-#### DAG with `.fastq{.gz}` as input
-
-Creates a config file from the command line arguments, which is then passed to OptiType. In parallel, the fastqs are unzipped if they are passed as archives. OptiType is then used for the HLA typing.
-
-![DAG with `fastq.{gz}` files](docs/images/hlatyping_dag_fastq.png)
-
-#### DAG with `.bam` as input
-
-Creates a config file from the command line arguments, which is then passed to OptiType. In parallel, the reads are extracted from the bam file and mapped again against the HLA reference sequence on chromosome 6. OptiType is then used for the HLA typing.
-
-![DAG with `.bam` file](docs/images/hlatyping_dag_bam.png)
+<!-- TODO nf-core: Add a brief overview of what the pipeline does and how it works -->
 
 ## Credits
 
-nf-core/hlatyping was originally written by [Christopher Mohr](https://github.com/christopher-mohr) from [Institute for Translational Bioinformatics](https://kohlbacherlab.org/team_tbi/) and [Quantitative Biology Center](https://uni-tuebingen.de/forschung/forschungsinfrastruktur/zentrum-fuer-quantitative-biologie-qbic/),  [Alexander Peltzer](https://github.com/apeltzer) from [Böhringer Ingelheim](https://www.boehringer-ingelheim.de), and [Sven Fillinger](https://github.com/sven1103) from [Quantitative Biology Center](https://uni-tuebingen.de/forschung/forschungsinfrastruktur/zentrum-fuer-quantitative-biologie-qbic/).
+nf-core/hlatyping was originally written by Christopher Mohr, Alexander Peltzer, Sven Fillinger.
 
 We thank the following people for their extensive assistance in the development
 of this pipeline:
@@ -73,7 +73,8 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 ## Citations
 
-If you use  nf-core/hlatyping for your analysis, please cite it using the following doi: [10.5281/zenodo.1401039](https://doi.org/10.5281/zenodo.1401039)
+<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi. -->
+<!-- If you use  nf-core/hlatyping for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
 
 You can cite the `nf-core` publication as follows:
 

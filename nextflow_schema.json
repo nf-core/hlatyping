@@ -17,34 +17,14 @@
                 "input": {
                     "type": "string",
                     "fa_icon": "fas fa-dna",
-                    "description": "Input FastQ or BAM files.",
+                    "description": "Input FastQ files.",
                     "help_text": "Use this to specify the location of your input FastQ files. For example:\n\n```bash\n--input 'path/to/data/sample_*_{1,2}.fastq'\n```\n\nPlease note the following requirements:\n\n1. The path must be enclosed in quotes\n2. The path must have at least one `*` wildcard character\n3. When using the pipeline with paired end data, the path must use `{1,2}` notation to specify read pairs.\n\nIf left unspecified, a default pattern is used: `data/*{1,2}.fastq.gz`"
-                },
-                "input_paths": {
-                    "type": "string",
-                    "fa_icon": "fas fa-dna",
-                    "description": "Input multiple FastQ or BAM files.",
-                    "default": "undefined",
-                    "hidden": true
                 },
                 "single_end": {
                     "type": "boolean",
                     "description": "Specifies that the input is single-end reads.",
                     "fa_icon": "fas fa-align-center",
                     "help_text": "By default, the pipeline expects paired-end data. If you have single-end data, you need to specify `--single_end` on the command line when you launch the pipeline. A normal glob pattern, enclosed in quotation marks, can then be used for `--input`. For example:\n\n```bash\n--single_end --input '*.fastq'\n```\n\nIt is not possible to run a mixture of single-end and paired-end files in one run."
-                },
-                "bam": {
-                    "type": "boolean",
-                    "description": "Specifies that the input is in BAM format.",
-                    "help_text": "By default, the pipeline expects input data as `.fastq{.gz}`. You can also provide `.bam` files as input and combine it with the `--single_end` option, if necessary.\n\nThis will trigger the pipeline to extract the reads from the `.bam` file and remap them against the HLA reference sequence, using the `yara` mapper. Indices and references are shipped with this pipeline.",
-                    "fa_icon": "fas fa-file-archive"
-                },
-                "seqtype": {
-                    "type": "string",
-                    "default": "dna",
-                    "description": "Specifies whether the input is DNA or RNA.",
-                    "help_text": "By default, the pipeline assumes `DNA` as input sequence type. In case you want to use `RNA` data as input, just provide the option with `--seqtype 'rna'`.",
-                    "fa_icon": "fas fa-vials"
                 },
                 "outdir": {
                     "type": "string",
@@ -61,42 +41,24 @@
                 }
             }
         },
-        "optimisation_step_options": {
-            "title": "Optimisation step options",
-            "type": "object",
-            "description": "Options for the optimisation step of the HLA typing pipeline.",
-            "default": "",
-            "fa_icon": "fas fa-calculator",
-            "properties": {
-                "solver": {
-                    "type": "string",
-                    "default": "glpk",
-                    "help_text": "By default, the pipeline uses the `glpk` integer programming (IP) solver. With this pipeline, there is also native support for the `cbc` solver, just pass it as argument with `--solver 'cbc'`, and the pipeline will run OptiType using this IP solver.",
-                    "description": "Specifies the integer programming solver.",
-                    "fa_icon": "fas fa-cogs"
-                },
-                "enumerations": {
-                    "type": "integer",
-                    "default": "1",
-                    "fa_icon": "fas fa-sort-amount-up",
-                    "help_text": "By default, the pipeline will do one enumeration (`--enumerations 1`). If you want OptiType to output the optimal solution and the top `N-1` suboptimal solutions in the result file, please specify the number of enumerations accordingly.",
-                    "description": "Specifies the number of output solutions."
-                },
-                "beta": {
-                    "type": "number",
-                    "default": 0.009,
-                    "fa_icon": "fas fa-braille",
-                    "help_text": "By default, the pipeline uses a beta value of `0.009`. The constant beta weights the regularisation term of the underlying integer linear program to account for homozygosity since the formulation favors heterozygous allele combinations. Beta represents the proportion of reads that need to be additionally explained by a chosen allele combination in order to choose heterzygous solutions over homzygous solutions. Evaluation of different values for beta showed the best performance with `0.009`. Please refer to the original publication of OptiType (doi: 10.1093/bioinformatics/btu548) for details.",
-                    "description": "Specifies the weight of the regularisation term."
-                }
-            }
-        },
         "reference_genome_options": {
             "title": "Reference genome options",
             "type": "object",
             "fa_icon": "fas fa-dna",
             "description": "Options for the reference genome indices used to align reads.",
             "properties": {
+                "genome": {
+                    "type": "string",
+                    "description": "Name of iGenomes reference.",
+                    "fa_icon": "fas fa-book",
+                    "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`.\n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
+                },
+                "fasta": {
+                    "type": "string",
+                    "fa_icon": "fas fa-font",
+                    "description": "Path to FASTA genome file.",
+                    "help_text": "If you have no genome reference available, the pipeline can build one using a FASTA file. This requires additional time and resources, so it's better to use a pre-build index if possible."
+                },
                 "igenomes_base": {
                     "type": "string",
                     "description": "Directory / URL base for iGenomes references.",
@@ -110,18 +72,6 @@
                     "fa_icon": "fas fa-ban",
                     "hidden": true,
                     "help_text": "Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`."
-                },
-                "base_index_path": {
-                    "type": "string",
-                    "default": "$baseDir/data/indices/yara",
-                    "description": "Path for the mapping reference index location.",
-                    "fa_icon": "far fa-folder"
-                },
-                "base_index_name": {
-                    "type": "string",
-                    "default": "",
-                    "description": "Name of the mapping reference index.",
-                    "fa_icon": "fas fa-file-signature"
                 }
             }
         },
@@ -215,7 +165,7 @@
             "properties": {
                 "max_cpus": {
                     "type": "integer",
-                    "description": "Maximum number of CPUs that can be requested for any single job.",
+                    "description": "Maximum number of CPUs that can be requested    for any single job.",
                     "default": 16,
                     "fa_icon": "fas fa-microchip",
                     "hidden": true,
@@ -292,9 +242,6 @@
     "allOf": [
         {
             "$ref": "#/definitions/input_output_options"
-        },
-        {
-            "$ref": "#/definitions/optimisation_step_options"
         },
         {
             "$ref": "#/definitions/reference_genome_options"
