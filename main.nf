@@ -220,17 +220,20 @@ if ( !params.bam  ) { // FASTQ files processing
         set val(pattern), file(reads) from input_data
 
         output:
-        set val(pattern), "unzipped_{1,2}.fastq" into raw_reads
+        set val(pattern), file(reads) into raw_reads
+        // set val(pattern), "unzipped_{1,2}.fastq" into raw_reads
 
         script:
         if(params.single_end)
             """
-            zcat ${reads[0]} > unzipped_1.fastq
+            #zcat ${reads[0]} > unzipped_1.fastq
+            echo ""
             """
         else
             """
-            zcat ${reads[0]} > unzipped_1.fastq
-            zcat ${reads[1]} > unzipped_2.fastq
+            #zcat ${reads[0]} > unzipped_1.fastq
+            #zcat ${reads[1]} > unzipped_2.fastq
+            echo ""
             """
     }
 } else { // BAM files processing
