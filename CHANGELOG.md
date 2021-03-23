@@ -1,3 +1,16 @@
+# nf-core/hlatyping: Changelog
 
-## 0.1.0 - 2018-06-01
-Initial release of nf-core/hlatyping, created with the NGI-NFcookiecutter template: https://github.com/ewels/NGI-NFcookiecutter.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## v1.2.1dev - [date]
+
+Initial release of nf-core/hlatyping, created with the [nf-core](https://nf-co.re/) template.
+
+### `Added`
+
+### `Fixed`
+
+### `Dependencies`
+
+### `Deprecated`
