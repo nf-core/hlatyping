@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Changed`
 
 ### `Fixed`
+- [#131](https://github.com/nf-core/hlatyping/pull/131) - Make plots folder optional if empty
 
 ## 1.2.0 - lead-sparrow - 2020-08-21
 
