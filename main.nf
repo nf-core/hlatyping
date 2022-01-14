@@ -41,11 +41,11 @@ def helpMessage() {
       --base_index_name [str]         Name of the mapping reference index.
 
     Resource options:
-      --max_memory [str]              Maximum amount of memory that can be requested for any single job (format integer.unit). 
+      --max_memory [str]              Maximum amount of memory that can be requested for any single job (format integer.unit).
                                       Default: '${params.max_memory}'
       --max_time [str]                Maximum amount of time that can be requested for any single job (format integer.unit).
                                       Default: '${params.max_time}'
-      --max_cpus [int]                Maximum number of CPUs that can be requested for any single job. 
+      --max_cpus [int]                Maximum number of CPUs that can be requested for any single job.
                                       Default: ${params.max_cpus}
 
     Other options:
@@ -410,8 +410,8 @@ process multiqc {
 
     output:
     file "*multiqc_report.html" into ch_multiqc_report
-    file "*_data"
-    file "multiqc_plots"
+    path "*_data"
+    path "*_plots" , optional:true
 
     script:
     rtitle = custom_runName ? "--title \"$custom_runName\"" : ''
