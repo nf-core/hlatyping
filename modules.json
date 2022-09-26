@@ -7,15 +7,15 @@
             "modules": {
                 "custom/dumpsoftwareversions": {
                     "branch": "master",
-                    "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
+                    "git_sha": "5e7b1ef9a5a2d9258635bcbf70fcf37dacd1b247"
                 },
                 "fastqc": {
                     "branch": "master",
-                    "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
+                    "git_sha": "49b18b1639f4f7104187058866a8fab33332bdfe"
                 },
                 "multiqc": {
                     "branch": "master",
-                    "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
+                    "git_sha": "90aef30f432332bdf0ce9f4b9004aa5d5c4960bb"
                 }
             }
         }
