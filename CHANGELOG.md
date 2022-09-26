@@ -3,13 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.2.1dev - 2020-08-21
+## v1.2.1dev - [date]
 
 ### `Added`
 
-### `Changed`
-
 ### `Fixed`
+
+### `Dependencies`
+
+### `Deprecated`
 
 ## 1.2.0 - lead-sparrow - 2020-08-21
 
@@ -62,4 +64,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.0.0 - 2018-07-17
 
-Initial release of nf-core/hlatyping, created with the [NGI-NF cookiecutter template](https://github.com/ewels/NGI-NFcookiecutter).
+# Initial release of nf-core/hlatyping, created with the [NGI-NF cookiecutter template](https://github.com/ewels/NGI-NFcookiecutter)
