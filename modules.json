@@ -28,6 +28,10 @@
                 "samtools/view": {
                     "branch": "master",
                     "git_sha": "09159edc9e13542375cc355ed8e615807276ed43"
+                },
+                "yara/mapper": {
+                    "branch": "master",
+                    "git_sha": "897c33d5da084b61109500ee44c01da2d3e4e773"
                 }
             }
         }
