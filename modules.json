@@ -13,6 +13,10 @@
                     "branch": "master",
                     "git_sha": "49b18b1639f4f7104187058866a8fab33332bdfe"
                 },
+                "gunzip": {
+                    "branch": "master",
+                    "git_sha": "90aef30f432332bdf0ce9f4b9004aa5d5c4960bb"
+                },
                 "multiqc": {
                     "branch": "master",
                     "git_sha": "90aef30f432332bdf0ce9f4b9004aa5d5c4960bb"
