@@ -110,17 +110,6 @@
                     "fa_icon": "fas fa-ban",
                     "hidden": true,
                     "help_text": "Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`."
-                },
-                "base_index_path": {
-                    "type": "string",
-                    "default": "$baseDir/data/indices/yara",
-                    "description": "Path for the mapping reference index location.",
-                    "fa_icon": "far fa-folder"
-                },
-                "base_index_name": {
-                    "type": "string",
-                    "description": "Name of the mapping reference index.",
-                    "fa_icon": "fas fa-file-signature"
                 }
             }
         },
