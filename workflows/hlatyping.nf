@@ -54,7 +54,6 @@ include { GUNZIP                      } from '../modules/nf-core/modules/gunzip/
 include { OPTITYPE                    } from '../modules/nf-core/modules/optitype/main'
 include { CHECK_PAIRED                } from '../modules/local/check_paired'
 include { SAMTOOLS_COLLATEFASTQ       } from '../modules/nf-core/modules/samtools/collatefastq/main'
-include { SAMTOOLS_BAM2FQ as BAM2FQ   } from '../modules/nf-core/modules/samtools/bam2fq/main'
 include { SAMTOOLS_VIEW               } from '../modules/nf-core/modules/samtools/view/main'
 include { YARA_INDEX                  } from '../modules/nf-core/modules/yara/index/main'
 include { YARA_MAPPER                 } from '../modules/nf-core/modules/yara/mapper/main'
