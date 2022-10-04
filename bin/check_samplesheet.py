@@ -91,7 +91,7 @@ class RowChecker:
 
     def _validate_first(self, row):
         """Assert that the first FASTQ entry is non-empty and has the right format."""
-        bam_provided = row[self._bam_col] != ""
+        bam_provided = (self._bam_col in row) and (row[self._bam_col] != "")
         if (len(row[self._first_col]) <= 0) and (not bam_provided):
             raise AssertionError("At least the first FASTQ file is required.")
         self._validate_fastq_format(row[self._first_col], bam_provided)
@@ -99,7 +99,7 @@ class RowChecker:
     def _validate_second(self, row):
         """Assert that the second FASTQ entry has the right format if it exists."""
         if len(row[self._second_col]) > 0:
-            bam_provided = row[self._bam_col] != ""
+            bam_provided = (self._bam_col in row) and (row[self._bam_col] != "")
             self._validate_fastq_format(row[self._second_col], bam_provided)
 
     def _validate_pair(self, row):
@@ -122,7 +122,7 @@ class RowChecker:
             )
 
     def _validate_bam(self, row):
-        bam_provided = row[self._bam_col] != ""
+        bam_provided = (self._bam_col in row) and (row[self._bam_col] != "")
         """Assert that a given filename has the expected BAM extension."""
         if bam_provided and not row[self._bam_col].endswith("bam"):
             raise AssertionError(

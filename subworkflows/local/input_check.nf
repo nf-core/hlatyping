@@ -35,7 +35,7 @@ def create_fastq_channel(LinkedHashMap row) {
     }
 
     // add path(s) of the fastq file(s) to the meta map
-    def bam_provided = row["bam"] != ""
+    def bam_provided = ("bam" in row) & (row["bam"] != "")
     def fastq_provided = row["fastq_1"] != ""
     def fastq_meta = []
 
