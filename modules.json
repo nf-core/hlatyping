@@ -25,10 +25,6 @@
                     "branch": "master",
                     "git_sha": "73aaecbc3ae62a124e1148b68b1a69dcfd9db0ed"
                 },
-                "samtools/bam2fq": {
-                    "branch": "master",
-                    "git_sha": "5510ea39fe638594bc26ac34cadf4a84bf27d159"
-                },
                 "samtools/collatefastq": {
                     "branch": "master",
                     "git_sha": "705f8c9ac4dfdf07666e71abde28f267e2dfd5eb"
