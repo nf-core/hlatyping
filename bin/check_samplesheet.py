@@ -27,6 +27,9 @@ class RowChecker:
     VALID_FORMATS = (
         ".fq.gz",
         ".fastq.gz",
+        ".fq",
+        ".fastq",
+        ".bam"
     )
 
     def __init__(
@@ -35,6 +38,7 @@ class RowChecker:
         first_col="fastq_1",
         second_col="fastq_2",
         single_col="single_end",
+        bam_col="bam",
         **kwargs,
     ):
         """
@@ -57,6 +61,7 @@ class RowChecker:
         self._first_col = first_col
         self._second_col = second_col
         self._single_col = single_col
+        self._bam_col = bam_col
         self._seen = set()
         self.modified = []
 
@@ -73,6 +78,7 @@ class RowChecker:
         self._validate_first(row)
         self._validate_second(row)
         self._validate_pair(row)
+        self._validate_bam(row)
         self._seen.add((row[self._sample_col], row[self._first_col]))
         self.modified.append(row)
 
@@ -85,14 +91,16 @@ class RowChecker:
 
     def _validate_first(self, row):
         """Assert that the first FASTQ entry is non-empty and has the right format."""
-        if len(row[self._first_col]) <= 0:
+        bam_provided = row[self._bam_col] != ""
+        if (len(row[self._first_col]) <= 0) and (not bam_provided):
             raise AssertionError("At least the first FASTQ file is required.")
-        self._validate_fastq_format(row[self._first_col])
+        self._validate_fastq_format(row[self._first_col], bam_provided)
 
     def _validate_second(self, row):
         """Assert that the second FASTQ entry has the right format if it exists."""
         if len(row[self._second_col]) > 0:
-            self._validate_fastq_format(row[self._second_col])
+            bam_provided = row[self._bam_col] != ""
+            self._validate_fastq_format(row[self._second_col], bam_provided)
 
     def _validate_pair(self, row):
         """Assert that read pairs have the same file extension. Report pair status."""
@@ -105,11 +113,20 @@ class RowChecker:
         else:
             row[self._single_col] = True
 
-    def _validate_fastq_format(self, filename):
+    def _validate_fastq_format(self, filename, bam_provided):
         """Assert that a given filename has one of the expected FASTQ extensions."""
-        if not any(filename.endswith(extension) for extension in self.VALID_FORMATS):
+        if not any(filename.endswith(extension) for extension in self.VALID_FORMATS) and not bam_provided:
             raise AssertionError(
                 f"The FASTQ file has an unrecognized extension: {filename}\n"
+                f"It should be one of: {', '.join(self.VALID_FORMATS)}"
+            )
+
+    def _validate_bam(self, row):
+        bam_provided = row[self._bam_col] != ""
+        """Assert that a given filename has the expected BAM extension."""
+        if bam_provided and not row[self._bam_col].endswith("bam"):
+            raise AssertionError(
+                f"The BAM file has an unrecognized extension: {row[self._bam_col]}\n"
                 f"It should be one of: {', '.join(self.VALID_FORMATS)}"
             )
 
@@ -186,6 +203,11 @@ def check_samplesheet(file_in, file_out):
             SAMPLE_PE,SAMPLE_PE_RUN1_1.fastq.gz,SAMPLE_PE_RUN1_2.fastq.gz
             SAMPLE_PE,SAMPLE_PE_RUN2_1.fastq.gz,SAMPLE_PE_RUN2_2.fastq.gz
             SAMPLE_SE,SAMPLE_SE_RUN1_1.fastq.gz,
+
+            or
+            sample,fastq_1,fastq_2,bam
+            SAMPLE_PE,,SAMPLE_PE.bam
+
 
     .. _viral recon samplesheet:
         https://raw.githubusercontent.com/nf-core/test-datasets/viralrecon/samplesheet/samplesheet_test_illumina_amplicon.csv

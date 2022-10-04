@@ -29,9 +29,17 @@
                     "branch": "master",
                     "git_sha": "5510ea39fe638594bc26ac34cadf4a84bf27d159"
                 },
+                "samtools/collatefastq": {
+                    "branch": "master",
+                    "git_sha": "705f8c9ac4dfdf07666e71abde28f267e2dfd5eb"
+                },
                 "samtools/view": {
                     "branch": "master",
                     "git_sha": "09159edc9e13542375cc355ed8e615807276ed43"
+                },
+                "yara/index": {
+                    "branch": "master",
+                    "git_sha": "f0800157544a82ae222931764483331a81812012"
                 },
                 "yara/mapper": {
                     "branch": "master",
