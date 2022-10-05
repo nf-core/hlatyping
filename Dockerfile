@@ -1,6 +1,6 @@
 FROM nfcore/base:1.10.2
 LABEL authors="Christopher Mohr, Alexander Peltzer, Sven Fillinger" \
-      description="Docker image containing all software requirements for the nf-core/hlatyping pipeline"
+    description="Docker image containing all software requirements for the nf-core/hlatyping pipeline"
 
 # Install the conda environment
 COPY environment.yml /
