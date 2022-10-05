@@ -40,9 +40,6 @@ jobs:
     name: Run profile tests
     if: ${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'nf-core/hlatyping') }}
     runs-on: ubuntu-latest
-    env:
-      NXF_VER: ${{ matrix.nxf_ver }}
-      NXF_ANSI_LOG: false
     strategy:
       matrix:
         NXF_VER:
