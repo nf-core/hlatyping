@@ -4,7 +4,8 @@
     nf-core/hlatyping
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Github : https://github.com/nf-core/hlatyping
-Website: https://nf-co.re/hlatyping
+
+    Website: https://nf-co.re/hlatyping
     Slack  : https://nfcore.slack.com/channels/hlatyping
 ----------------------------------------------------------------------------------------
 */

@@ -2,44 +2,45 @@
     "name": "nf-core/hlatyping",
     "homePage": "https://github.com/nf-core/hlatyping",
     "repos": {
-        "nf-core/modules": {
-            "git_url": "https://github.com/nf-core/modules.git",
+        "https://github.com/nf-core/modules.git": {
             "modules": {
-                "custom/dumpsoftwareversions": {
-                    "branch": "master",
-                    "git_sha": "5e7b1ef9a5a2d9258635bcbf70fcf37dacd1b247"
-                },
-                "fastqc": {
-                    "branch": "master",
-                    "git_sha": "49b18b1639f4f7104187058866a8fab33332bdfe"
-                },
-                "gunzip": {
-                    "branch": "master",
-                    "git_sha": "90aef30f432332bdf0ce9f4b9004aa5d5c4960bb"
-                },
-                "multiqc": {
-                    "branch": "master",
-                    "git_sha": "90aef30f432332bdf0ce9f4b9004aa5d5c4960bb"
-                },
-                "optitype": {
-                    "branch": "master",
-                    "git_sha": "73aaecbc3ae62a124e1148b68b1a69dcfd9db0ed"
-                },
-                "samtools/collatefastq": {
-                    "branch": "master",
-                    "git_sha": "705f8c9ac4dfdf07666e71abde28f267e2dfd5eb"
-                },
-                "samtools/view": {
-                    "branch": "master",
-                    "git_sha": "09159edc9e13542375cc355ed8e615807276ed43"
-                },
-                "yara/index": {
-                    "branch": "master",
-                    "git_sha": "f0800157544a82ae222931764483331a81812012"
-                },
-                "yara/mapper": {
-                    "branch": "master",
-                    "git_sha": "897c33d5da084b61109500ee44c01da2d3e4e773"
+                "nf-core": {
+                    "custom/dumpsoftwareversions": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                    },
+                    "fastqc": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                    },
+                    "gunzip": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                    },
+                    "multiqc": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                    },
+                    "optitype": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                    },
+                    "samtools/collatefastq": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                    },
+                    "samtools/view": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                    },
+                    "yara/index": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                    },
+                    "yara/mapper": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                    }
                 }
             }
         }
