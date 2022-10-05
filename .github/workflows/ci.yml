@@ -49,11 +49,7 @@ jobs:
         NXF_VER:
           - "21.10.3"
           - "latest-everything"
-        tests:
-          [
-            "test_fastq",
-            "test_rna"
-          ]
+        tests: ["test_fastq", "test_rna"]
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v2

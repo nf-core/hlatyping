@@ -30,14 +30,14 @@
                     }
                 ]
             },
-            "seq_type": {"errorMessage": "Sequencing type must be one of the following: 'dna', 'rna'",
-            "anyOf": [
-                {
-                    "type": "string",
-                    "pattern": "^(dna|rna)$"
-                }
-            ]
-
+            "seq_type": {
+                "errorMessage": "Sequencing type must be one of the following: 'dna', 'rna'",
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "^(dna|rna)$"
+                    }
+                ]
             }
         },
         "required": ["sample", "fastq_1", "seq_type"]
