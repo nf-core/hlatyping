@@ -12,7 +12,16 @@ indent_style = space
 indent_size = 2
 
 # These files are edited and tested upstream in nf-core/modules
-{/modules/nf-core/**, /data/references/alleles*}
+[/modules/nf-core/**]
+charset = unset
+end_of_line = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
+indent_style = unset
+indent_size = unset
+
+# Unset for allele references
+[/data/references/alleles*]
 charset = unset
 end_of_line = unset
 insert_final_newline = unset
