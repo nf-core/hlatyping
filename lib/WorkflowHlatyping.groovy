@@ -12,11 +12,10 @@ class WorkflowHlatyping {
     public static void initialise(params, log) {
         genomeExistsError(params, log)
 
-
-        if (!params.fasta) {
-            log.error "HLA fasta file not specified with e.g. '--fasta hla.fa' or via a detectable config file."
-            System.exit(1)
-        }
+        //if (!params.fasta) {
+        //    log.error "HLA fasta file not specified with e.g. '--fasta hla.fa' or via a detectable config file."
+        //    System.exit(1)
+        //}
     }
 
     //

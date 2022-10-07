@@ -9,9 +9,8 @@ def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
 // Validate input parameters
 WorkflowHlatyping.initialise(params, log)
 
-// TODO nf-core: Add all file path parameters for the pipeline to the list below
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config, params.fasta ]
+def checkPathParamList = [ params.input, params.multiqc_config ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
@@ -123,6 +122,12 @@ workflow HLATYPING {
         }
         .set { ch_filtered_bam2fq }
 
+    ch_input_files.fastq
+        .mix(ch_filtered_bam2fq)
+        .map { meta, reads ->
+                [ meta, file("$projectDir/data/references/hla_reference_${meta['seq_type']}.fasta") ]
+        }
+        .set { ch_input_with_references }
 
     //
     // MODULE: Run FastQC
@@ -138,9 +143,21 @@ workflow HLATYPING {
     // MODULE: Run Yara indexing on HLA reference
     //
     YARA_INDEX (
-        params.fasta
+        ch_input_with_references
     )
     ch_versions = ch_versions.mix(YARA_INDEX.out.versions)
+
+    //
+    // Map sample-specific reads and index
+    //
+    ch_input_files.fastq
+        .mix(ch_filtered_bam2fq)
+        .cross(YARA_INDEX.out.index)
+        .multiMap { reads, index ->
+            reads: reads
+            index: index
+        }
+        .set { ch_mapping_input }
 
 
     //
@@ -153,9 +170,8 @@ workflow HLATYPING {
     // here with the `yara` mapper, and map against the HLA reference only.
     //
     YARA_MAPPER (
-        ch_input_files.fastq
-        .mix(ch_filtered_bam2fq),
-        YARA_INDEX.out.index
+        ch_mapping_input.reads,
+        ch_mapping_input.index
     )
     ch_versions = ch_versions.mix(YARA_MAPPER.out.versions)
 
