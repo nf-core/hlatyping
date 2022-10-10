@@ -21,10 +21,11 @@ On release, automated continuous integration tests run the pipeline on a full-si
 
 ## Pipeline summary
 
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
-
 1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+2. Generate reference indices ([`yara`](https://www.seqan.de/apps/yara.html))
+3. Map reads to reference ([`yara`](https://www.seqan.de/apps/yara.html))
+4. Run HLA typing ([`OptiType`](https://github.com/FRED-2/OptiType))
+5. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
 
 ## Quick Start
 
