@@ -2,4 +2,4 @@
 default: true,
 line-length: false
 no-duplicate-header:
-    siblings_only: true
+  siblings_only: true
