@@ -6,7 +6,7 @@
 
 ## Introduction
 
-The hlatyping pipeline can currently deal with two input formats: `.fastq{.gz}` or `.bam`, not both at the same time however. If the input file type is `bam`, than the pipeline extracts all reads from it and performs an mapping additional step with the `yara` mapper against the HLA reference sequence. Indices are provided in the `./data` directory of this repository. Optitype uses [razers3](https://github.com/seqan/seqan/tree/master/apps/razers3), which is very memory consuming. In order to avoid memory issues during pipeline execution, we reduce the mapping information on the relevant HLA regions on chromosome 6.
+The `hlatyping` pipeline can currently deal with two input formats: `.fastq{.gz}` or `.bam`. If the input file type is `bam`, than the pipeline extracts all reads from it and performs an mapping additional step with the `yara` mapper against the HLA reference sequence. Indices are generated using `yara`. OptiType uses [razers3](https://github.com/seqan/seqan/tree/master/apps/razers3), which is very memory consuming. In order to avoid memory issues during pipeline execution, we reduce the mapping information on the relevant HLA regions on chromosome 6.
 
 ### DAG with `.fastq{.gz}` as input
 
@@ -85,7 +85,7 @@ work                # Directory containing the nextflow working files
 
 ### HLA references
 
-The **nf-core/hlatyping** pipeline uses a default HLA reference which is located in the pipelines root directory in `./data/references` and the corresponding mapper indices in `./data/indices/yara`. The references are based on the IMGT/HLA Release 3.14.0, July 2013, and have been processed as described in the [publication](https://doi.org/10.1093/bioinformatics/btu548) of OptiType.
+The **nf-core/hlatyping** pipeline uses a default HLA reference which is located in the pipelines root directory in `./data/references`. The references are based on the IMGT/HLA Release 3.14.0, July 2013, and have been processed as described in the [publication](https://doi.org/10.1093/bioinformatics/btu548) of OptiType. The reference is automatically set during the pipeline execution based on the information provided in the `seq_type` column of the samplesheet (`dna` or `rna`).
 
 You can always download new versions from the [HLA database](https://www.ebi.ac.uk/ipd/imgt/hla/docs/release.html), but be aware that these allele sets are missing intron sequence information, which will have a negative influence in the HLA typing outcome in case of DNAseq.
 
