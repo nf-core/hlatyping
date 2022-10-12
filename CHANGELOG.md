@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
+- [#141](https://github.com/nf-core/hlatyping/pull/141) - Add `OptiType` results to `MultiQC` report
+
 ### `Changed`
 
 - [#140](https://github.com/nf-core/hlatyping/pull/140) - Port pipeline to `DSL2`
