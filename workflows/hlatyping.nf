@@ -192,6 +192,7 @@ workflow HLATYPING {
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
 
+
     //
     // MODULE: MultiQC
     //
@@ -206,12 +207,13 @@ workflow HLATYPING {
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.output.collect{it[1]}.ifEmpty([]))
 
     MULTIQC (
         ch_multiqc_files.collect(),
         ch_multiqc_config.collect().ifEmpty([]),
         ch_multiqc_custom_config.collect().ifEmpty([]),
-        ch_multiqc_logo.collect().ifEmpty([])
+        ch_multiqc_logo.collect().ifEmpty([]),
     )
     multiqc_report = MULTIQC.out.report.toList()
     ch_versions    = ch_versions.mix(MULTIQC.out.versions)
