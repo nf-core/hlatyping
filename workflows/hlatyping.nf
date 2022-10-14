@@ -97,6 +97,7 @@ workflow HLATYPING {
             [meta, reads]
         }
         .set { ch_bam_pe_corrected }
+    ch_versions = ch_versions.mix(CHECK_PAIRED.out.versions)
 
 
     //
@@ -129,6 +130,7 @@ workflow HLATYPING {
         }
         .set { ch_input_with_references }
 
+
     //
     // MODULE: Run FastQC
     //
@@ -146,6 +148,7 @@ workflow HLATYPING {
         ch_input_with_references
     )
     ch_versions = ch_versions.mix(YARA_INDEX.out.versions)
+
 
     //
     // Map sample-specific reads and index
