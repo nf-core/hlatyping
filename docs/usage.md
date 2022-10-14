@@ -12,13 +12,13 @@ The `hlatyping` pipeline can currently deal with two input formats: `.fastq{.gz}
 
 Creates a config file from the command line arguments, which is then passed to OptiType. In parallel, the fastqs are unzipped if they are passed as archives. OptiType is then used for the HLA typing.
 
-![DAG with `fastq.{gz}` files](docs/images/hlatyping_dag_fastq.png)
+![DAG with `fastq.{gz}` files](images/hlatyping_dag_fastq.png)
 
 ### DAG with `.bam` as input
 
 Creates a config file from the command line arguments, which is then passed to OptiType. In parallel, the reads are extracted from the bam file and mapped again against the HLA reference sequence on chromosome 6. OptiType is then used for the HLA typing.
 
-![DAG with `.bam` file](docs/images/hlatyping_dag_bam.png)
+![DAG with `.bam` file](images/hlatyping_dag_bam.png)
 
 ## Samplesheet input
 
