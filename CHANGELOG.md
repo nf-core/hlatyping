@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v2.0.0dev - [date]
+## 2.0.0 - Han Solo - 2022-10-18
 
 ### `Added`
 
@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#140](https://github.com/nf-core/hlatyping/pull/140) - Port pipeline to `DSL2`
 - [#140](https://github.com/nf-core/hlatyping/pull/140) - Merge nf-core template updates up to `2.6`
+- [#140](https://github.com/nf-core/hlatyping/pull/140) - Support for BAM and FASTQ input in the same run
+- [#140](https://github.com/nf-core/hlatyping/pull/140) - Support for DNA and RNA input in the same run
 
 ### `Fixed`
 
