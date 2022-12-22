@@ -17,7 +17,7 @@
                     },
                     "gunzip": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
                         "installed_by": ["modules"]
                     },
                     "multiqc": {
@@ -42,12 +42,12 @@
                     },
                     "yara/index": {
                         "branch": "master",
-                        "git_sha": "6a5ea5708e1d7891bb71026eba98508866339d1e",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
                         "installed_by": ["modules"]
                     },
                     "yara/mapper": {
                         "branch": "master",
-                        "git_sha": "6a5ea5708e1d7891bb71026eba98508866339d1e",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
                         "installed_by": ["modules"]
                     }
                 }
