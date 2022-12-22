@@ -47,7 +47,7 @@ jobs:
     strategy:
       matrix:
         NXF_VER:
-          - "21.10.3"
+          - "22.10.1"
           - "latest-everything"
         tests: ["test_fastq", "test_rna", "test_dna_rna"]
     steps:
