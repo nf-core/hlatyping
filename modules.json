@@ -7,39 +7,48 @@
                 "nf-core": {
                     "custom/dumpsoftwareversions": {
                         "branch": "master",
-                        "git_sha": "8022c68e7403eecbd8ba9c49496f69f8c49d50f0"
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"]
                     },
                     "fastqc": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"]
                     },
                     "gunzip": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"]
                     },
                     "multiqc": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"]
                     },
                     "optitype": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"]
                     },
                     "samtools/collatefastq": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905",
+                        "installed_by": ["modules"]
                     },
                     "samtools/view": {
                         "branch": "master",
-                        "git_sha": "202683bfc98ddecdd456ea73268e330bca2e5c5a"
+                        "git_sha": "202683bfc98ddecdd456ea73268e330bca2e5c5a",
+                        "installed_by": ["modules"]
                     },
                     "yara/index": {
                         "branch": "master",
-                        "git_sha": "6a5ea5708e1d7891bb71026eba98508866339d1e"
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"]
                     },
                     "yara/mapper": {
                         "branch": "master",
-                        "git_sha": "6a5ea5708e1d7891bb71026eba98508866339d1e"
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"]
                     }
                 }
             }

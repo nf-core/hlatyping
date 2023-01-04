@@ -3,6 +3,20 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.1.0dev - [] - 2022-12-22
+
+### `Added`
+
+### `Changed`
+
+- [#152](https://github.com/nf-core/hlatyping/pull/152) - Merge nf-core template updates up to `2.7.2`
+
+### `Fixed`
+
+### `Dependencies`
+
+### `Deprecated`
+
 ## 2.0.0 - Han Solo - 2022-10-18
 
 ### `Added`
