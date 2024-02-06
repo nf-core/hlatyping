@@ -47,6 +47,7 @@ include { INPUT_CHECK } from '../subworkflows/local/input_check'
 //
 // MODULE: Installed directly from nf-core/modules
 //
+include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq'
 include { FASTQC                      } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
@@ -88,6 +89,26 @@ workflow HLATYPING {
             }
             .set { ch_input_files }
 
+    ch_input_files.fastq
+        .branch {
+            meta, fastqs ->
+                single  : fastqs.size() == 1
+                    return [ meta, fastqs.flatten() ]
+                multiple: fastqs.size() > 1
+                    return [ meta, fastqs.flatten() ]
+        }
+        .set { ch_fastq }
+
+    //
+    // MODULE: Concatenate FastQ files from same sample if required
+    //
+    CAT_FASTQ (
+        ch_fastq.multiple
+    )
+    .reads
+    .mix(ch_fastq.single)
+    .set { ch_cat_fastq }
+    ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first().ifEmpty(null))
 
     // determine BAM pairedness for fastq conversion
     CHECK_PAIRED (ch_input_files.bam )
@@ -123,7 +144,7 @@ workflow HLATYPING {
         }
         .set { ch_filtered_bam2fq }
 
-    ch_input_files.fastq
+    ch_cat_fastq
         .mix(ch_filtered_bam2fq)
         .map { meta, reads ->
                 [ meta, file("$projectDir/data/references/hla_reference_${meta['seq_type']}.fasta") ]
