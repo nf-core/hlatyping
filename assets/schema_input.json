@@ -10,15 +10,13 @@
             "sample": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Sample name must be provided and cannot contain spaces"
+                "errorMessage": "Sample name must be provided and cannot contain spaces",
+                "meta": ["id"]
             },
             "fastq_1": {
                 "type": "string",
                 "pattern": "^\\S+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
-            },
-            "fastq_2": {
-                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
+                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
                 "anyOf": [
                     {
                         "type": "string",
@@ -28,18 +26,47 @@
                         "type": "string",
                         "maxLength": 0
                     }
-                ]
+                ],
+                "format": "file-path",
+                "exists": true
             },
-            "seq_type": {
-                "errorMessage": "Sequencing type must be one of the following: 'dna', 'rna'",
+            "fastq_2": {
+                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
+                "dependentRequired": ["fastq_1"],
                 "anyOf": [
                     {
                         "type": "string",
-                        "pattern": "^(dna|rna)$"
+                        "pattern": "^\\S+\\.f(ast)?q\\.gz$"
+                    },
+                    {
+                        "type": "string",
+                        "maxLength": 0
                     }
-                ]
+                ],
+                "format": "file-path",
+                "exists": true
+            },
+            "bam": {
+                "errorMessage": "BAM file cannot contain spaces and must have extension '.bam'",
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "^\\S+\\.bam$"
+                    },
+                    {
+                        "type": "string",
+                        "maxLength": 0
+                    }
+                ],
+                "format": "file-path",
+                "exists": true
+            },
+            "seq_type": {
+                "errorMessage": "Sequencing type must be one of the following: 'dna', 'rna'",
+                "enum": ["dna","rna"],
+                "meta": ["seq_type"]
             }
         },
-        "required": ["sample", "fastq_1", "seq_type"]
+        "required": ["sample","seq_type"]
     }
 }
