@@ -19,6 +19,15 @@ class WorkflowHlatyping {
     }
 
     //
+    // Function to validate channels from input samplesheet
+    //
+    // TODO Copied stub from nf-core/rnaseq, need to add validation
+    public static ArrayList validateInput(input) {
+        def (metas, fastqs) = input[1..2]
+        return [ metas[0], fastqs ]
+    }
+
+    //
     // Get workflow summary for MultiQC
     //
     public static String paramsSummaryMultiqc(workflow, summary) {
