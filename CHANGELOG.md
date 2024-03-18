@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Changed`
 
 - [#152](https://github.com/nf-core/hlatyping/pull/152) - Merge nf-core template updates up to `2.7.2`
+- [#165](https://github.com/nf-core/hlatyping/pull/165) - Merge nf-core template updates up to `2.13.1`
 
 ### `Fixed`
 
