@@ -1,23 +1,5 @@
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    VALIDATE INPUTS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
-
-// Validate input parameters
-WorkflowHlatyping.initialise(params, log)
-
-// Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config ]
-for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
-
-// Check mandatory parameters
-if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CONFIG FILES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
@@ -36,7 +18,9 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
-include { INPUT_CHECK } from '../subworkflows/local/input_check'
+include { CHECK_PAIRED                } from '../modules/local/check_paired'
+
+include { methodsDescriptionText      } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,14 +33,17 @@ include { INPUT_CHECK } from '../subworkflows/local/input_check'
 //
 include { FASTQC                      } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
-include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 include { GUNZIP                      } from '../modules/nf-core/gunzip/main'
 include { OPTITYPE                    } from '../modules/nf-core/optitype/main'
-include { CHECK_PAIRED                } from '../modules/local/check_paired'
 include { SAMTOOLS_COLLATEFASTQ       } from '../modules/nf-core/samtools/collatefastq/main'
 include { SAMTOOLS_VIEW               } from '../modules/nf-core/samtools/view/main'
 include { YARA_INDEX                  } from '../modules/nf-core/yara/index/main'
 include { YARA_MAPPER                 } from '../modules/nf-core/yara/mapper/main'
+
+include { paramsSummaryMap            } from 'plugin/nf-validation'
+
+include { paramsSummaryMultiqc        } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { softwareVersionsToYAML      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -64,29 +51,23 @@ include { YARA_MAPPER                 } from '../modules/nf-core/yara/mapper/mai
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// Info required for completion email and summary
-def multiqc_report = []
-
 workflow HLATYPING {
 
-    ch_versions = Channel.empty()
+    take:
+    ch_samplesheet      // channel: sample fastqs parsed from --input
 
-    //
-    // SUBWORKFLOW: Read in samplesheet, validate and stage input files
-    //
-    INPUT_CHECK (
-        ch_input
-    )
-    ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
+    main:
+
+    ch_versions = Channel.empty()
+    ch_multiqc_files = Channel.empty()
 
     // Split by input type (bam/fastq)
-    INPUT_CHECK.out
-        .reads
-            .branch { meta, files ->
-                bam : meta.data_type == "bam"
-                fastq : meta.data_type == "fastq"
-            }
-            .set { ch_input_files }
+    ch_samplesheet
+        .branch { meta, files ->
+            bam : files[0].getExtension() == "bam"
+            fastq : True
+        }
+        .set { ch_input_files }
 
 
     // determine BAM pairedness for fastq conversion
@@ -187,30 +168,29 @@ workflow HLATYPING {
     )
     ch_versions = ch_versions.mix(OPTITYPE.out.versions)
 
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]})
+    ch_versions = ch_versions.mix(FASTQC.out.versions.first())
 
     //
-    // MODULE: Pipeline reporting
+    // Collate and save software versions
     //
-    CUSTOM_DUMPSOFTWAREVERSIONS (
-        ch_versions.unique().collectFile(name: 'collated_versions.yml')
-    )
+    softwareVersionsToYAML(ch_versions)
+        .collectFile(storeDir: "${params.outdir}/pipeline_info", name: 'nf_core_pipeline_software_mqc_versions.yml', sort: true, newLine: true)
+        .set { ch_collated_versions }
 
 
     //
     // MODULE: MultiQC
     //
-    workflow_summary    = WorkflowHlatyping.paramsSummaryMultiqc(workflow, summary_params)
-    ch_workflow_summary = Channel.value(workflow_summary)
-
-    methods_description    = WorkflowHlatyping.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description)
-    ch_methods_description = Channel.value(methods_description)
+    summary_params                        = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    ch_workflow_summary                   = Channel.value(paramsSummaryMultiqc(summary_params))
+    ch_methods_description                = Channel.value(methodsDescriptionText(ch_multiqc_custom_methods_description))
 
     ch_multiqc_files = Channel.empty()
-    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.output.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files                      = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    ch_multiqc_files                      = ch_multiqc_files.mix(ch_collated_versions)
+    ch_multiqc_files                      = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml', sort: false))
+    ch_multiqc_files                      = ch_multiqc_files.mix(OPTITYPE.out.output.collect{it[1]}.ifEmpty([]))
 
     MULTIQC (
         ch_multiqc_files.collect(),
@@ -218,23 +198,10 @@ workflow HLATYPING {
         ch_multiqc_custom_config.toList(),
         ch_multiqc_logo.toList()
     )
-    multiqc_report = MULTIQC.out.report.toList()
-}
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    COMPLETION EMAIL AND SUMMARY
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-workflow.onComplete {
-    if (params.email || params.email_on_fail) {
-        NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report)
-    }
-    NfcoreTemplate.summary(workflow, params, log)
-    if (params.hook_url) {
-        NfcoreTemplate.IM_notification(workflow, params, summary_params, projectDir, log)
-    }
+    emit:
+    multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
+    versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }
 
 /*
