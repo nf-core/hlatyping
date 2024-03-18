@@ -42,21 +42,18 @@ On release, automated continuous integration tests run the pipeline on a full-si
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
-
 First, prepare a samplesheet with your input data that looks as follows:
 
 `samplesheet.csv`:
 
 ```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+sample,fastq_1,fastq_2,seq_type
+CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz,dna
 ```
 
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
+Each row represents a sample and its fastq file (single-end) or a pair of fastq files (paired end) and the sequencing type. The sample identifiers have to be specified with the fastq files and the sequencing type, i.e. `dna` or `rna`. It is also possible to provide reads as `bam` file by adding a column `bam` in which the file path will be specified. The fastq columns have to be kept.
 
--->
+The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet.
 
 Now, you can run the pipeline using:
 
