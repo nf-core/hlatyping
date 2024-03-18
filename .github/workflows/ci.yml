@@ -50,12 +50,12 @@ jobs:
     strategy:
       matrix:
         NXF_VER:
-          - "22.10.1"
+          - "23.04.0"
           - "latest-everything"
         tests: ["test_fastq", "test_rna", "test_dna_rna"]
     steps:
       - name: Check out pipeline code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Nextflow
         uses: nf-core/setup-nextflow@v1
