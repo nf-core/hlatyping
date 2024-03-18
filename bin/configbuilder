@@ -60,7 +60,7 @@ def __main__():
     parser.add_argument('-s', "--solver", help="Specifies the solver used by OptiType.", required=True)
 
     args = parser.parse_args()
-    
+
     """ Not all IP solvers are multi-threaded.
 
     So we have to tell the script, which solvers to restrict the number of threads.
