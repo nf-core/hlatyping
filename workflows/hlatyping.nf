@@ -65,7 +65,7 @@ workflow HLATYPING {
     ch_samplesheet
         .branch { meta, files ->
             bam : files[0].getExtension() == "bam"
-            fastq : True
+            fastq : true
         }
         .set { ch_input_files }
 
