@@ -167,9 +167,9 @@ workflow HLATYPING {
     OPTITYPE (
         YARA_MAPPER.out.bam.join(YARA_MAPPER.out.bai)
     )
-    ch_multiqc_files                      = ch_multiqc_files.mix(OPTITYPE.out.hla_type.collect{it[1]}
-    ch_multiqc_files                      = ch_multiqc_files.mix(OPTITYPE.out.coverage_plot.collect{it[1]}
-    ch_versions = ch_versions.mix(OPTITYPE.out.versions)
+    ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.hla_type.collect{it[1]})
+    ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.coverage_plot.collect{it[1]})
+    ch_versions      = ch_versions.mix(OPTITYPE.out.versions)
 
 
     //
