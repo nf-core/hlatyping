@@ -10,36 +10,37 @@
             "sample": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Sample name must be provided and cannot contain spaces"
+                "errorMessage": "Sample name must be provided and cannot contain spaces",
+                "meta": ["id"]
             },
             "fastq_1": {
                 "type": "string",
+                "format": "file-path",
+                "exists": true,
                 "pattern": "^\\S+\\.f(ast)?q\\.gz$",
                 "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
             },
             "fastq_2": {
-                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
-                "anyOf": [
-                    {
-                        "type": "string",
-                        "pattern": "^\\S+\\.f(ast)?q\\.gz$"
-                    },
-                    {
-                        "type": "string",
-                        "maxLength": 0
-                    }
-                ]
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+            },
+            "bam": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.bam$",
+                "errorMessage": "BAM file cannot contain spaces and must have extension '.bam'"
             },
             "seq_type": {
-                "errorMessage": "Sequencing type must be one of the following: 'dna', 'rna'",
-                "anyOf": [
-                    {
-                        "type": "string",
-                        "pattern": "^(dna|rna)$"
-                    }
-                ]
+                "type": "string",
+                "enum": ["dna", "rna"],
+                "meta": ["seq_type"],
+                "errorMessage": "Sequencing type (seq_type) must be one of the following: 'dna', 'rna'"
             }
         },
-        "required": ["sample", "fastq_1", "seq_type"]
+        "required": ["sample", "seq_type"]
     }
 }
