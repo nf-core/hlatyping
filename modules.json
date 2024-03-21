@@ -22,7 +22,7 @@
                     },
                     "optitype": {
                         "branch": "master",
-                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "git_sha": "43ba2439a983483f745a1789b7d564f71874ccd9",
                         "installed_by": ["modules"]
                     },
                     "samtools/collatefastq": {
