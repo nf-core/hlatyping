@@ -47,7 +47,7 @@
                 "tools": {
                     "type": "string",
                     "default": "optitype",
-                    "help_text": "Specifies the tool(s) to use. Multiple tools can be combined in a list separated by comma.\nAvailable are: `optitype`, `hlahd`.",
+                    "help_text": "Specifies the tool(s) to use. Multiple tools can be combined in a list separated by comma.\nAvailable are: `optitype`, `hlahd`, `hlala`, `arcashla`.",
                     "description": "Specifies the hlatyping tool(s) to use."
                 }
             }
@@ -107,6 +107,38 @@
                     "fa_icon": "fas fa-check",
                     "description": "Update HLA-HD reference dictionary to the latest version before running HLA-HD.",
                     "help_text": "By default, the HLA-HD reference dictionary is not updated. To update the dictionary to the latest version from the IGMT/HLA database, set this parameter to `true`. Note that an internet connection is required for updating the dictionary from https://github.com/ANHIG/IMGTHLA/raw/refs/heads/Latest/hla.dat.zip"
+                }
+            }
+        },
+        "arcashla_options": {
+            "title": "arcasHLA options",
+            "type": "object",
+            "description": "Options for running arcasHLA for HLA typing from RNA-seq data.",
+            "default": "",
+            "fa_icon": "fas fa-dna",
+            "properties": {
+                "arcashla_reference": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "default": null,
+                    "fa_icon": "fas fa-database",
+                    "description": "Path to pre-built arcasHLA reference database.",
+                    "help_text": "Path to a directory containing the pre-built arcasHLA IMGT/HLA reference database. If not provided, the reference will be automatically downloaded and built from IMGT/HLA during the pipeline run."
+                },
+                "arcashla_genes": {
+                    "type": "string",
+                    "default": null,
+                    "fa_icon": "fas fa-list",
+                    "description": "Comma-separated list of HLA genes to type.",
+                    "help_text": "Specify which HLA genes to genotype. By default, arcasHLA types all supported genes. Example: `A,B,C,DQA1,DQB1,DRB1`."
+                },
+                "arcashla_population": {
+                    "type": "string",
+                    "default": null,
+                    "fa_icon": "fas fa-users",
+                    "description": "Population for allele frequency prior.",
+                    "help_text": "Specify a population to use allele frequency priors during genotyping. This can improve accuracy for samples from specific populations.",
+                    "enum": ["asian_pacific_islander", "black", "caucasian", "hispanic", "native_american"]
                 }
             }
         },
@@ -322,6 +354,9 @@
         },
         {
             "$ref": "#/$defs/hlahd_options"
+        },
+        {
+            "$ref": "#/$defs/arcashla_options"
         },
         {
             "$ref": "#/$defs/reference_genome_options"

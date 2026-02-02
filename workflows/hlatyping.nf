@@ -17,6 +17,8 @@
 include { CHECK_PAIRED                } from '../modules/local/check_paired'
 include { HLAHD_INSTALL               } from '../modules/local/hlahd/install'
 include { HLAHD                       } from '../modules/local/hlahd/genotype'
+include { ARCASHLA_REFERENCE          } from '../modules/local/arcashla/reference'
+include { ARCASHLA_GENOTYPE           } from '../modules/local/arcashla/genotype'
 
 include { paramsSummaryMultiqc        } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -40,6 +42,7 @@ include { SAMTOOLS_COLLATEFASTQ       } from '../modules/nf-core/samtools/collat
 include { SAMTOOLS_VIEW               } from '../modules/nf-core/samtools/view/main'
 include { YARA_INDEX                  } from '../modules/nf-core/yara/index/main'
 include { YARA_MAPPER                 } from '../modules/nf-core/yara/mapper/main'
+include { ARCASHLA_EXTRACT            } from '../modules/nf-core/arcashla/extract/main'
 
 include { paramsSummaryMap            } from 'plugin/nf-schema'
 
@@ -199,6 +202,41 @@ workflow HLATYPING {
         HLAHD_INSTALL(ch_hlahd_install)
         HLAHD(ch_all_fastq.combine(HLAHD_INSTALL.out.hlahd))
         ch_versions = ch_versions.mix(HLAHD.out.versions)
+    }
+
+    if ( "arcashla" in tools.tokenize(",") ) {
+        //
+        // MODULE: Run arcasHLA typing
+        //
+        // arcasHLA works with both BAM and FASTQ input:
+        // - BAM input: Use arcasHLA extract to get HLA-mapped reads, then genotype
+        // - FASTQ input: Run genotype directly on the reads
+        //
+
+        // Get or build arcasHLA reference database
+        if (params.arcashla_reference) {
+            // Use provided reference
+            ch_arcashla_reference = Channel.fromPath(params.arcashla_reference, checkIfExists: true).collect()
+        } else {
+            // Build reference from IMGT/HLA
+            ARCASHLA_REFERENCE()
+            ch_arcashla_reference = ARCASHLA_REFERENCE.out.reference.collect()
+            ch_versions = ch_versions.mix(ARCASHLA_REFERENCE.out.versions)
+        }
+
+        // For BAM input: extract HLA-mapped reads
+        ARCASHLA_EXTRACT(ch_bam_pe_corrected)
+        ch_versions = ch_versions.mix(ARCASHLA_EXTRACT.out.versions.first())
+
+        // Combine extracted reads from BAM with direct FASTQ input
+        ch_input_files.fastq_single
+            .mix(ch_cat_fastq)
+            .mix(ARCASHLA_EXTRACT.out.extracted_reads_fastq)
+            .set { ch_arcashla_input }
+
+        // Run genotyping with reference
+        ARCASHLA_GENOTYPE(ch_arcashla_input, ch_arcashla_reference)
+        ch_versions = ch_versions.mix(ARCASHLA_GENOTYPE.out.versions.first())
     }
 
     //
