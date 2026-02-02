@@ -47,6 +47,10 @@ process ARCASHLA_REFERENCE {
     # Now build the reference (arcasHLA will detect IMGTHLA exists and build from it)
     arcasHLA reference --rebuild ${args}
 
+    # Clean up: remove .git directory and zip files to reduce output size
+    rm -rf dat/IMGTHLA/.git dat/IMGTHLA/.gitattributes dat/IMGTHLA/.github
+    rm -f dat/IMGTHLA/*.zip
+
     # Copy/move the reference data to output directory
     mv dat reference
 

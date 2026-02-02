@@ -47,7 +47,7 @@
                 "tools": {
                     "type": "string",
                     "default": "optitype",
-                    "help_text": "Specifies the tool(s) to use. Multiple tools can be combined in a list separated by comma.\nAvailable are: `optitype`, `hlahd`, `hlala`, `arcashla`.",
+                    "help_text": "Specifies the tool(s) to use. Multiple tools can be combined in a list separated by comma.\nAvailable are: `optitype`, `hlahd`, `arcashla`.",
                     "description": "Specifies the hlatyping tool(s) to use."
                 }
             }
