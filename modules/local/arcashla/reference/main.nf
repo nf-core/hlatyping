@@ -1,16 +1,13 @@
 process ARCASHLA_REFERENCE {
     label 'process_medium'
 
-    // Need to run as root to modify container's dat directory
-    containerOptions { workflow.containerEngine == 'docker' ? '--user 0:0' : '' }
-
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/arcas-hla:0.6.0--hdfd78af_2':
         'biocontainers/arcas-hla:0.6.0--hdfd78af_2' }"
 
     output:
-    path "reference"    , emit: reference
+    path "dat"          , emit: reference
     path "versions.yml" , emit: versions
 
     when:
@@ -18,53 +15,35 @@ process ARCASHLA_REFERENCE {
 
     script:
     def args = task.ext.args ?: ''
-    def VERSION = "0.6.0" // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
-
     """
-    # Find arcasHLA installation path (resolve glob and get first match)
-    ARCAS_SHARE=\$(dirname \$(which arcasHLA))/../share
-    ARCAS_PATH=\$(ls -d \${ARCAS_SHARE}/arcas-hla-*/ | head -1)
+    # Create local arcasHLA structure
+    ARCAS_INSTALL=\$(ls -d \$(dirname \$(which arcasHLA))/../share/arcas-hla-*/ | head -1)
+    mkdir -p arcashla
+    cp \${ARCAS_INSTALL}/arcasHLA arcashla/
+    cp -r \${ARCAS_INSTALL}/scripts arcashla/
+    cp -r \${ARCAS_INSTALL}/dat arcashla/
 
-    # Copy the existing dat directory content (contains info/parameters.json needed by reference.py)
-    # before cloning IMGTHLA database
-    mkdir -p dat
-    cp -r \${ARCAS_PATH}/dat/* dat/ 2>/dev/null || true
+    # Clone IMGTHLA and extract hla.dat
+    git clone --depth 1 https://github.com/ANHIG/IMGTHLA.git arcashla/dat/IMGTHLA
+    unzip -o arcashla/dat/IMGTHLA/hla.dat.zip -d arcashla/dat/IMGTHLA
 
-    # Clone IMGTHLA database to work directory
-    # This works around arcasHLA bug where check_ref() calls build_convert()
-    # before ensuring the IMGTHLA database exists
-    git clone --depth 1 https://github.com/ANHIG/IMGTHLA.git dat/IMGTHLA
+    # Build reference
+    bash arcashla/arcasHLA reference --rebuild ${args}
 
-    # Extract hla.dat from zip (arcasHLA expects unzipped file)
-    cd dat/IMGTHLA
-    unzip -o hla.dat.zip
-    cd ../..
-
-    # Link our local dat directory to arcasHLA's expected location
-    rm -rf \${ARCAS_PATH}/dat
-    ln -s \$(readlink -f dat) \${ARCAS_PATH}/dat
-
-    # Now build the reference (arcasHLA will detect IMGTHLA exists and build from it)
-    arcasHLA reference --rebuild ${args}
-
-    # Clean up: remove .git directory and zip files to reduce output size
-    rm -rf dat/IMGTHLA/.git dat/IMGTHLA/.gitattributes dat/IMGTHLA/.github
-    rm -f dat/IMGTHLA/*.zip
-
-    # Copy/move the reference data to output directory
-    mv dat reference
+    # Move dat to output and clean up
+    mv arcashla/dat dat
+    rm -rf arcashla dat/IMGTHLA/.git dat/IMGTHLA/.github dat/IMGTHLA/*.zip
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        arcashla: 0.6.0
+        arcashla: \$(arcasHLA --version 2>&1 | grep -oP '\\d+\\.\\d+\\.\\d+' || echo '0.6.0')
     END_VERSIONS
     """
 
     stub:
     """
-    mkdir -p reference/IMGTHLA/wmda
-    echo "stub" > reference/IMGTHLA/wmda/hla_nom_p.txt
-    echo "stub" > reference/IMGTHLA/wmda/hla_nom_g.txt
+    mkdir -p dat/IMGTHLA/wmda dat/info dat/ref
+    touch dat/IMGTHLA/wmda/hla_nom_p.txt dat/IMGTHLA/wmda/hla_nom_g.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

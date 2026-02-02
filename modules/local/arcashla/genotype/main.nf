@@ -2,9 +2,6 @@ process ARCASHLA_GENOTYPE {
     tag "$meta.id"
     label 'process_medium'
 
-    // Need to run as root to modify container's dat directory
-    containerOptions { workflow.containerEngine == 'docker' ? '--user 0:0' : '' }
-
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/arcas-hla:0.6.0--hdfd78af_2':
@@ -12,7 +9,7 @@ process ARCASHLA_GENOTYPE {
 
     input:
     tuple val(meta), path(reads)
-    path(reference)
+    path(dat)
 
     output:
     tuple val(meta), path("*.genotype.json"), emit: genotype
@@ -24,33 +21,26 @@ process ARCASHLA_GENOTYPE {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
     def single_end = meta.single_end ? "--single" : ""
-    def VERSION = "0.6.0" // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
-
     """
-    # Link reference data to arcasHLA's expected location
-    ARCAS_SHARE=\$(dirname \$(which arcasHLA))/../share
-    ARCAS_PATH=\$(ls -d \${ARCAS_SHARE}/arcas-hla-*/ | head -1)
-    rm -rf \${ARCAS_PATH}/dat
-    ln -s \$(readlink -f ${reference}) \${ARCAS_PATH}/dat
+    # Create local arcasHLA structure with staged dat
+    ARCAS_INSTALL=\$(ls -d \$(dirname \$(which arcasHLA))/../share/arcas-hla-*/ | head -1)
+    mkdir -p arcashla
+    cp \${ARCAS_INSTALL}/arcasHLA arcashla/
+    cp -r \${ARCAS_INSTALL}/scripts arcashla/
+    ln -s \$(pwd)/${dat} arcashla/dat
 
-    arcasHLA \\
-        genotype \\
-        ${args} \\
-        -t ${task.cpus} \\
-        -o . \\
-        ${single_end} \\
-        ${reads}
+    bash arcashla/arcasHLA genotype ${args} -t ${task.cpus} -o . ${single_end} ${reads}
+
+    rm -rf arcashla
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        arcashla: ${VERSION}
+        arcashla: \$(arcasHLA --version 2>&1 | grep -oP '\\d+\\.\\d+\\.\\d+' || echo '0.6.0')
     END_VERSIONS
     """
 
     stub:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     echo '{"sample": "${prefix}", "A": ["A*02:01", "A*24:02"], "B": ["B*07:02", "B*44:02"], "C": ["C*05:01", "C*07:02"]}' > ${prefix}.genotype.json
