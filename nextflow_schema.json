@@ -47,7 +47,7 @@
                 "tools": {
                     "type": "string",
                     "default": "optitype",
-                    "help_text": "Specifies the tool(s) to use. Multiple tools can be combined in a list separated by comma.\nAvailable are: `optitype`, `hlahd`.",
+                    "help_text": "Specifies the tool(s) to use. Multiple tools can be combined in a list separated by comma.\nAvailable are: `optitype`, `hlahd`, `hlala`.",
                     "description": "Specifies the hlatyping tool(s) to use."
                 }
             }
@@ -107,6 +107,22 @@
                     "fa_icon": "fas fa-check",
                     "description": "Update HLA-HD reference dictionary to the latest version before running HLA-HD.",
                     "help_text": "By default, the HLA-HD reference dictionary is not updated. To update the dictionary to the latest version from the IGMT/HLA database, set this parameter to `true`. Note that an internet connection is required for updating the dictionary from https://github.com/ANHIG/IMGTHLA/raw/refs/heads/Latest/hla.dat.zip"
+                }
+            }
+        },
+        "hlala_options": {
+            "title": "HLA*LA options",
+            "type": "object",
+            "description": "Options for running HLA*LA for HLA typing from BAM files.",
+            "default": "",
+            "fa_icon": "fas fa-dna",
+            "properties": {
+                "hlala_graph_tarball": {
+                    "type": "string",
+                    "default": null,
+                    "fa_icon": "fas fa-file-archive",
+                    "description": "Path to HLA*LA graph tarball (optional).",
+                    "help_text": "Path to the HLA*LA graph tarball (PRG_MHC_GRCh38_withIMGT.tar.gz). If provided, it will be validated and extracted. If not provided, the graph will be downloaded automatically from Oxford servers."
                 }
             }
         },
@@ -322,6 +338,9 @@
         },
         {
             "$ref": "#/$defs/hlahd_options"
+        },
+        {
+            "$ref": "#/$defs/hlala_options"
         },
         {
             "$ref": "#/$defs/reference_genome_options"

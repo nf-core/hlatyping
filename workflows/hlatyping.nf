@@ -17,6 +17,8 @@
 include { CHECK_PAIRED                } from '../modules/local/check_paired'
 include { HLAHD_INSTALL               } from '../modules/local/hlahd/install'
 include { HLAHD                       } from '../modules/local/hlahd/genotype'
+include { HLALA                       } from '../modules/local/hlala/genotype'
+include { HLALA_INSTALL               } from '../modules/local/hlala/install'
 
 include { paramsSummaryMultiqc        } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -57,8 +59,8 @@ workflow HLATYPING {
 
     def tools = params.tools ?: 'optitype'
 
-    ch_versions = Channel.empty()
-    ch_multiqc_files = Channel.empty()
+    ch_versions = channel.empty()
+    ch_multiqc_files = channel.empty()
 
     // Split by input type (bam/fastq)
     ch_samplesheet
@@ -71,6 +73,15 @@ workflow HLATYPING {
         }
         .set { ch_input_files }
 
+    // Create separate BAM channels for different processing paths
+    // One for conversion to FASTQ (OptiType/HLA-HD), one for HLA*LA (direct BAM input)
+    ch_input_files.bam
+        .multiMap { meta, files ->
+            for_fastq_conversion: [meta, files]
+            for_hlala: [meta, files]
+        }
+        .set { ch_bam_split }
+
     //
     // MODULE: Concatenate FastQ files from same sample if required
     //
@@ -79,7 +90,7 @@ workflow HLATYPING {
     ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first())
 
     // determine BAM pairedness for fastq conversion
-    CHECK_PAIRED (ch_input_files.bam )
+    CHECK_PAIRED (ch_bam_split.for_fastq_conversion )
     CHECK_PAIRED.out.reads
         .map {meta, reads, single_end ->
             meta["single_end"] = single_end.text.toBoolean()
@@ -180,15 +191,17 @@ workflow HLATYPING {
         ch_versions      = ch_versions.mix(OPTITYPE.out.versions)
     }
 
+    // Parse software metadata for HLA-HD and HLA*LA
+    def software_meta_file = file("$projectDir/assets/software_meta.json", checkIfExists: true)
+    def jsonSlurper = new groovy.json.JsonSlurper()
+    def software_meta = jsonSlurper.parse(software_meta_file)
+
     if ( "hlahd" in tools.tokenize(",") ) {
         //
         // MODULE: Run HLAHD typing
         //
-        // Parse HLA-HD software metadata and create installation channel
-        def hlahd_software_meta = file("$projectDir/assets/hlahd_software_meta.json", checkIfExists: true)
-        def jsonSlurper = new groovy.json.JsonSlurper()
-        def hlahd_meta = jsonSlurper.parse(hlahd_software_meta)['hlahd']
-        def ch_hlahd_install = Channel.of([
+        def hlahd_meta = software_meta['hlahd']
+        def ch_hlahd_install = channel.of([
             'hlahd',
             hlahd_meta.version,
             hlahd_meta.software_md5,
@@ -201,10 +214,45 @@ workflow HLATYPING {
         ch_versions = ch_versions.mix(HLAHD.out.versions)
     }
 
+    if ( "hlala" in tools.tokenize(",") ) {
+        //
+        // MODULE: Run HLA*LA typing (requires BAM input)
+        //
+        // Recompress BAM to BGZF format and create index in one step
+        ch_bam_split.for_hlala
+            .map { meta, files -> [meta, files, []] }  // Add empty index
+            .set { ch_hlala_input }
+
+        SAMTOOLS_VIEW(
+            ch_hlala_input,
+            [[:], []],  // No reference needed for BAM->BAM
+            [],         // No qname file
+            'bai'       // Create BAI index
+        )
+        ch_versions = ch_versions.mix(SAMTOOLS_VIEW.out.versions.first())
+
+        // Combine BAM with its index for HLA*LA
+        SAMTOOLS_VIEW.out.bam
+            .join(SAMTOOLS_VIEW.out.bai)
+            .set { ch_bam_with_index }
+
+        // Install graph - use provided tarball or download
+        def hlala_meta = software_meta['hlala']
+        def graph_tarball = params.hlala_graph_tarball ?
+            file(params.hlala_graph_tarball, checkIfExists: true) :
+            file('NO_FILE')
+        HLALA_INSTALL(channel.of([hlala_meta.graph, hlala_meta.graph_url, hlala_meta.graph_md5, graph_tarball]))
+        ch_graph_dir = HLALA_INSTALL.out.graph
+        ch_versions = ch_versions.mix(HLALA_INSTALL.out.versions.first())
+
+        HLALA(ch_bam_with_index, ch_graph_dir.collect())
+        ch_versions = ch_versions.mix(HLALA.out.versions.first())
+    }
+
     //
     // Collate and save software versions
     //
-    def topic_versions = Channel.topic("versions")
+    def topic_versions = channel.topic("versions")
         .distinct()
         .branch { entry ->
             versions_file: entry instanceof Path
