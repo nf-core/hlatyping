@@ -1,0 +1,70 @@
+{
+    "-profile test_hlala (stub)": {
+        "content": [
+            7,
+            {
+                "CHECK_PAIRED": {
+                    "samtools": "1.16.1"
+                },
+                "FASTQC": {
+                    "fastqc": "0.12.1"
+                },
+                "HLALA": {
+                    "hlala": "1.0.4"
+                },
+                "HLALA_INSTALL": {
+                    "hlala_graph": "PRG_MHC_GRCh38_withIMGT"
+                },
+                "SAMTOOLS_COLLATEFASTQ": {
+                    "samtools": 1.21
+                },
+                "SAMTOOLS_VIEW": {
+                    "samtools": 1.21
+                },
+                "Workflow": {
+                    "nf-core/hlatyping": "v2.2.0"
+                }
+            },
+            [
+                "check",
+                "check/example_pe.bam",
+                "check/is_singleend.txt",
+                "fastqc",
+                "fastqc/SAMPLE_PAIRED_END_BAM.html",
+                "fastqc/SAMPLE_PAIRED_END_BAM.zip",
+                "hlala",
+                "hlala/SAMPLE_PAIRED_END_BAM",
+                "hlala/SAMPLE_PAIRED_END_BAM/SAMPLE_PAIRED_END_BAM",
+                "hlala/SAMPLE_PAIRED_END_BAM/SAMPLE_PAIRED_END_BAM/hla",
+                "hlala/SAMPLE_PAIRED_END_BAM/SAMPLE_PAIRED_END_BAM/hla/R1_bestguess_G.txt",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_plots",
+                "multiqc/multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
+                "samtools",
+                "samtools/SAMPLE_PAIRED_END_BAM_1.fq.gz",
+                "samtools/SAMPLE_PAIRED_END_BAM_2.fq.gz",
+                "samtools/SAMPLE_PAIRED_END_BAM_other.fq.gz",
+                "samtools/SAMPLE_PAIRED_END_BAM_singleton.fq.gz"
+            ],
+            [
+                "example_pe.bam:md5,e6145c17fef62ea071238f8b0aca841c",
+                "is_singleend.txt:md5,d42f2da1df5ecdf29be4ac27edda0c12",
+                "SAMPLE_PAIRED_END_BAM.html:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SAMPLE_PAIRED_END_BAM.zip:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "R1_bestguess_G.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SAMPLE_PAIRED_END_BAM_1.fq.gz:md5,68b329da9893e34099c7d8ad5cb9c940",
+                "SAMPLE_PAIRED_END_BAM_2.fq.gz:md5,68b329da9893e34099c7d8ad5cb9c940",
+                "SAMPLE_PAIRED_END_BAM_other.fq.gz:md5,68b329da9893e34099c7d8ad5cb9c940",
+                "SAMPLE_PAIRED_END_BAM_singleton.fq.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2026-02-03T08:27:06.848822299"
+    }
+}
