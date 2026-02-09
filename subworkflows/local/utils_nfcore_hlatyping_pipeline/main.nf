@@ -29,10 +29,10 @@ workflow PIPELINE_INITIALISATION {
     take:
     version           // boolean: Display version and exit
     validate_params   // boolean: Boolean whether to validate parameters against the schema at runtime
-    monochrome_logs   // boolean: Do not use coloured log outputs
+    _monochrome_logs  // boolean: Do not use coloured log outputs
     nextflow_cli_args //   array: List of positional nextflow CLI args
     outdir            //  string: The output directory where the results will be saved
-    input             //  string: Path to input samplesheet
+    _input            //  string: Path to input samplesheet
     help              // boolean: Display help message and exit
     help_full         // boolean: Show the full help message
     show_hidden       // boolean: Show hidden parameters in the help message
@@ -200,7 +200,7 @@ def validateToolsParam() {
     def tools = params.tools ?: 'optitype'
     def valid_tools = [ 'optitype', 'hlahd' ]
     def tool_list = tools.tokenize(',')
-    def invalid_tools = tool_list.findAll { it.trim() !in valid_tools }
+    def invalid_tools = tool_list.findAll { tool -> tool.trim() !in valid_tools }
     if (invalid_tools) {
         error("Invalid tools found: ${invalid_tools.join(',')}.\nValid tools: ${valid_tools.join(',')}")
     }
@@ -231,29 +231,29 @@ def validateInputSamplesheet(input) {
         error("Please check input samplesheet -> Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end: ${metas[0].id}")
     }
 
-    seq_type_ok = metas.collect{ it.seq_type }.unique().size == 1
+    def seq_type_ok = metas.collect{ meta -> meta.seq_type }.unique().size == 1
     if (!seq_type_ok) {
         error(
-            "Check input samplesheet -> Multiple runs of the same "
-            + "sample must have the same sequence type: ${metas[0].id}"
+            "Check input samplesheet -> Multiple runs of the same " +
+            "sample must have the same sequence type: ${metas[0].id}"
         )
     }
 
-    data_type_ok = metas.collect{ it.data_type }.unique().size == 1
+    def data_type_ok = metas.collect{ meta -> meta.data_type }.unique().size == 1
     if (!data_type_ok) {
         error(
-            "Check input samplesheet -> Multiple runs of the same "
-            + "sample must have the same data type (fastq only, bam "
-            + "concatenation not currently supported): ${metas[0].id}"
+            "Check input samplesheet -> Multiple runs of the same " +
+            "sample must have the same data type (fastq only, bam " +
+            "concatenation not currently supported): ${metas[0].id}"
         )
     }
 
-    if (metas.collect{ it.data_type }.unique() == "bam") {
-        bam_count_ok = metas.collect{ it.data_type }.size == 1
+    if (metas.collect{ meta -> meta.data_type }.unique() == "bam") {
+        def bam_count_ok = metas.collect{ meta -> meta.data_type }.size == 1
         if(!bam_count_ok) {
             error(
-                "Check input samplesheet -> Multiple runs of the same "
-                + "bam sample is not currently supported: ${metas[0].id}"
+                "Check input samplesheet -> Multiple runs of the same " +
+                "bam sample is not currently supported: ${metas[0].id}"
             )
         }
     }
