@@ -2,14 +2,15 @@
 %%metro style: dark
 %%metro file: fastq_in | FASTQ
 %%metro file: bam_in | BAM
-%%metro file: report_out | HTML
-%%metro line: optitype | OptiType | #2db572
-%%metro line: hlahd | HLA-HD | #e6842a
+%%metro file: report_html | HTML
+%%metro file: report_tsv | TSV
+%%metro line: fastq | FASTQ input | #2db572
+%%metro line: bam | BAM input | #e6842a
 %%metro legend: bl
 
 graph LR
     subgraph preprocessing [Pre-processing]
-        %%metro exit: right | optitype, hlahd
+        %%metro exit: right | fastq, bam
         fastq_in[ ]
         bam_in[ ]
         cat_fastq[cat FASTQ]
@@ -17,15 +18,15 @@ graph LR
         collatefastq[BAM to FASTQ]
         fastqc[FastQC]
 
-        fastq_in -->|optitype| cat_fastq
-        cat_fastq -->|optitype| fastqc
-        bam_in -->|hlahd| check_paired
-        check_paired -->|hlahd| collatefastq
+        fastq_in -->|fastq| cat_fastq
+        cat_fastq -->|fastq| fastqc
+        bam_in -->|bam| check_paired
+        check_paired -->|bam| collatefastq
     end
 
     subgraph hla_typing [HLA Typing]
-        %%metro entry: left | optitype, hlahd
-        %%metro exit: right | optitype, hlahd
+        %%metro entry: left | fastq, bam
+        %%metro exit: right | fastq, bam
         yara_index[Yara Index]
         yara_mapper[Yara Mapper]
         optitype_run[OptiType]
@@ -33,22 +34,20 @@ graph LR
         hlahd_run[HLA-HD]
         _h2[hidden]
 
-        yara_index -->|optitype| yara_mapper
-        yara_mapper -->|optitype| optitype_run
-        hlahd_install -->|hlahd| _h2
-        _h2 -->|hlahd| hlahd_run
+        yara_index -->|fastq| yara_mapper
+        yara_mapper -->|fastq| optitype_run
+        hlahd_install -->|bam| _h2
+        _h2 -->|bam| hlahd_run
     end
 
-    subgraph reporting [Reporting]
-        %%metro entry: left | optitype, hlahd
-        multiqc[MultiQC]
-        report_out[ ]
-
-        multiqc -->|optitype,hlahd| report_out
+    subgraph reporting [MultiQC / Reporting]
+        %%metro entry: left | fastq, bam
+        report_html[ ]
+        report_tsv[ ]
     end
 
     %% Inter-section edges
-    fastqc -->|optitype| yara_index
-    collatefastq -->|hlahd| hlahd_install
-    optitype_run -->|optitype| multiqc
-    hlahd_run -->|hlahd| multiqc
+    fastqc -->|fastq| yara_index
+    collatefastq -->|bam| hlahd_install
+    optitype_run -->|fastq| report_html
+    hlahd_run -->|bam| report_tsv
