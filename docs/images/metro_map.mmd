@@ -1,0 +1,54 @@
+%%metro title: nf-core/hlatyping
+%%metro style: dark
+%%metro file: fastq_in | FASTQ
+%%metro file: bam_in | BAM
+%%metro file: report_out | HTML
+%%metro line: optitype | OptiType | #2db572
+%%metro line: hlahd | HLA-HD | #e6842a
+%%metro legend: bl
+
+graph LR
+    subgraph preprocessing [Pre-processing]
+        %%metro exit: right | optitype, hlahd
+        fastq_in[ ]
+        bam_in[ ]
+        cat_fastq[cat FASTQ]
+        check_paired[Check Paired]
+        collatefastq[BAM to FASTQ]
+        fastqc[FastQC]
+
+        fastq_in -->|optitype| cat_fastq
+        cat_fastq -->|optitype| fastqc
+        bam_in -->|hlahd| check_paired
+        check_paired -->|hlahd| collatefastq
+    end
+
+    subgraph hla_typing [HLA Typing]
+        %%metro entry: left | optitype, hlahd
+        %%metro exit: right | optitype, hlahd
+        yara_index[Yara Index]
+        yara_mapper[Yara Mapper]
+        optitype_run[OptiType]
+        hlahd_install[Install HLA-HD]
+        hlahd_run[HLA-HD]
+        _h2[hidden]
+
+        yara_index -->|optitype| yara_mapper
+        yara_mapper -->|optitype| optitype_run
+        hlahd_install -->|hlahd| _h2
+        _h2 -->|hlahd| hlahd_run
+    end
+
+    subgraph reporting [Reporting]
+        %%metro entry: left | optitype, hlahd
+        multiqc[MultiQC]
+        report_out[ ]
+
+        multiqc -->|optitype,hlahd| report_out
+    end
+
+    %% Inter-section edges
+    fastqc -->|optitype| yara_index
+    collatefastq -->|hlahd| hlahd_install
+    optitype_run -->|optitype| multiqc
+    hlahd_run -->|hlahd| multiqc
