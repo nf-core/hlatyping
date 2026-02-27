@@ -5,13 +5,12 @@
 %%metro file: bam_in | BAM
 %%metro file: report_tsv | TSV
 %%metro file: report_html | HTML
-%%metro line: fastq | FASTQ | #2db572
-%%metro line: bam | BAM | #e6842a
+%%metro line: main | nf-core/hlatyping | #2db572
 %%metro legend: bl
 
 graph LR
     subgraph preprocessing [Pre-processing]
-        %%metro exit: right | fastq, bam
+        %%metro exit: right | main
         fastq_in[ ]
         bam_in[ ]
         cat_fastq[cat FASTQ]
@@ -20,17 +19,17 @@ graph LR
         collatefastq[BAM to FASTQ]
         fastqc[FastQC]
 
-        fastq_in -->|fastq| cat_fastq
-        cat_fastq -->|fastq| _fastq_delay
-        _fastq_delay -->|fastq| fastqc
-        bam_in -->|bam| check_paired
-        check_paired -->|bam| collatefastq
-        collatefastq -->|bam| fastqc
+        fastq_in -->|main| cat_fastq
+        cat_fastq -->|main| _fastq_delay
+        _fastq_delay -->|main| fastqc
+        bam_in -->|main| check_paired
+        check_paired -->|main| collatefastq
+        collatefastq -->|main| fastqc
     end
 
     subgraph hla_typing [HLA Typing]
-        %%metro entry: left | fastq, bam
-        %%metro exit: right | fastq, bam
+        %%metro entry: left | main
+        %%metro exit: right | main
         yara_index[Yara Index]
         yara_mapper[Yara Mapper]
         optitype_run[OptiType]
@@ -39,25 +38,25 @@ graph LR
         _hlahd_delay2[ ]
         _merge1[ ]
 
-        yara_index -->|fastq,bam| yara_mapper
-        yara_mapper -->|fastq,bam| optitype_run
-        optitype_run -->|fastq,bam| _merge1
-        _hlahd_delay -->|fastq,bam| hlahd_run
-        hlahd_run -->|fastq,bam| _hlahd_delay2
-        _hlahd_delay2 -->|fastq,bam| _merge1
+        yara_index -->|main| yara_mapper
+        yara_mapper -->|main| optitype_run
+        optitype_run -->|main| _merge1
+        _hlahd_delay -->|main| hlahd_run
+        hlahd_run -->|main| _hlahd_delay2
+        _hlahd_delay2 -->|main| _merge1
     end
 
     subgraph reporting [Reporting]
-        %%metro entry: left | fastq, bam
+        %%metro entry: left | main
         report_tsv[ ]
         multiqc[MultiQC]
         report_html[ ]
 
-        multiqc -->|fastq,bam| report_html
+        multiqc -->|main| report_html
     end
 
     %% Inter-section edges
-    fastqc -->|fastq,bam| yara_index
-    fastqc -->|fastq,bam| _hlahd_delay
-    _merge1 -->|fastq,bam| report_tsv
-    _merge1 -->|fastq,bam| multiqc
+    fastqc -->|main| yara_index
+    fastqc -->|main| _hlahd_delay
+    _merge1 -->|main| report_tsv
+    _merge1 -->|main| multiqc
