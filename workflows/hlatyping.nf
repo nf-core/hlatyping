@@ -129,7 +129,7 @@ workflow HLATYPING {
     FASTQC (
         ch_all_fastq
     )
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]})
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{ entry -> entry[1]})
     ch_versions = ch_versions.mix(FASTQC.out.versions.first())
 
     //
@@ -138,7 +138,7 @@ workflow HLATYPING {
     if ( "optitype" in tools.tokenize(",") ) {
 
         ch_all_fastq
-            .map { meta, reads ->
+            .map { meta, _reads ->
                     [ meta, file("$projectDir/data/references/hla_reference_${meta['seq_type']}.fasta") ]
             }
             .set { ch_input_with_references }
@@ -186,8 +186,8 @@ workflow HLATYPING {
             YARA_MAPPER.out.bam.join(YARA_MAPPER.out.bai)
         )
 
-        ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.hla_type.collect{it[1]})
-        ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.coverage_plot.collect{it[1]})
+        ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.hla_type.collect{ entry -> entry[1]})
+        ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.coverage_plot.collect{ entry -> entry[1]})
         ch_versions      = ch_versions.mix(OPTITYPE.out.versions)
     }
 
