@@ -123,6 +123,14 @@
                     "fa_icon": "fas fa-file-archive",
                     "description": "Path to HLA*LA graph tarball (optional).",
                     "help_text": "Path to the HLA*LA graph tarball (PRG_MHC_GRCh38_withIMGT.tar.gz). If provided, it will be validated and extracted. If not provided, the graph will be downloaded automatically from Oxford servers."
+                },
+                "hlala_graph_dir": {
+                    "type": "string",
+                    "default": null,
+                    "format": "directory-path",
+                    "fa_icon": "fas fa-folder-open",
+                    "description": "Path to pre-built HLA*LA graph parent directory (optional).",
+                    "help_text": "Path to the parent directory containing the HLA*LA graph (e.g., the directory that contains `PRG_MHC_GRCh38_withIMGT/`). If provided, skips graph download entirely. Takes precedence over `hlala_graph_tarball`."
                 }
             }
         },

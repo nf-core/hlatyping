@@ -17,8 +17,7 @@
 include { CHECK_PAIRED                } from '../modules/local/check_paired'
 include { HLAHD_INSTALL               } from '../modules/local/hlahd/install'
 include { HLAHD                       } from '../modules/local/hlahd/genotype'
-include { HLALA                       } from '../modules/local/hlala/genotype'
-include { HLALA_INSTALL               } from '../modules/local/hlala/install'
+include { HLALA_DOWNLOAD               } from '../modules/local/hlala/download'
 
 include { paramsSummaryMultiqc        } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -39,6 +38,7 @@ include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { GUNZIP                      } from '../modules/nf-core/gunzip/main'
 include { OPTITYPE                    } from '../modules/nf-core/optitype/main'
 include { SAMTOOLS_COLLATEFASTQ       } from '../modules/nf-core/samtools/collatefastq/main'
+include { HLALA_TYPING                } from '../modules/nf-core/hlala/typing/main'
 include { SAMTOOLS_VIEW               } from '../modules/nf-core/samtools/view/main'
 include { YARA_INDEX                  } from '../modules/nf-core/yara/index/main'
 include { YARA_MAPPER                 } from '../modules/nf-core/yara/mapper/main'
@@ -236,17 +236,26 @@ workflow HLATYPING {
             .join(SAMTOOLS_VIEW.out.bai)
             .set { ch_bam_with_index }
 
-        // Install graph - use provided tarball or download
+        // Graph acquisition: use pre-built directory, provided tarball, or download
         def hlala_meta = software_meta['hlala']
-        def graph_tarball = params.hlala_graph_tarball ?
-            file(params.hlala_graph_tarball, checkIfExists: true) :
-            file('NO_FILE')
-        HLALA_INSTALL(channel.of([hlala_meta.graph, hlala_meta.graph_url, hlala_meta.graph_md5, graph_tarball]))
-        ch_graph_dir = HLALA_INSTALL.out.graph
-        ch_versions = ch_versions.mix(HLALA_INSTALL.out.versions.first())
+        if (params.hlala_graph_dir) {
+            ch_graph_dir = channel.value(file(params.hlala_graph_dir, checkIfExists: true))
+        } else {
+            def graph_tarball = params.hlala_graph_tarball ?
+                file(params.hlala_graph_tarball, checkIfExists: true) :
+                file('NO_FILE')
+            HLALA_DOWNLOAD(channel.of([hlala_meta.graph, hlala_meta.graph_url, hlala_meta.graph_md5, graph_tarball]))
+            ch_graph_dir = HLALA_DOWNLOAD.out.graph
+            ch_versions = ch_versions.mix(HLALA_DOWNLOAD.out.versions.first())
+        }
 
-        HLALA(ch_bam_with_index, ch_graph_dir.collect())
-        ch_versions = ch_versions.mix(HLALA.out.versions.first())
+        // Combine BAM+BAI with graph for HLALA_TYPING
+        ch_bam_with_index
+            .combine(ch_graph_dir)
+            .set { ch_hlala_typing_input }
+
+        HLALA_TYPING(ch_hlala_typing_input)
+        ch_versions = ch_versions.mix(HLALA_TYPING.out.versions.first())
     }
 
     //

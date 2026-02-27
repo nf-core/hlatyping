@@ -9,5 +9,6 @@ multiqc/multiqc_report.html
 fastqc/*_fastqc.{html,zip}
 optitype/**/*
 hlahd/**/*.{bam,bai,pdf,tsv}
+hlala/**/*
 yara/**/*.{bam,bai}
 pipeline_info/*.{html,json,txt,yml}

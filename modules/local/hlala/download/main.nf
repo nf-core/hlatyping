@@ -1,17 +1,17 @@
-process HLALA_INSTALL {
+process HLALA_DOWNLOAD {
     tag "$graph_name"
     label 'process_single'
 
-    conda "bioconda::hla-la=1.0.4"
+    conda "conda-forge::wget=1.21.4 conda-forge::coreutils=9.5"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/hla-la:1.0.4--h077b44d_1' :
-        'quay.io/biocontainers/hla-la:1.0.4--h077b44d_1' }"
+        'https://depot.galaxyproject.org/singularity/wget:1.21.4' :
+        'biocontainers/wget:1.21.4' }"
 
     input:
     tuple val(graph_name), val(graph_url), val(graph_md5), path(graph_tarball)
 
     output:
-    path "${graph_name}", emit: graph
+    path "graphs", emit: graph
     path "versions.yml", emit: versions
 
     when:
@@ -36,24 +36,25 @@ process HLALA_INSTALL {
         exit 2
     fi
 
-    # Extract and cleanup
-    tar -xzf "\$TARBALL"
+    # Extract into parent directory structure for HLA*LA --customGraphDir
+    mkdir -p graphs
+    tar -xzf "\$TARBALL" -C graphs
     [ "${use_local}" = "false" ] && rm "\$TARBALL"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        hlala_graph: ${graph_name}
+        wget: \$(wget --version 2>&1 | head -1 | sed 's/GNU Wget //;s/ .*//')
     END_VERSIONS
     """
 
     stub:
     """
-    mkdir -p ${graph_name}
-    touch ${graph_name}/serializedGRAPH
+    mkdir -p graphs/${graph_name}
+    touch graphs/${graph_name}/serializedGRAPH
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        hlala_graph: ${graph_name}
+        wget: \$(wget --version 2>&1 | head -1 | sed 's/GNU Wget //;s/ .*//')
     END_VERSIONS
     """
 }
