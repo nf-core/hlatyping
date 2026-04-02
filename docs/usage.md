@@ -8,17 +8,16 @@
 
 The `hlatyping` pipeline can currently deal with two input formats: `.fastq{.gz}` or `.bam`. If the input file type is `bam`, than the pipeline extracts all reads from it and performs an mapping additional step with the `yara` mapper against the HLA reference sequence. Indices are generated using `yara`. OptiType uses [razers3](https://github.com/seqan/seqan/tree/master/apps/razers3), which is very memory consuming. In order to avoid memory issues during pipeline execution, we reduce the mapping information on the relevant HLA regions on chromosome 6.
 
-### DAG with `.fastq{.gz}` as input
+### FASTQ input
 
-Creates a config file from the command line arguments, which is then passed to OptiType. In parallel, the fastqs are unzipped if they are passed as archives. OptiType is then used for the HLA typing.
+When `.fastq{.gz}` files are provided, the pipeline extracts reads and maps them against the HLA reference sequence on chromosome 6 using `yara`. OptiType and/or HLA-HD then perform HLA typing from the mapped reads.
 
-![DAG with `fastq.{gz}` files](images/hlatyping_dag_fastq.png)
+### BAM input
 
-### DAG with `.bam` as input
+When `.bam` files are provided, the pipeline handles them in two ways depending on the selected tools:
 
-Creates a config file from the command line arguments, which is then passed to OptiType. In parallel, the reads are extracted from the bam file and mapped again against the HLA reference sequence on chromosome 6. OptiType is then used for the HLA typing.
-
-![DAG with `.bam` file](images/hlatyping_dag_bam.png)
+- **OptiType / HLA-HD**: Reads are extracted from the BAM file using `samtools`, converted to FASTQ, and then processed through the standard FASTQ pipeline path.
+- **HLA\*LA**: BAM files are used directly. The BAM is re-compressed to BGZF format, indexed, and passed to HLA\*LA along with the graph reference. **Important:** HLA\*LA requires genome-aligned BAM files (e.g., aligned to GRCh38), not HLA-reference-aligned BAMs. FASTQ input is not supported for HLA\*LA.
 
 ## Samplesheet input
 
@@ -84,12 +83,53 @@ You can always download new versions from the [HLA database](https://www.ebi.ac.
 We are currently looking into a dynamic solution, in order to build pre-processed input HLA references from current HLA allele information from the IPD-IMGT/HLA database.
 If you wish to repeatedly use the same parameters for multiple runs, rather than specifying each flag in the command, you can specify these in a params file.
 
+### HLA typing tools
+
+The pipeline supports three HLA typing tools, controlled by the `--tools` parameter:
+
+- **OptiType** (default): HLA Class I typing from FASTQ or BAM input. Open-source, included in pipeline containers.
+- **HLA-HD**: HLA Class I + II typing from FASTQ or BAM input. Requires a local installation due to licensing restrictions (see [HLA-HD section](#hla-hd-setup)).
+- **HLA\*LA**: HLA typing from BAM input only. Open-source, included in pipeline containers. Uses a graph-based approach with the PRG_MHC_GRCh38_withIMGT reference graph.
+
+Tools can be combined:
+
+```bash
+--tools optitype,hlala      # Run both OptiType and HLA*LA (BAM input required)
+--tools optitype,hlahd      # Run both OptiType and HLA-HD
+```
+
+> [!NOTE]
+> HLA\*LA requires genome-aligned BAM input (e.g., aligned to GRCh38). Unlike OptiType and HLA-HD, it cannot work from FASTQ files or HLA-reference-aligned BAMs. If you specify `--tools hlala` with FASTQ-only samples, HLA\*LA will not run for those samples.
+
+### HLA\*LA setup
+
+HLA\*LA requires a graph reference (~5 GB) which can be provided in three ways:
+
+1. **Automatic download** (default): The graph is downloaded from Oxford servers during the pipeline run.
+2. **Pre-downloaded tarball**: Provide the path to a downloaded `PRG_MHC_GRCh38_withIMGT.tar.gz` tarball:
+   ```bash
+   --hlala_graph_tarball /path/to/PRG_MHC_GRCh38_withIMGT.tar.gz
+   ```
+3. **Pre-built graph directory**: Provide the parent directory containing the extracted graph:
+   ```bash
+   --hlala_graph_dir /path/to/graphs/
+   ```
+   The directory should contain the `PRG_MHC_GRCh38_withIMGT/` subdirectory.
+
+### HLA-HD setup
+
+HLA-HD is not distributed with the pipeline's containers due to licensing restrictions. The software is freely available for academic and non-commercial research. Users must register and download it from the [HLA-HD website](https://w3.genome.med.kyoto-u.ac.jp/HLA-HD/). Provide the path to the downloaded tarball:
+
+```bash
+--tools hlahd --hlahd_path /path/to/hlahd.1.7.1.tar.gz
+```
+
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/hlatyping --input ./samplesheet.csv --outdir ./results --genome GRCh37 -profile docker
+nextflow run nf-core/hlatyping --input ./samplesheet.csv --outdir ./results -profile docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.

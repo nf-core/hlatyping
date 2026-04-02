@@ -32,6 +32,10 @@
 
 > Kawaguchi S, Higasa K, Shimizu M, Yamada R, Matsuda F. HLA-HD: An accurate HLA typing algorithm for next-generation sequencing data. Hum Mutat. 2017 Jul;38(7):788-797. doi: 10.1002/humu.23230. Epub 2017 May 12. PMID: 28419628.
 
+- [HLA\*LA](https://pubmed.ncbi.nlm.nih.gov/30942877/)
+
+  > Dilthey AT, Mentzer AJ, Caber R, Sherber C, Mentzer AA, Lundgren J, Stefansson K, Power RA, McVean G. HLA\*LA — HLA typing from linearly projected graph alignments. Bioinformatics. 2019 Nov 1;35(21):4394-4396. doi: 10.1093/bioinformatics/btz235. PMID: 30942877; PMCID: PMC6821181.
+
 - [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
 
   > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016 Oct 1;32(19):3047-8. doi: 10.1093/bioinformatics/btw354. Epub 2016 Jun 16. PubMed PMID: 27312411; PubMed Central PMCID: PMC5039924.

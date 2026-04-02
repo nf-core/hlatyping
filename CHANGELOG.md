@@ -7,7 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
-- [#213](https://github.com/nf-core/hlatyping/pull/213) - Add metro map pipeline overview
+- [#211](https://github.com/nf-core/hlatyping/pull/211) - Add HLA\*LA as a third HLA typing tool for HLA typing from BAM files (@jonasscheid)
+- [#213](https://github.com/nf-core/hlatyping/pull/213) - Add metro map pipeline overview diagram (@jonasscheid)
+
+### `Changed`
+
+- [#211](https://github.com/nf-core/hlatyping/pull/211) - Replace local HLA\*LA modules with nf-core community modules `hlala/typing` and `hlala/preparegraph` (@jonasscheid)
+- [#211](https://github.com/nf-core/hlatyping/pull/211) - Clean up published output by disabling publishing for intermediate processes (CHECK_PAIRED, YARA_INDEX, YARA_MAPPER, SAMTOOLS_VIEW, SAMTOOLS_COLLATEFASTQ, HLAHD_INSTALL, HLALA_DOWNLOAD) (@jonasscheid)
+
+### `Fixed`
+
+- [#212](https://github.com/nf-core/hlatyping/pull/212) - Fix nextflow lint errors and warnings (@jonasscheid)
+
+### `Dependencies`
+
+| Dependency | Old version | New version |
+| ---------- | ----------- | ----------- |
+| `HLA*LA`   | -           | 1.0.6       |
 
 ## 2.2.0 - Holocron - 2026-01-28
 

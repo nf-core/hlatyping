@@ -21,8 +21,11 @@
 
 ## Introduction
 
-**nf-core/hlatyping** is a bioinformatics pipeline that can be used to perform HLA typing from next-generation sequencing data.
-The pipeline does next-generation sequencing-based Human Leukocyte Antigen (HLA) typing using [OptiType](https://github.com/FRED-2/OptiType). OptiType is a HLA genotyping algorithm based on integer linear programming. Reads of whole exome/genome/transcriptome sequencing data are mapped against a reference of known MHC class I alleles. To produce accurate 4-digit HLA genotyping predictions, all major and minor HLA-I loci are considered simultaneously to find an allele combination that maximizes the number of explained reads.
+**nf-core/hlatyping** is a bioinformatics pipeline that can be used to perform HLA typing from next-generation sequencing data. It supports three HLA typing tools:
+
+- [**OptiType**](https://github.com/FRED-2/OptiType) (default, open-source): HLA Class I genotyping based on integer linear programming from FASTQ or BAM input.
+- [**HLA-HD**](https://w3.genome.med.kyoto-u.ac.jp/HLA-HD/) (optional, requires local installation): HLA Class I + II typing from FASTQ or BAM input.
+- [**HLA\*LA**](https://github.com/DiltheyLab/HLA-LA) (optional, open-source): HLA typing from BAM files using a population reference graph of the MHC region.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
@@ -36,8 +39,10 @@ On release, automated continuous integration tests run the pipeline on a full-si
 2. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 3. Generate reference indices ([`yara`](https://www.seqan.de/apps/yara.html))
 4. Map reads to reference ([`yara`](https://www.seqan.de/apps/yara.html))
-5. Run HLA class I typing ([`OptiType`](https://github.com/FRED-2/OptiType)) and optional HLA class I+II ([`HLA-HD`](https://w3.genome.med.kyoto-u.ac.jp/HLA-HD/), requires local installation of HLA-HD)
-6. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+5. Run HLA class I typing ([`OptiType`](https://github.com/FRED-2/OptiType))
+6. Optional: HLA class I+II typing ([`HLA-HD`](https://w3.genome.med.kyoto-u.ac.jp/HLA-HD/), requires local installation)
+7. Optional: HLA typing from BAM ([`HLA*LA`](https://github.com/DiltheyLab/HLA-LA))
+8. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
 
 ## Usage
 

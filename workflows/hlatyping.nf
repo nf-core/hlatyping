@@ -17,7 +17,8 @@
 include { CHECK_PAIRED                } from '../modules/local/check_paired'
 include { HLAHD_INSTALL               } from '../modules/local/hlahd/install'
 include { HLAHD                       } from '../modules/local/hlahd/genotype'
-include { HLALA_DOWNLOAD               } from '../modules/local/hlala/download'
+include { HLALA_DOWNLOAD              } from '../modules/local/hlala/download'
+include { HLALA_PREPAREGRAPH         } from '../modules/nf-core/hlala/preparegraph/main'
 
 include { paramsSummaryMultiqc        } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -58,6 +59,7 @@ workflow HLATYPING {
     main:
 
     def tools = params.tools ?: 'optitype'
+    def tool_list = tools.tokenize(",")
 
     ch_versions = channel.empty()
     ch_multiqc_files = channel.empty()
@@ -73,14 +75,22 @@ workflow HLATYPING {
         }
         .set { ch_input_files }
 
-    // Create separate BAM channels for different processing paths
-    // One for conversion to FASTQ (OptiType/HLA-HD), one for HLA*LA (direct BAM input)
-    ch_input_files.bam
-        .multiMap { meta, files ->
-            for_fastq_conversion: [meta, files]
-            for_hlala: [meta, files]
-        }
-        .set { ch_bam_split }
+    // When HLA*LA is selected, fork BAM channel for both FASTQ conversion and direct BAM input
+    def ch_bam_for_fastq
+    def ch_bam_for_hlala
+    if ("hlala" in tool_list) {
+        ch_input_files.bam
+            .multiMap { meta, files ->
+                for_fastq_conversion: [meta, files]
+                for_hlala: [meta, files]
+            }
+            .set { ch_bam_split }
+        ch_bam_for_fastq = ch_bam_split.for_fastq_conversion
+        ch_bam_for_hlala = ch_bam_split.for_hlala
+    } else {
+        ch_bam_for_fastq = ch_input_files.bam
+        ch_bam_for_hlala = channel.empty()
+    }
 
     //
     // MODULE: Concatenate FastQ files from same sample if required
@@ -90,31 +100,22 @@ workflow HLATYPING {
     ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first())
 
     // determine BAM pairedness for fastq conversion
-    CHECK_PAIRED (ch_bam_split.for_fastq_conversion )
+    CHECK_PAIRED (ch_bam_for_fastq)
     CHECK_PAIRED.out.reads
-        .map {meta, reads, single_end ->
+        .map { meta, reads, single_end ->
             meta["single_end"] = single_end.text.toBoolean()
             [meta, reads]
         }
         .set { ch_bam_pe_corrected }
     ch_versions = ch_versions.mix(CHECK_PAIRED.out.versions)
 
-
-    //  paired-end reads should not be interleaved
-    def interleave = false
-
     //
     // MODULE: Run COLLATEFASTQ
     //
     SAMTOOLS_COLLATEFASTQ (
         ch_bam_pe_corrected,
-        ch_bam_pe_corrected.map{ it ->                                         // meta, fasta
-            def new_id = ""
-            if(it) {
-                new_id = it[0].baseName
-            }
-            [[id:new_id], []] },
-        interleave
+        ch_bam_pe_corrected.map { _meta, _reads -> [[id: ''], []] },
+        false
     )
     SAMTOOLS_COLLATEFASTQ.out.fastq.set { ch_bam_fastq }
     ch_versions = ch_versions.mix(SAMTOOLS_COLLATEFASTQ.out.versions)
@@ -129,13 +130,13 @@ workflow HLATYPING {
     FASTQC (
         ch_all_fastq
     )
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{ entry -> entry[1]})
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect { _meta, zip -> zip })
     ch_versions = ch_versions.mix(FASTQC.out.versions.first())
 
     //
     // Run modules for each selected tool
     //
-    if ( "optitype" in tools.tokenize(",") ) {
+    if ( "optitype" in tool_list ) {
 
         ch_all_fastq
             .map { meta, _reads ->
@@ -186,21 +187,16 @@ workflow HLATYPING {
             YARA_MAPPER.out.bam.join(YARA_MAPPER.out.bai)
         )
 
-        ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.hla_type.collect{ entry -> entry[1]})
-        ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.coverage_plot.collect{ entry -> entry[1]})
+        ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.hla_type.collect { _meta, tsv -> tsv })
+        ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.coverage_plot.collect { _meta, plot -> plot })
         ch_versions      = ch_versions.mix(OPTITYPE.out.versions)
     }
 
-    // Parse software metadata for HLA-HD and HLA*LA
-    def software_meta_file = file("$projectDir/assets/software_meta.json", checkIfExists: true)
-    def jsonSlurper = new groovy.json.JsonSlurper()
-    def software_meta = jsonSlurper.parse(software_meta_file)
-
-    if ( "hlahd" in tools.tokenize(",") ) {
+    if ( "hlahd" in tool_list ) {
         //
         // MODULE: Run HLAHD typing
         //
-        def hlahd_meta = software_meta['hlahd']
+        def hlahd_meta = new groovy.json.JsonSlurper().parse(file("$projectDir/assets/software_meta.json", checkIfExists: true))['hlahd']
         def ch_hlahd_install = channel.of([
             'hlahd',
             hlahd_meta.version,
@@ -214,30 +210,25 @@ workflow HLATYPING {
         ch_versions = ch_versions.mix(HLAHD.out.versions)
     }
 
-    if ( "hlala" in tools.tokenize(",") ) {
+    if ( "hlala" in tool_list ) {
         //
-        // MODULE: Run HLA*LA typing (requires BAM input)
+        // MODULE: Run HLA*LA typing (requires genome-aligned BAM + BAI input)
         //
-        // Recompress BAM to BGZF format and create index in one step
-        ch_bam_split.for_hlala
-            .map { meta, files -> [meta, files, []] }  // Add empty index
-            .set { ch_hlala_input }
-
         SAMTOOLS_VIEW(
-            ch_hlala_input,
-            [[:], []],  // No reference needed for BAM->BAM
-            [],         // No qname file
-            'bai'       // Create BAI index
+            ch_bam_for_hlala.map { meta, files -> [meta, files, []] },
+            [[:], []],
+            [],
+            'bai'
         )
         ch_versions = ch_versions.mix(SAMTOOLS_VIEW.out.versions.first())
 
-        // Combine BAM with its index for HLA*LA
         SAMTOOLS_VIEW.out.bam
             .join(SAMTOOLS_VIEW.out.bai)
             .set { ch_bam_with_index }
 
-        // Graph acquisition: use pre-built directory, provided tarball, or download
-        def hlala_meta = software_meta['hlala']
+        // Graph acquisition: use pre-built directory, or download + prepare
+        def hlala_meta = new groovy.json.JsonSlurper().parse(file("$projectDir/assets/software_meta.json", checkIfExists: true))['hlala']
+        def ch_graph_dir
         if (params.hlala_graph_dir) {
             ch_graph_dir = channel.value(file(params.hlala_graph_dir, checkIfExists: true))
         } else {
@@ -245,17 +236,20 @@ workflow HLATYPING {
                 file(params.hlala_graph_tarball, checkIfExists: true) :
                 file('NO_FILE')
             HLALA_DOWNLOAD(channel.of([hlala_meta.graph, hlala_meta.graph_url, hlala_meta.graph_md5, graph_tarball]))
-            ch_graph_dir = HLALA_DOWNLOAD.out.graph
-            ch_versions = ch_versions.mix(HLALA_DOWNLOAD.out.versions.first())
+
+            HLALA_PREPAREGRAPH(HLALA_DOWNLOAD.out.graph.map { graph -> [[id: graph.name], graph] })
+            ch_versions = ch_versions.mix(HLALA_PREPAREGRAPH.out.versions)
+
+            // HLALA_TYPING needs the parent directory (--customGraphDir), not the graph dir itself
+            ch_graph_dir = HLALA_PREPAREGRAPH.out.graph.map { _meta, graph -> graph.parent }.first()
         }
 
-        // Combine BAM+BAI with graph for HLALA_TYPING
         ch_bam_with_index
             .combine(ch_graph_dir)
             .set { ch_hlala_typing_input }
 
         HLALA_TYPING(ch_hlala_typing_input)
-        ch_versions = ch_versions.mix(HLALA_TYPING.out.versions.first())
+        ch_versions = ch_versions.mix(HLALA_TYPING.out.versions)
     }
 
     //

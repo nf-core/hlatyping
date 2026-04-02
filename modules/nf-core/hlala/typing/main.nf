@@ -1,54 +1,55 @@
 process HLALA_TYPING {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/hla-la:1.0.4--h077b44d_1':
-        'biocontainers/hla-la:1.0.4--h077b44d_1' }"
+    container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
+        ? 'https://depot.galaxyproject.org/singularity/hla-la:1.0.4--h077b44d_1'
+        : 'biocontainers/hla-la:1.0.4--h077b44d_1'}"
 
     input:
     tuple val(meta), path(bam), path(bai), path(graph)
 
     output:
-    tuple val(meta), path("results")                             , emit: results
-    tuple val(meta), path("results/extraction.bam")              , emit: extraction
-    tuple val(meta), path("results/extraction.bam.bai")          , emit: extraction_index
-    tuple val(meta), path("results/extraction_mapped.bam")       , emit: extraction_mapped
-    tuple val(meta), path("results/extraction_unmapped.bam")     , emit: extraction_unmpapped
-    tuple val(meta), path("results/hla/*")                       , emit: hla
-    tuple val(meta), path("results/*.fastq")                     , emit: fastq
-    tuple val(meta), path("results/reads_per_level.txt")         , emit: reads_per_level
-    tuple val(meta), path("results/remapped_with_a.bam")         , emit: remapped
-    tuple val(meta), path("results/remapped_with_a.bam.bai")     , emit: remapped_index
-    path "versions.yml"                                          , emit: versions
+    tuple val(meta), path("results"), emit: results
+    tuple val(meta), path("results/extraction.bam"), emit: extraction
+    tuple val(meta), path("results/extraction.bam.bai"), emit: extraction_index
+    tuple val(meta), path("results/extraction_mapped.bam"), emit: extraction_mapped
+    tuple val(meta), path("results/extraction_unmapped.bam"), emit: extraction_unmpapped
+    tuple val(meta), path("results/hla/*"), emit: hla
+    tuple val(meta), path("results/*.fastq"), emit: fastq
+    tuple val(meta), path("results/reads_per_level.txt"), emit: reads_per_level
+    tuple val(meta), path("results/remapped_with_a.bam"), emit: remapped
+    tuple val(meta), path("results/remapped_with_a.bam.bai"), emit: remapped_index
+    path "versions.yml", emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def args    = task.ext.args   ?: ''
-    def prefix  = task.ext.prefix ?: "${meta.id}"
-    def VERSION = '1.0.4' // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    def VERSION = '1.0.4'
+    // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
 
     def bin = ""
     if (workflow.profile.tokenize(',').intersect(['conda', 'mamba']).size() >= 1) {
-        bin="\$CONDA_PREFIX/opt/hla-la/src/HLA-LA.pl"
-    } else {
-        bin="/usr/local/opt/hla-la/src/HLA-LA.pl"
+        bin = "\$CONDA_PREFIX/opt/hla-la/src/HLA-LA.pl"
+    }
+    else {
+        bin = "/usr/local/opt/hla-la/src/HLA-LA.pl"
     }
 
     """
     ${bin} \\
-        --BAM $bam \\
+        --BAM ${bam} \\
         --customGraphDir ${graph} \\
-        --sampleID $prefix \\
+        --sampleID ${prefix} \\
         --workingDir . \\
-        --maxThreads $task.cpus \\
-        $args
+        --maxThreads ${task.cpus} \\
+        ${args}
 
-    mkdir -p results
-    mv ${prefix}/ results/
+    mv ${prefix} results
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -57,7 +58,8 @@ process HLALA_TYPING {
     """
 
     stub:
-    def VERSION = '1.0.4' // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
+    def VERSION = '1.0.4'
+    // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
     """
     mkdir -p results
 

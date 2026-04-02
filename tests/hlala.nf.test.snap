@@ -1,7 +1,7 @@
 {
     "-profile test_hlala (stub)": {
         "content": [
-            7,
+            8,
             {
                 "CHECK_PAIRED": {
                     "samtools": "1.16.1"
@@ -11,6 +11,9 @@
                 },
                 "HLALA_DOWNLOAD": {
                     "wget": "1.21.4"
+                },
+                "HLALA_PREPAREGRAPH": {
+                    "hlala": "1.0.4"
                 },
                 "HLALA_TYPING": {
                     "hla-la": "1.0.4"
@@ -132,6 +135,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.3"
         },
-        "timestamp": "2026-02-27T10:37:40.952629022"
+        "timestamp": "2026-03-16T11:37:14.015137564"
     }
 }
