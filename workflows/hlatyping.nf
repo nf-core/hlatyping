@@ -17,7 +17,6 @@
 include { CHECK_PAIRED                } from '../modules/local/check_paired'
 include { HLAHD_INSTALL               } from '../modules/local/hlahd/install'
 include { HLAHD                       } from '../modules/local/hlahd/genotype'
-include { HLALA_DOWNLOAD              } from '../modules/local/hlala/download'
 include { HLALA_PREPAREGRAPH         } from '../modules/nf-core/hlala/preparegraph/main'
 
 include { paramsSummaryMultiqc        } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -41,6 +40,8 @@ include { OPTITYPE                    } from '../modules/nf-core/optitype/main'
 include { SAMTOOLS_COLLATEFASTQ       } from '../modules/nf-core/samtools/collatefastq/main'
 include { HLALA_TYPING                } from '../modules/nf-core/hlala/typing/main'
 include { SAMTOOLS_VIEW               } from '../modules/nf-core/samtools/view/main'
+include { UNTAR                       } from '../modules/nf-core/untar/main'
+include { WGET                        } from '../modules/nf-core/wget/main'
 include { YARA_INDEX                  } from '../modules/nf-core/yara/index/main'
 include { YARA_MAPPER                 } from '../modules/nf-core/yara/mapper/main'
 
@@ -226,18 +227,43 @@ workflow HLATYPING {
             .join(SAMTOOLS_VIEW.out.bai)
             .set { ch_bam_with_index }
 
-        // Graph acquisition: use pre-built directory, or download + prepare
+        // Graph acquisition: use pre-built directory, or (download +) extract tarball
         def hlala_meta = new groovy.json.JsonSlurper().parse(file("$projectDir/assets/software_meta.json", checkIfExists: true))['hlala']
         def ch_graph_dir
         if (params.hlala_graph_dir) {
             ch_graph_dir = channel.value(file(params.hlala_graph_dir, checkIfExists: true))
         } else {
-            def graph_tarball = params.hlala_graph_tarball ?
-                file(params.hlala_graph_tarball, checkIfExists: true) :
-                file('NO_FILE')
-            HLALA_DOWNLOAD(channel.of([hlala_meta.graph, hlala_meta.graph_url, hlala_meta.graph_md5, graph_tarball]))
+            def ch_graph_tarball
+            if (params.hlala_graph_tarball) {
+                ch_graph_tarball = channel.of([[id: hlala_meta.graph], file(params.hlala_graph_tarball, checkIfExists: true)])
+            } else {
+                WGET(channel.of([[id: hlala_meta.graph], hlala_meta.graph_url, 'tar.gz']))
+                ch_versions = ch_versions.mix(WGET.out.versions)
+                ch_graph_tarball = WGET.out.outfile
+            }
 
-            HLALA_PREPAREGRAPH(HLALA_DOWNLOAD.out.graph.map { graph -> [[id: graph.name], graph] })
+            // Validate MD5 checksum (streaming to avoid loading multi-GB tarball into memory)
+            def ch_graph_validated = ch_graph_tarball.map { meta, tarball ->
+                if (!workflow.stubRun) {
+                    def digest = java.security.MessageDigest.getInstance("MD5")
+                    tarball.withInputStream { input ->
+                        def buffer = new byte[1 << 16]
+                        def read = input.read(buffer)
+                        while (read != -1) {
+                            digest.update(buffer, 0, read)
+                            read = input.read(buffer)
+                        }
+                    }
+                    def actual = digest.digest().collect { String.format("%02x", it) }.join()
+                    if (actual != hlala_meta.graph_md5) {
+                        error "HLA*LA graph checksum mismatch for ${tarball.name}: expected ${hlala_meta.graph_md5}, got ${actual}"
+                    }
+                }
+                [meta, tarball]
+            }
+
+            UNTAR(ch_graph_validated)
+            HLALA_PREPAREGRAPH(UNTAR.out.untar)
             ch_versions = ch_versions.mix(HLALA_PREPAREGRAPH.out.versions)
 
             // HLALA_TYPING needs the parent directory (--customGraphDir), not the graph dir itself
