@@ -5,7 +5,7 @@
     },
     "hlala": {
         "graph": "PRG_MHC_GRCh38_withIMGT",
-        "graph_url": "http://www.well.ox.ac.uk/downloads/PRG_MHC_GRCh38_withIMGT.tar.gz",
+        "graph_url": "https://zenodo.org/records/19336310/files/PRG_MHC_GRCh38_withIMGT.tar.gz?download=1",
         "graph_md5": "525a8aa0c7f357bf29fe2c75ef1d477d"
     }
 }
