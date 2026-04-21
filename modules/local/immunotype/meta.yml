@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "immunotype"
+description: Peptide-based HLA class I typing from immunopeptidomics data
+keywords:
+  - hla
+  - typing
+  - immunopeptidomics
+  - peptides
+tools:
+  - "immunotype":
+      description: "Peptide-based HLA typing from immunopeptidomics data"
+      homepage: "https://github.com/AG-Walz/immunotype"
+      documentation: "https://github.com/AG-Walz/immunotype"
+      tool_dev_url: "https://github.com/AG-Walz/immunotype"
+      licence: ["MIT"]
+      identifier: null
+
+input:
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1' ]`
+    - peptide_tsv:
+        type: file
+        description: |
+          TSV file containing peptide sequences. Must have a `sequence` column header.
+          Typically an MHCquant output file; other columns are ignored.
+        pattern: "*.tsv"
+        ontologies:
+          - edam: "http://edamontology.org/format_3475" # TSV
+
+output:
+  typing:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1' ]`
+      - "*.typing.tsv":
+          type: file
+          description: TSV with predicted HLA class I alleles (top 2 per A/B/C locus, joined with `;`)
+          pattern: "*.typing.tsv"
+          ontologies:
+            - edam: "http://edamontology.org/format_3475" # TSV
+  probabilities:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1' ]`
+      - "*.probabilities.tsv":
+          type: file
+          description: Optional TSV with per-allele probability scores (emitted only when `--prob-output` is passed via `ext.args`)
+          pattern: "*.probabilities.tsv"
+          ontologies:
+            - edam: "http://edamontology.org/format_3475" # TSV
+
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - immunotype:
+          type: string
+          description: The name of the tool
+      - immunotype --version | cut -d' ' -f3:
+          type: eval
+          description: The expression to obtain the version of the tool
+
+authors:
+  - "@jonasscheid"
+maintainers:
+  - "@jonasscheid"

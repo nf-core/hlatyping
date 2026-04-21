@@ -1,0 +1,36 @@
+{
+    "-profile test_immunotype (stub)": {
+        "content": [
+            2,
+            {
+                "IMMUNOTYPE": {
+                    "immunotype": null
+                },
+                "Workflow": {
+                    "nf-core/hlatyping": "v2.2.0"
+                }
+            },
+            [
+                "immunotype",
+                "immunotype/HepG2_A",
+                "immunotype/HepG2_A/HepG2_A.typing.tsv",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_plots",
+                "multiqc/multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
+                "samplesheet.csv"
+            ],
+            [
+                "HepG2_A.typing.tsv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "samplesheet.csv:md5,4cd9cee83291668f99f6e41e26727d4d"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.3"
+        },
+        "timestamp": "2026-04-21T21:36:25.347541529"
+    }
+}

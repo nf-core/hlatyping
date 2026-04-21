@@ -104,15 +104,15 @@ workflow PIPELINE_INITIALISATION {
     channel
         .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
         .map {
-            meta, fastq_1, fastq_2, bam ->
-                if (!bam) {
-                    if (!fastq_2) {
-                        return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
-                    } else {
-                        return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
-                    }
+            meta, fastq_1, fastq_2, bam, peptide_tsv ->
+                if (peptide_tsv) {
+                    return [ meta.id, meta, [ peptide_tsv ] ]
+                } else if (bam) {
+                    return [ meta.id, meta, [ bam ] ]
+                } else if (fastq_2) {
+                    return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
                 } else {
-                        return [ meta.id, meta, [ bam ] ]
+                    return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
                 }
         }
         .groupTuple()
@@ -198,7 +198,7 @@ def validateInputParameters() {
 //
 def validateToolsParam() {
     def tools = params.tools ?: 'optitype'
-    def valid_tools = [ 'optitype', 'hlahd' ]
+    def valid_tools = [ 'optitype', 'hlahd', 'immunotype' ]
     def tool_list = tools.tokenize(',')
     def invalid_tools = tool_list.findAll { tool -> tool.trim() !in valid_tools }
     if (invalid_tools) {

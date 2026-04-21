@@ -34,13 +34,34 @@
                 "pattern": "^\\S+\\.bam$",
                 "errorMessage": "BAM file cannot contain spaces and must have extension '.bam'"
             },
+            "peptide_tsv": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.tsv$",
+                "errorMessage": "Peptide TSV file cannot contain spaces and must have extension '.tsv'"
+            },
             "seq_type": {
                 "type": "string",
-                "enum": ["dna", "rna"],
+                "enum": ["dna", "rna", "peptide"],
                 "meta": ["seq_type"],
-                "errorMessage": "Sequencing type (seq_type) must be one of the following: 'dna', 'rna'"
+                "errorMessage": "Sequencing type (seq_type) must be one of the following: 'dna', 'rna', 'peptide'"
             }
         },
-        "required": ["sample", "seq_type"]
+        "required": ["sample", "seq_type"],
+        "oneOf": [
+            {
+                "required": ["fastq_1"],
+                "not": { "anyOf": [{ "required": ["bam"] }, { "required": ["peptide_tsv"] }] }
+            },
+            {
+                "required": ["bam"],
+                "not": { "anyOf": [{ "required": ["fastq_1"] }, { "required": ["fastq_2"] }, { "required": ["peptide_tsv"] }] }
+            },
+            {
+                "required": ["peptide_tsv"],
+                "not": { "anyOf": [{ "required": ["fastq_1"] }, { "required": ["fastq_2"] }, { "required": ["bam"] }] }
+            }
+        ]
     }
 }
