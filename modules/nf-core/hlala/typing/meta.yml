@@ -144,13 +144,17 @@ output:
           description: Remapped BAM index file
           pattern: "*.bam.bai"
           ontologies: []
+topics:
   versions:
-    - versions.yml:
-        type: file
-        description: File containing software versions
-        pattern: "versions.yml"
-        ontologies:
-          - edam: http://edamontology.org/format_3750 # YAML
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - hla-la:
+          type: string
+          description: The name of the tool
+      - 1.0.4:
+          type: string
+          description: The expression to obtain the version of the tool
 authors:
   - "@mapo9"
 maintainers:
