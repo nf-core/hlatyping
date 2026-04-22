@@ -8,11 +8,11 @@ process IMMUNOTYPE {
         : 'biocontainers/immunotype:1.0.2--pyhdfd78af_0'}"
 
     input:
-    tuple val(meta), path(peptide_tsv)
+    tuple val(meta), path(tsv)
 
     output:
-    tuple val(meta), path("${prefix}.typing.tsv"),                    emit: typing
-    tuple val(meta), path("${prefix}.probabilities.tsv"),             emit: probabilities, optional: true
+    tuple val(meta), path("${prefix}_typing.tsv"), emit: typing
+    tuple val(meta), path("${prefix}_probabilities.tsv"), emit: probabilities, optional: true
     tuple val("${task.process}"), val('immunotype'), eval("immunotype --version | cut -d' ' -f3"), topic: versions
 
     when:
@@ -20,26 +20,28 @@ process IMMUNOTYPE {
 
     script:
     def args = task.ext.args ?: ''
-    prefix   = task.ext.prefix ?: "${meta.id}"
-    """
-    awk -F '\\t' '
-        NR==1 {
-            for (i=1; i<=NF; i++) if (\$i == "sequence") col=i
-            if (!col) { print "ERROR: sequence column not found in ${peptide_tsv}" > "/dev/stderr"; exit 1 }
-            next
+    def col_name = task.ext.peptide_col_name
+    prefix = task.ext.prefix ?: "${meta.id}"
+    def peptides = tsv
+    if (col_name) {
+        def lines = tsv.text.readLines()
+        def idx = lines[0].split('\t').findIndexOf { it == col_name }
+        if (idx < 0) {
+            error("Column '${col_name}' not found in ${tsv}")
         }
-        !seen[\$col]++ { print \$col }
-    ' ${peptide_tsv} > ${prefix}.peptides.tsv
-
+        peptides = file("${task.workDir}/${prefix}.peptides.tsv")
+        peptides.text = lines.drop(1).collect { it.split('\t')[idx] }.unique().join('\n') + '\n'
+    }
+    """
     immunotype \\
         ${args} \\
-        ${prefix}.peptides.tsv \\
-        ${prefix}.typing.tsv
+        ${peptides} \\
+        ${prefix}_typing.tsv
     """
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.typing.tsv
+    touch ${prefix}_typing.tsv
     """
 }

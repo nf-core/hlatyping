@@ -11,9 +11,11 @@
                 }
             },
             [
+                "fixtures",
+                "fixtures/HepG2_A.tsv",
                 "immunotype",
                 "immunotype/HepG2_A",
-                "immunotype/HepG2_A/HepG2_A.typing.tsv",
+                "immunotype/HepG2_A/HepG2_A_typing.tsv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_plots",
@@ -23,14 +25,15 @@
                 "samplesheet.csv"
             ],
             [
-                "HepG2_A.typing.tsv:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "samplesheet.csv:md5,4cd9cee83291668f99f6e41e26727d4d"
+                "HepG2_A.tsv:md5,aad8a65612b176640916f0a7e26d247f",
+                "HepG2_A_typing.tsv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "samplesheet.csv:md5,88f0f56182bc71dada80bc0113467b86"
             ]
         ],
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.3"
         },
-        "timestamp": "2026-04-21T21:36:25.347541529"
+        "timestamp": "2026-04-22T15:53:41.978471814"
     }
 }

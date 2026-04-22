@@ -6,16 +6,21 @@ nextflow_pipeline {
     tag "immunotype"
     profile "test_immunotype"
 
+    // TODO: once the MHCquant-style peptide TSV test fixture has been uploaded to
+    // nf-core/test-datasets under the 'hlatyping' branch, drop the setup block and
+    // point `input` in conf/test_immunotype.config to the remote samplesheet.
     test("-profile test_immunotype (stub)") {
 
         options "-stub-run"
 
         setup {
+            def fixtures = new File("$outputDir/fixtures")
+            fixtures.mkdirs()
+            new File(fixtures, "HepG2_A.tsv").text = "sequence\tprotein_accessions\nPEPTIDEAAA\tP0001\nPEPTIDEBBB\tP0002\n"
             def samplesheet = new File("$outputDir/samplesheet.csv")
-            samplesheet.parentFile.mkdirs()
             samplesheet.text = """\
-sample,fastq_1,fastq_2,bam,peptide_tsv,seq_type
-HepG2_A,,,,${projectDir}/tests/fixtures/immunotype/HepG2_A.tsv,peptide
+sample,fastq_1,fastq_2,bam,tsv,seq_type
+HepG2_A,,,,${fixtures}/HepG2_A.tsv,peptide
 """
         }
 

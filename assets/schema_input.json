@@ -34,12 +34,12 @@
                 "pattern": "^\\S+\\.bam$",
                 "errorMessage": "BAM file cannot contain spaces and must have extension '.bam'"
             },
-            "peptide_tsv": {
+            "tsv": {
                 "type": "string",
                 "format": "file-path",
                 "exists": true,
                 "pattern": "^\\S+\\.tsv$",
-                "errorMessage": "Peptide TSV file cannot contain spaces and must have extension '.tsv'"
+                "errorMessage": "TSV file cannot contain spaces and must have extension '.tsv'"
             },
             "seq_type": {
                 "type": "string",
@@ -52,14 +52,14 @@
         "oneOf": [
             {
                 "required": ["fastq_1"],
-                "not": { "anyOf": [{ "required": ["bam"] }, { "required": ["peptide_tsv"] }] }
+                "not": { "anyOf": [{ "required": ["bam"] }, { "required": ["tsv"] }] }
             },
             {
                 "required": ["bam"],
-                "not": { "anyOf": [{ "required": ["fastq_1"] }, { "required": ["fastq_2"] }, { "required": ["peptide_tsv"] }] }
+                "not": { "anyOf": [{ "required": ["fastq_1"] }, { "required": ["fastq_2"] }, { "required": ["tsv"] }] }
             },
             {
-                "required": ["peptide_tsv"],
+                "required": ["tsv"],
                 "not": { "anyOf": [{ "required": ["fastq_1"] }, { "required": ["fastq_2"] }, { "required": ["bam"] }] }
             }
         ]

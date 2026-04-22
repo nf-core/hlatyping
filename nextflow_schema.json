@@ -110,6 +110,23 @@
                 }
             }
         },
+        "immunotype_options": {
+            "title": "ImmunoType options",
+            "type": "object",
+            "description": "Options for running ImmunoType for peptide-based HLA class I typing.",
+            "default": "",
+            "fa_icon": "fas fa-cog",
+            "properties": {
+                "peptide_col_name": {
+                    "type": "string",
+                    "default": "sequence",
+                    "fa_icon": "fas fa-columns",
+                    "description": "Name of the column containing peptide sequences in the input TSV.",
+                    "help_text": "ImmunoType requires a list of peptide sequences. When the input TSV has multiple columns (e.g. MHCquant output), this parameter selects which column holds the peptides. Default is `sequence`.",
+                    "hidden": true
+                }
+            }
+        },
         "reference_genome_options": {
             "title": "Reference genome options",
             "type": "object",
@@ -322,6 +339,9 @@
         },
         {
             "$ref": "#/$defs/hlahd_options"
+        },
+        {
+            "$ref": "#/$defs/immunotype_options"
         },
         {
             "$ref": "#/$defs/reference_genome_options"
