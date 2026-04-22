@@ -19,23 +19,19 @@ process IMMUNOTYPE {
     task.ext.when == null || task.ext.when
 
     script:
+    prefix = task.ext.prefix ?: "${meta.id}"
     def args = task.ext.args ?: ''
     def col_name = task.ext.peptide_col_name
-    prefix = task.ext.prefix ?: "${meta.id}"
-    def peptides = tsv
-    if (col_name) {
-        def lines = tsv.text.readLines()
-        def idx = lines[0].split('\t').findIndexOf { it == col_name }
-        if (idx < 0) {
-            error("Column '${col_name}' not found in ${tsv}")
-        }
-        peptides = file("${task.workDir}/${prefix}.peptides.tsv")
-        peptides.text = lines.drop(1).collect { it.split('\t')[idx] }.unique().join('\n') + '\n'
-    }
+    // If peptide_col_name is set, extract that column from a header TSV; otherwise the input is already a headerless peptide list and is passed through.
+    def prepare = col_name
+        ? "awk -F'\\t' -v c='${col_name}' 'NR==1{for(i=1;i<=NF;i++) if(\$i==c) k=i; next} !seen[\$k]++{print \$k}' ${tsv} > ${prefix}_immunotype_input.tsv"
+        : "cp ${tsv} ${prefix}_immunotype_input.tsv"
     """
+    ${prepare}
+
     immunotype \\
         ${args} \\
-        ${peptides} \\
+        ${prefix}_immunotype_input.tsv \\
         ${prefix}_typing.tsv
     """
 
