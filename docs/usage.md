@@ -65,13 +65,23 @@ CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz,,
 TREATMENT_REP1,,,AEG588A4_S4_L003_R1_001.bam,dna
 ```
 
+Peptide TSV input is also supported for Immunotype (selected via `--tools immunotype`). Rows set `seq_type` to `peptide` and use the `tsv` column instead of `fastq_*`/`bam`:
+
+```console
+sample,tsv,seq_type
+HepG2_A,HepG2_A.tsv,peptide
+```
+
 | Column     | Description                                                                                                                |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `sample`   | Custom sample name.                                                                                                        |
 | `fastq_1`  | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz". |
 | `fastq_2`  | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz". |
 | `bam`      | OPTIONAL. Full path to BAM file.                                                                                           |
-| `seq_type` | `DNA` or `RNA`.                                                                                                            |
+| `tsv`      | OPTIONAL. Full path to a peptide TSV (used with `seq_type: peptide` for Immunotype).                                       |
+| `seq_type` | `DNA`, `RNA`, or `peptide`.                                                                                                |
+
+Each row must provide exactly one of `fastq_1`, `bam`, or `tsv`. By default the `tsv` file is assumed to have a header with a `sequence` column (MHCquant-style); override with `--peptide_col_name <col>`, or pass a headerless peptide list by setting `peptide_col_name` to `null` via a params file.
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
