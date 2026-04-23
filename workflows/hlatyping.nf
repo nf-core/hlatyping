@@ -183,7 +183,7 @@ workflow HLATYPING {
 
     if ("immunotype" in tools.tokenize(",")) {
         //
-        // MODULE: Run ImmunoType peptide-based HLA typing
+        // MODULE: Run immunotype peptide-based HLA typing
         //
         IMMUNOTYPE(ch_input_files.tsv.map { meta, files -> [meta, files[0]] })
     }

@@ -4,7 +4,7 @@
             2,
             {
                 "IMMUNOTYPE": {
-                    "immunotype": null
+                    "immunotype": "1.0.2"
                 },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0"
@@ -14,8 +14,7 @@
                 "fixtures",
                 "fixtures/HepG2_A.tsv",
                 "immunotype",
-                "immunotype/HepG2_A",
-                "immunotype/HepG2_A/HepG2_A_typing.tsv",
+                "immunotype/HepG2_A_typing.tsv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_plots",
@@ -34,6 +33,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.3"
         },
-        "timestamp": "2026-04-22T15:53:41.978471814"
+        "timestamp": "2026-04-23T13:18:59.438368848"
     }
 }

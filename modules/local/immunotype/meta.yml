@@ -24,10 +24,8 @@ input:
     - tsv:
         type: file
         description: |
-          TSV file containing peptide sequences. If `task.ext.peptide_col_name` is set
-          (default `sequence` via pipeline param), the column is extracted and
-          deduplicated before being passed to the tool. If null, the file is expected
-          to be headerless with one peptide per line.
+          TSV file containing a header with `peptide_col_name` or a headerless tsv
+          with only one sequence per row in it.
         pattern: "*.tsv"
         ontologies:
           - edam: "http://edamontology.org/format_3475" # TSV
