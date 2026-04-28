@@ -21,7 +21,7 @@ process IMMUNOTYPE {
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     def args = task.ext.args ?: ''
-    def col_name = task.ext.peptide_col_name ?: params.peptide_col_name
+    def col_name = task.ext.peptide_col_name
     // If peptide_col_name is set, extract that column from a header TSV; otherwise the input is already a headerless peptide list and is passed through.
     def prepare = col_name
         ? "awk -F'\\t' -v c='${col_name}' 'NR==1{for(i=1;i<=NF;i++) if(\$i==c) k=i; next} !seen[\$k]++{print \$k}' ${tsv} > ${prefix}_immunotype_input.tsv"
