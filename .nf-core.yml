@@ -1,7 +1,23 @@
 lint:
+  files_exist:
+    # Moved to docs/CONTRIBUTING.md in nf-core/tools 4.0.0 template
+    - .github/CONTRIBUTING.md
   files_unchanged:
     - docs/images/nf-core-hlatyping_logo_dark.png
     - assets/nf-core-hlatyping_logo_light.png
+    # Updated by nf-core/tools 4.0.0 template sync; differs from 3.5.2 linter expectations
+    - .github/PULL_REQUEST_TEMPLATE.md
+    - .github/workflows/branch.yml
+    - .github/workflows/linting_comment.yml
+    - .github/workflows/linting.yml
+    - .prettierignore
+  nf_test_content:
+    # nf-test.config uses `key = "value"` syntax (correct per template); 3.5.2 linter
+    # regex expects `key "value"` (without `=`) — false failure due to linter bug
+    - nf-test.config
+  schema_params: false
+  # ms2pip_model_dir is injected by the user's ~/.nextflow/config from another pipeline
+  # and causes a false-positive schema_params failure; disabled until linting env is clean
 nf_core_version: 4.0.0
 repository_type: pipeline
 template:
