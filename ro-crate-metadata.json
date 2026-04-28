@@ -1,6 +1,6 @@
 {
     "@context": [
-        "https://w3id.org/ro/crate/1.1/context",
+        "https://w3id.org/ro/crate/1.2/context",
         {
             "GithubService": "https://w3id.org/ro/terms/test#GithubService",
             "JenkinsService": "https://w3id.org/ro/terms/test#JenkinsService",
@@ -118,7 +118,7 @@
             },
             "conformsTo": [
                 {
-                    "@id": "https://w3id.org/ro/crate/1.1"
+                    "@id": "https://w3id.org/ro/crate/1.2"
                 },
                 {
                     "@id": "https://w3id.org/workflowhub/workflow-ro-crate/1.0"
@@ -186,13 +186,8 @@
             "sdPublisher": {
                 "@id": "https://nf-co.re/"
             },
-            "url": [
-                "https://github.com/nf-core/hlatyping",
-                "https://nf-co.re/hlatyping/2.2.0/"
-            ],
-            "version": [
-                "2.2.0"
-            ]
+            "url": ["https://github.com/nf-core/hlatyping", "https://nf-co.re/hlatyping/2.2.0/"],
+            "version": ["2.2.0"]
         },
         {
             "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow",
@@ -204,14 +199,14 @@
             "url": {
                 "@id": "https://www.nextflow.io/"
             },
-            "version": "!>=25.04.2"
+            "version": "!>=25.10.4"
         },
         {
-            "@id": "#fbeeb1b3-7685-4b3b-b255-6384f10c2b19",
+            "@id": "#dac4fb43-11bf-477e-9f1d-b16d66b49b75",
             "@type": "TestSuite",
             "instance": [
                 {
-                    "@id": "#1e6dadac-0af2-444b-92f5-93b282821c0e"
+                    "@id": "#f8fe5c32-6599-4b75-b496-943f1f59548d"
                 }
             ],
             "mainEntity": {
@@ -220,7 +215,7 @@
             "name": "Test suite for nf-core/hlatyping"
         },
         {
-            "@id": "#1e6dadac-0af2-444b-92f5-93b282821c0e",
+            "@id": "#f8fe5c32-6599-4b75-b496-943f1f59548d",
             "@type": "TestInstance",
             "name": "GitHub Actions workflow for testing nf-core/hlatyping",
             "resource": "repos/nf-core/hlatyping/actions/workflows/nf-test.yml",
