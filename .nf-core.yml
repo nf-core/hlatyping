@@ -2,7 +2,7 @@ lint:
   files_unchanged:
     - docs/images/nf-core-hlatyping_logo_dark.png
     - assets/nf-core-hlatyping_logo_light.png
-nf_core_version: 4.0.0
+nf_core_version: 4.0.1
 repository_type: pipeline
 template:
   author: Christopher Mohr, Alexander Peltzer, Sven Fillinger
