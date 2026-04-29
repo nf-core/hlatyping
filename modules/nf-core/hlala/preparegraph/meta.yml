@@ -1,51 +1,60 @@
 name: "hlala_preparegraph"
 description: Pre-compute the graph index structure.
 keywords:
-- hla
-- hlala
-- hla_typing
-- hlala_typing
+  - hla
+  - hlala
+  - hla_typing
+  - hlala_typing
 tools:
-- "hlala":
-    description: "HLA typing from short and long reads"
-    homepage: "https://github.com/DiltheyLab/HLA-LA"
-    documentation: "https://github.com/DiltheyLab/HLA-LA#running-hlala"
-    tool_dev_url: "https://github.com/DiltheyLab/HLA-LA"
-    doi: "10.1093/bioinformatics/btz235"
-    licence:
-    - "GPL"
-    identifier: ""
+  - "hlala":
+      description: "HLA typing from short and long reads"
+      homepage: "https://github.com/DiltheyLab/HLA-LA"
+      documentation: "https://github.com/DiltheyLab/HLA-LA#running-hlala"
+      tool_dev_url: "https://github.com/DiltheyLab/HLA-LA"
+      doi: "10.1093/bioinformatics/btz235"
+      licence: ["GPL"]
+      identifier: ""
 input:
-- - meta:
-      type: map
-      description: |
-        Groovy Map containing sample information
-        e.g. [ id:'test', single_end:false ]
-  - graph:
-      type: directory
-      description: PRG graph directory
-output:
-  graph:
   - - meta:
         type: map
         description: |
           Groovy Map containing sample information
           e.g. [ id:'test', single_end:false ]
-    - ${graph}:
+    - graph:
         type: directory
         description: PRG graph directory
+output:
+  graph:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. [ id:'test', single_end:false ]
+      - ${graph}:
+          type: directory
+          description: PRG graph directory
+  versions_hlala:
+    - - ${task.process}:
+          type: string
+          description: The process the versions were collected from
+      - hla-la:
+          type: string
+          description: The name of the tool
+      - echo 1.0.4:
+          type: eval
+          description: The expression to obtain the version of the tool
 topics:
   versions:
     - - ${task.process}:
           type: string
-          description: The name of the process
-      - hlala:
+          description: The process the versions were collected from
+      - hla-la:
           type: string
           description: The name of the tool
-      - 1.0.4:
-          type: string
+      - echo 1.0.4:
+          type: eval
           description: The expression to obtain the version of the tool
 authors:
-- "@mapo9"
+  - "@mapo9"
 maintainers:
-- "@mapo9"
+  - "@mapo9"

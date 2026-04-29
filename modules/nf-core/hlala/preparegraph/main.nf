@@ -1,19 +1,19 @@
 process HLALA_PREPAREGRAPH {
-    tag "${meta.id}"
+    tag "$meta.id"
     label 'process_high'
     stageInMode 'copy'
 
     conda "${moduleDir}/environment.yml"
-    container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
-        ? 'https://depot.galaxyproject.org/singularity/hla-la:1.0.4--h077b44d_1'
-        : 'biocontainers/hla-la:1.0.4--h077b44d_1'}"
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/hla-la:1.0.4--h077b44d_1':
+        'quay.io/biocontainers/hla-la:1.0.4--h077b44d_1' }"
 
     input:
     tuple val(meta), path(graph)
 
     output:
-    tuple val(meta), path("${graph}"), emit: graph
-    tuple val("${task.process}"), val('hlala'), val('1.0.4'), topic: versions
+    tuple val(meta), path("${graph}")        , emit: graph
+    tuple val("${task.process}"), val('hla-la'), eval('echo 1.0.4'), emit: versions_hlala, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -21,16 +21,15 @@ process HLALA_PREPAREGRAPH {
     script:
     def bin = ""
     if (workflow.profile.tokenize(',').intersect(['conda', 'mamba']).size() >= 1) {
-        bin = "\$CONDA_PREFIX/opt/hla-la/bin/HLA-LA"
-    }
-    else {
-        bin = "/usr/local/opt/hla-la/bin/HLA-LA"
+        bin="\$CONDA_PREFIX/opt/hla-la/bin/HLA-LA"
+    } else {
+        bin="/usr/local/opt/hla-la/bin/HLA-LA"
     }
 
     """
     ${bin} \\
         --action prepareGraph \\
-        --PRG_graph_dir ${graph}
+        --PRG_graph_dir $graph
     """
 
     stub:
