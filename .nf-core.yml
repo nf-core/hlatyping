@@ -18,7 +18,7 @@ lint:
   schema_params: false
   # ms2pip_model_dir is injected by the user's ~/.nextflow/config from another pipeline
   # and causes a false-positive schema_params failure; disabled until linting env is clean
-nf_core_version: 4.0.0
+nf_core_version: 4.0.1
 repository_type: pipeline
 template:
   author: Christopher Mohr, Alexander Peltzer, Sven Fillinger
