@@ -12,12 +12,13 @@ process HLAHD {
 
     output:
     tuple val(meta), path("*_final.result.txt"), emit: hla
-    path "versions.yml", emit: versions
+    tuple val("${task.process}"), val('hlahd'), val("${hlahd_version}"), emit: versions_hlahd, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
+    hlahd_version = hlahd_directory.toString().tokenize('/').last()
     def hlahd_p = hlahd_directory ? "${hlahd_directory}/bin" : ''
     def freq_data = hlahd_directory ? "${hlahd_directory}/freq_data" : ''
     def split_file = hlahd_directory ? "${hlahd_directory}/HLA_gene.split.3.50.0.txt" : ''
@@ -45,15 +46,10 @@ process HLAHD {
         ./
 
     cp ${prefix}/result/${prefix}_final.result.txt ./${prefix}_final.result.txt
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        hlahd: \$(echo \$(hlahd.sh 2>&1 | sed -n 's/.*version \\([0-9.]*\\).*/\\1/p'))
-    END_VERSIONS
-
     """
 
     stub:
+    hlahd_version = hlahd_directory.toString().tokenize('/').last()
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
@@ -63,11 +59,5 @@ process HLAHD {
 
     mkdir -p ${prefix}_output
     echo "Simulated hlahd output" > ${prefix}_final.result.txt
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        hlahd: \$(echo \$(hlahd.sh 2>&1 | sed -n 's/.*version \\([0-9.]*\\).*/\\1/p'))
-    END_VERSIONS
-
     """
 }

@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | ------------ | ----------- | ----------- |
 | `Immunotype` | -           | 1.0.2       |
 
+### `Dependencies`
+
+| Dependency | Old version | New version |
+| ---------- | ----------- | ----------- |
+| `MultiQC`  | 1.32        | 1.34        |
+| `samtools` | 1.21        | 1.23.1      |
+| `nf-core`  | 3.5.1       | 4.0.0       |
+| `Nextflow` | 25.04.2     | 25.10.4     |
+
 ## 2.2.0 - Holocron - 2026-01-28
 
 ### `Added`
