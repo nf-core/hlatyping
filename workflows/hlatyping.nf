@@ -264,7 +264,6 @@ workflow HLATYPING {
 
             UNTAR(ch_graph_validated)
             HLALA_PREPAREGRAPH(UNTAR.out.untar)
-            ch_versions = ch_versions.mix(HLALA_PREPAREGRAPH.out.versions)
 
             // HLALA_TYPING needs the parent directory (--customGraphDir), not the graph dir itself
             ch_graph_dir = HLALA_PREPAREGRAPH.out.graph.map { _meta, graph -> graph.parent }.first()
@@ -275,7 +274,6 @@ workflow HLATYPING {
             .set { ch_hlala_typing_input }
 
         HLALA_TYPING(ch_hlala_typing_input)
-        ch_versions = ch_versions.mix(HLALA_TYPING.out.versions)
     }
 
     //
