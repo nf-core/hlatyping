@@ -11,7 +11,7 @@ process HLAHD_INSTALL {
 
     output:
     path "${toolname}/${toolversion}", emit: hlahd
-    path "versions.yml", emit: versions
+    tuple val("${task.process}"), val('hlahd'), val(toolversion), emit: versions_hlahd, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -22,42 +22,30 @@ process HLAHD_INSTALL {
     #
     # VALIDATE THE CHECKSUM OF THE PROVIDED SOFTWARE TARBALL
     #
-    checksum="\$(md5sum "$tooltarball" | cut -f1 -d' ')"
+    checksum="\$(md5sum "${tooltarball}" | cut -f1 -d' ')"
     echo "\$checksum"
     if [ "\$checksum" != "${toolchecksum}" ]; then
-        echo "Checksum error for $toolname. Please make sure to provide the original tarball for $toolname version $toolversion" >&2
+        echo "Checksum error for ${toolname}. Please make sure to provide the original tarball for ${toolname} version ${toolversion}" >&2
         exit 2
     fi
 
     mkdir -p "${toolname}/${toolversion}"
 
-    tar -C "${toolname}/${toolversion}" -v -x --strip-components=1 -f "$tooltarball"
+    tar -C "${toolname}/${toolversion}" -v -x --strip-components=1 -f "${tooltarball}"
 
     cd "${toolname}/${toolversion}"
     sh install.sh
 
     # UPDATE THE DICTIONARY IF REQUESTED
-    if [ $update_dict_flag -eq 1 ]; then
+    if [ ${update_dict_flag} -eq 1 ]; then
         sh update_dictionary.sh
     fi
 
     cd ../../
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        hlahd: \$(echo \$(bin/hlahd.sh 2>&1 | sed -n 's/.*version \\([0-9.]*\\).*/\\1/p'))
-    END_VERSIONS
-
     """
 
     stub:
     """
     mkdir -p "${toolname}/${toolversion}"
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        hlahd: "${toolversion}"
-    END_VERSIONS
-
     """
 }
