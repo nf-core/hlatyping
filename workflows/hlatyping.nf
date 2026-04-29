@@ -22,6 +22,7 @@ include { HLALA_PREPAREGRAPH         } from '../modules/nf-core/hlala/preparegra
 include { paramsSummaryMultiqc        } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText      } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
+include { validateMd5                 } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -242,23 +243,9 @@ workflow HLATYPING {
                 ch_graph_tarball = WGET.out.outfile
             }
 
-            // Validate MD5 checksum (streaming to avoid loading multi-GB tarball into memory)
+            // Validate MD5 checksum before extracting the multi-GB graph tarball.
             def ch_graph_validated = ch_graph_tarball.map { meta, tarball ->
-                if (!workflow.stubRun) {
-                    def digest = java.security.MessageDigest.getInstance("MD5")
-                    tarball.withInputStream { input ->
-                        def buffer = new byte[1 << 16]
-                        def read = input.read(buffer)
-                        while (read != -1) {
-                            digest.update(buffer, 0, read)
-                            read = input.read(buffer)
-                        }
-                    }
-                    def actual = digest.digest().collect { String.format("%02x", it) }.join()
-                    if (actual != hlala_meta.graph_md5) {
-                        error "HLA*LA graph checksum mismatch for ${tarball.name}: expected ${hlala_meta.graph_md5}, got ${actual}"
-                    }
-                }
+                validateMd5(tarball, hlala_meta.graph_md5, "HLA*LA graph ${tarball.name}")
                 [meta, tarball]
             }
 

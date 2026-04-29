@@ -2,6 +2,8 @@
 // Subworkflow with functionality specific to the nf-core/hlatyping pipeline
 //
 
+import org.apache.commons.codec.digest.DigestUtils
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS
@@ -351,4 +353,14 @@ def methodsDescriptionText(mqc_methods_yaml) {
     def description_html = engine.createTemplate(methods_text).make(meta)
 
     return description_html.toString()
+}
+
+//
+// Validate the MD5 of a file against an expected hex digest. Streams the file via
+// DigestUtils so memory is bounded regardless of file size. No-ops under -stub.
+//
+def validateMd5(file, expectedMd5, label = null) {
+    if (workflow.stubRun) return
+    def actual = file.withInputStream { DigestUtils.md5Hex(it) }
+    if (actual != expectedMd5) error "MD5 mismatch for ${label ?: file.name}: expected ${expectedMd5}, got ${actual}"
 }
