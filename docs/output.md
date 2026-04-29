@@ -95,9 +95,10 @@ DPB1  DPB1*04:01:01:01  DPB1*04:02:01:01
 <summary>Output files</summary>
 
 - `hlala/`
-  - `<sample_id>/results/`: Directory containing HLA\*LA typing results including:
+  - `<sample_id>/`: Directory containing HLA\*LA typing results including:
     - `hla/R1_bestguess_G.txt`: Best-guess HLA genotype calls at G-group resolution.
     - `hla/R1_bestguess.txt`: Best-guess HLA genotype calls.
+    - `reads_per_level.txt`: Read counts at each level of the typing hierarchy.
 
 </details>
 

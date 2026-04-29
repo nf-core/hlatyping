@@ -105,7 +105,7 @@ Tools can be combined:
 
 HLA\*LA requires a graph reference (~5 GB) which can be provided in three ways:
 
-1. **Automatic download** (default): The graph is downloaded from Oxford servers during the pipeline run.
+1. **Automatic download** (default): The graph is downloaded from a [Zenodo mirror](https://zenodo.org/records/19336310) during the pipeline run.
 2. **Pre-downloaded tarball**: Provide the path to a downloaded `PRG_MHC_GRCh38_withIMGT.tar.gz` tarball:
    ```bash
    --hlala_graph_tarball /path/to/PRG_MHC_GRCh38_withIMGT.tar.gz
