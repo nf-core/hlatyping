@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "utils_nfcore_hlatyping_pipeline"
+description: Subworkflow with utility functions specific to the nf-core/hlatyping pipeline
+keywords:
+  - utility
+  - pipeline
+  - initialise
+  - hlatyping
+components: []
+input:
+  - version:
+      type: boolean
+      description: Display version and exit
+  - validate_params:
+      type: boolean
+      description: Boolean whether to validate parameters against the schema at runtime
+  - monochrome_logs:
+      type: boolean
+      description: Do not use coloured log outputs
+  - nextflow_cli_args:
+      type: list
+      description: List of positional nextflow CLI args
+  - outdir:
+      type: string
+      description: The output directory where the results will be saved
+  - input:
+      type: string
+      description: Path to input samplesheet
+  - help:
+      type: boolean
+      description: Display help message and exit
+  - help_full:
+      type: boolean
+      description: Show the full help message
+  - show_hidden:
+      type: boolean
+      description: Show hidden parameters in the help message
+output:
+  - samplesheet:
+      type: channel
+      description: Channel containing parsed samplesheet entries
+  - versions:
+      type: channel
+      description: Channel containing software versions
+authors:
+  - "@Christopher-Mohr"
+  - "@apeltzer"
+  - "@sven1103"
+maintainers:
+  - "@Christopher-Mohr"
+  - "@jonasscheid"
+  - "@mapo9"

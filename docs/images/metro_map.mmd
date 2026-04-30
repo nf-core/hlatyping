@@ -1,0 +1,63 @@
+%%metro title: nf-core/hlatyping
+%%metro style: dark
+%%metro logo: docs/images/nf-core-hlatyping_logo_dark.png
+%%metro file: fastq_in | FASTQ
+%%metro file: bam_in | BAM
+%%metro file: report_tsv | TSV
+%%metro file: report_html | HTML
+%%metro line: fastq | FASTQ | #2db572
+%%metro line: bam | BAM | #e6842a
+%%metro legend: bl
+
+graph LR
+    subgraph preprocessing [Pre-processing]
+        %%metro exit: right | fastq, bam
+        fastq_in[ ]
+        bam_in[ ]
+        cat_fastq[cat FASTQ]
+        _fastq_delay[ ]
+        check_paired[Check Paired]
+        collatefastq[BAM to FASTQ]
+        fastqc[FastQC]
+
+        fastq_in -->|fastq| cat_fastq
+        cat_fastq -->|fastq| _fastq_delay
+        _fastq_delay -->|fastq| fastqc
+        bam_in -->|bam| check_paired
+        check_paired -->|bam| collatefastq
+        collatefastq -->|bam| fastqc
+    end
+
+    subgraph hla_typing [HLA Typing]
+        %%metro entry: left | fastq, bam
+        %%metro exit: right | fastq, bam
+        yara_index[Yara Index]
+        yara_mapper[Yara Mapper]
+        optitype_run[OptiType]
+        _hlahd_delay[ ]
+        hlahd_run[HLA-HD]
+        _hlahd_delay2[ ]
+        _merge1[ ]
+
+        yara_index -->|fastq,bam| yara_mapper
+        yara_mapper -->|fastq,bam| optitype_run
+        optitype_run -->|fastq,bam| _merge1
+        _hlahd_delay -->|fastq,bam| hlahd_run
+        hlahd_run -->|fastq,bam| _hlahd_delay2
+        _hlahd_delay2 -->|fastq,bam| _merge1
+    end
+
+    subgraph reporting [Reporting]
+        %%metro entry: left | fastq, bam
+        report_tsv[ ]
+        multiqc[MultiQC]
+        report_html[ ]
+
+        multiqc -->|fastq,bam| report_html
+    end
+
+    %% Inter-section edges
+    fastqc -->|fastq,bam| yara_index
+    fastqc -->|fastq,bam| _hlahd_delay
+    _merge1 -->|fastq,bam| report_tsv
+    _merge1 -->|fastq,bam| multiqc

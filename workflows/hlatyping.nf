@@ -1,14 +1,47 @@
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
+    CONFIG FILES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-include { FASTQC                 } from '../modules/nf-core/fastqc/main'
-include { MULTIQC                } from '../modules/nf-core/multiqc/main'
-include { paramsSummaryMap       } from 'plugin/nf-schema'
+
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    IMPORT LOCAL MODULES/SUBWORKFLOWS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+//
+// SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
+//
+include { CHECK_PAIRED           } from '../modules/local/check_paired'
+include { HLAHD_INSTALL          } from '../modules/local/hlahd/install'
+include { HLAHD                  } from '../modules/local/hlahd/genotype'
+
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    IMPORT NF-CORE MODULES/SUBWORKFLOWS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+//
+// MODULE: Installed directly from nf-core/modules
+//
+include { CAT_FASTQ              } from '../modules/nf-core/cat/fastq'
+include { FASTQC                 } from '../modules/nf-core/fastqc/main'
+include { MULTIQC                } from '../modules/nf-core/multiqc/main'
+include { GUNZIP                 } from '../modules/nf-core/gunzip/main'
+include { OPTITYPE               } from '../modules/nf-core/optitype/main'
+include { SAMTOOLS_COLLATEFASTQ  } from '../modules/nf-core/samtools/collatefastq/main'
+include { SAMTOOLS_VIEW          } from '../modules/nf-core/samtools/view/main'
+include { YARA_INDEX             } from '../modules/nf-core/yara/index/main'
+include { YARA_MAPPER            } from '../modules/nf-core/yara/mapper/main'
+
+include { paramsSummaryMap       } from 'plugin/nf-schema'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -17,7 +50,6 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_hlat
 */
 
 workflow HLATYPING {
-
     take:
     ch_samplesheet // channel: samplesheet read in from --input
     multiqc_config
@@ -27,13 +59,140 @@ workflow HLATYPING {
 
     main:
 
-    def ch_versions = channel.empty()
-    def ch_multiqc_files = channel.empty()
+    def tools = params.tools ?: 'optitype'
+
+    ch_versions = channel.empty()
+    ch_multiqc_files = channel.empty()
+
+    // Split by input type (bam/fastq)
+    ch_samplesheet
+        .branch { meta, files ->
+            bam: files[0].getExtension() == "bam"
+            fastq_multiple: (meta.single_end && files.size() > 1) || (!meta.single_end && files.size() > 2)
+            fastq_single: true
+        }
+        .set { ch_input_files }
+
+    //
+    // MODULE: Concatenate FastQ files from same sample if required
+    //
+    CAT_FASTQ(ch_input_files.fastq_multiple).reads.set { ch_cat_fastq }
+
+    // determine BAM pairedness for fastq conversion
+    CHECK_PAIRED(ch_input_files.bam)
+    CHECK_PAIRED.out.reads
+        .map { meta, reads, single_end ->
+            meta["single_end"] = single_end.text.toBoolean()
+            [meta, reads]
+        }
+        .set { ch_bam_pe_corrected }
+
+
+    //  paired-end reads should not be interleaved
+    def interleave = false
+
+    //
+    // MODULE: Run COLLATEFASTQ
+    //
+    SAMTOOLS_COLLATEFASTQ(
+        ch_bam_pe_corrected,
+        ch_bam_pe_corrected.map { meta, _files -> [[id: meta.id], [], []] },
+        interleave,
+    )
+    SAMTOOLS_COLLATEFASTQ.out.fastq.set { ch_bam_fastq }
+
+    ch_input_files.fastq_single
+        .mix(ch_cat_fastq, ch_bam_fastq)
+        .set { ch_all_fastq }
+
     //
     // MODULE: Run FastQC
     //
-    FASTQC(ch_samplesheet)
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.map{ _meta, file -> file })
+    FASTQC(
+        ch_all_fastq
+    )
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect { entry -> entry[1] })
+
+    //
+    // Run modules for each selected tool
+    //
+    if ("optitype" in tools.tokenize(",")) {
+
+        ch_all_fastq
+            .map { meta, _reads ->
+                [meta, file("${projectDir}/data/references/hla_reference_${meta['seq_type']}.fasta")]
+            }
+            .set { ch_input_with_references }
+
+        //
+        // MODULE: Run Yara indexing on HLA reference
+        //
+        YARA_INDEX(
+            ch_input_with_references
+        )
+        ch_versions = ch_versions.mix(YARA_INDEX.out.versions)
+
+
+        //
+        // Map sample-specific reads and index
+        //
+        ch_all_fastq
+            .cross(YARA_INDEX.out.index)
+            .multiMap { reads, index ->
+                reads: reads
+                index: index
+            }
+            .set { ch_mapping_input }
+
+
+        //
+        // MODULE: Run Yara mapping
+        //
+        // Preparation Step - Pre-mapping against HLA
+        //
+        // In order to avoid the internal usage of RazerS from within OptiType when
+        // the input files are of type `fastq`, we perform a pre-mapping step
+        // here with the `yara` mapper, and map against the HLA reference only.
+        //
+        YARA_MAPPER(
+            ch_mapping_input.reads,
+            ch_mapping_input.index,
+        )
+        ch_versions = ch_versions.mix(YARA_MAPPER.out.versions)
+
+        //
+        // MODULE: OptiType
+        //
+        OPTITYPE(
+            YARA_MAPPER.out.bam.join(YARA_MAPPER.out.bai)
+        )
+
+        ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.hla_type.collect { entry -> entry[1] })
+        ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.coverage_plot.collect { entry -> entry[1] })
+        ch_versions = ch_versions.mix(OPTITYPE.out.versions)
+    }
+
+    if ("hlahd" in tools.tokenize(",")) {
+        //
+        // MODULE: Run HLAHD typing
+        //
+        // Parse HLA-HD software metadata and create installation channel
+        def hlahd_software_meta = file("${projectDir}/assets/hlahd_software_meta.json", checkIfExists: true)
+        def jsonSlurper = new groovy.json.JsonSlurper()
+        def hlahd_meta = jsonSlurper.parse(hlahd_software_meta)['hlahd']
+        def ch_hlahd_install = channel.of(
+            [
+                'hlahd',
+                hlahd_meta.version,
+                hlahd_meta.software_md5,
+                file(params.hlahd_path, checkIfExists: true),
+                params.hlahd_update_reference_dict,
+            ]
+        )
+
+        HLAHD_INSTALL(ch_hlahd_install)
+        HLAHD(ch_all_fastq.combine(HLAHD_INSTALL.out.hlahd))
+    }
 
     //
     // Collate and save software versions
@@ -47,9 +206,9 @@ workflow HLATYPING {
 
     def topic_versions_string = topic_versions.versions_tuple
         .map { process, tool, version ->
-            [ process[process.lastIndexOf(':')+1..-1], "  ${tool}: ${version}" ]
+            [process[process.lastIndexOf(':') + 1..-1], "  ${tool}: ${version}"]
         }
-        .groupTuple(by:0)
+        .groupTuple(by: 0)
         .map { process, tool_versions ->
             tool_versions.unique().sort()
             "${process}:\n${tool_versions.join('\n')}"
@@ -59,9 +218,9 @@ workflow HLATYPING {
         .mix(topic_versions_string)
         .collectFile(
             storeDir: "${outdir}/pipeline_info",
-            name: 'nf_core_'  +  'hlatyping_software_'  + 'mqc_'  + 'versions.yml',
+            name: 'nf_core_' + 'hlatyping_software_' + 'mqc_' + 'versions.yml',
             sort: true,
-            newLine: true
+            newLine: true,
         )
 
     //
@@ -90,12 +249,8 @@ workflow HLATYPING {
             ]
         }
     )
-    emit:multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
-}
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+    emit:
+    multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
+    versions       = ch_versions // channel: [ path(versions.yml) ]
+}
