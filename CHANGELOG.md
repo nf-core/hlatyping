@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#211](https://github.com/nf-core/hlatyping/pull/211) - Add HLA\*LA as a third HLA typing tool for HLA typing from BAM files (@jonasscheid)
 - [#213](https://github.com/nf-core/hlatyping/pull/213) - Add metro map pipeline overview diagram (@jonasscheid)
+- [#214](https://github.com/nf-core/hlatyping/pull/214) - Add [Immunotype](https://github.com/AG-Walz/immunotype) support for peptide-based HLA class I typing (@jonasscheid)
 
 ### `Changed`
 
@@ -21,9 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Dependencies`
 
-| Dependency | Old version | New version |
-| ---------- | ----------- | ----------- |
-| `HLA*LA`   | -           | 1.0.4       |
+| Dependency   | Old version | New version |
+| ------------ | ----------- | ----------- |
+| `HLA*LA`     | -           | 1.0.4       |
+| `Immunotype` | -           | 1.0.2       |
+| `MultiQC`    | 1.32        | 1.34        |
+| `samtools`   | 1.21        | 1.23.1      |
+| `nf-core`    | 3.5.1       | 4.0.0       |
+| `Nextflow`   | 25.04.2     | 25.10.4     |
 
 ## 2.2.0 - Holocron - 2026-01-28
 

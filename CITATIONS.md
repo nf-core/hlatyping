@@ -36,6 +36,10 @@
 
   > Dilthey AT, Mentzer AJ, Caber R, Sherber C, Mentzer AA, Lundgren J, Stefansson K, Power RA, McVean G. HLA\*LA — HLA typing from linearly projected graph alignments. Bioinformatics. 2019 Nov 1;35(21):4394-4396. doi: 10.1093/bioinformatics/btz235. PMID: 30942877; PMCID: PMC6821181.
 
+- [Immunotype](https://doi.org/10.64898/2026.04.08.717021)
+
+> Pilz M, Scheid J, Bauer A, Lemke S, Sachsenberg T, Bauer J, Nelde A, Stadelmaier J, Walter A, Rammensee H-G, Nahnsen S, Kohlbacher O, Walz JS. Deep learning enables direct HLA typing from immunopeptidomics data. bioRxiv. 2026. doi: 10.64898/2026.04.08.717021.
+
 - [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
 
   > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016 Oct 1;32(19):3047-8. doi: 10.1093/bioinformatics/btw354. Epub 2016 Jun 16. PubMed PMID: 27312411; PubMed Central PMCID: PMC5039924.

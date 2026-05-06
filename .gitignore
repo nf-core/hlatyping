@@ -8,5 +8,7 @@ testing*
 *.pyc
 null/
 work_hlala_graphs/
+.nf-test/
 CLAUDE.md
 .claude/
+.lineage/

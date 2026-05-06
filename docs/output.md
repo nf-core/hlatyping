@@ -102,6 +102,19 @@ DPB1  DPB1*04:01:01:01  DPB1*04:02:01:01
 
 </details>
 
+### Immunotype
+
+[Immunotype](https://github.com/AG-Walz/immunotype) predicts HLA class I alleles directly from a list of immunopeptidomics peptide sequences. It takes the `tsv` samplesheet column as input (MHCquant-style or a headerless peptide list — see the [usage docs](usage.md#samplesheet-input)) and is selected via `--tools immunotype`.
+
+**Output directory: `immunotype/`**
+
+- `{prefix}_typing.tsv` — two-column TSV with the predicted HLA class I alleles joined by `;`
+
+```tsv
+sample  typing
+sample_0  HLA-A*02:01;HLA-A*24:02;HLA-B*51:08;HLA-C*04:01;HLA-C*16:02
+```
+
 ### MultiQC
 
 <details markdown="1">
