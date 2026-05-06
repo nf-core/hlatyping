@@ -16,10 +16,10 @@
                     "hla-la": "1.0.4"
                 },
                 "SAMTOOLS_COLLATEFASTQ": {
-                    "samtools": 1.21
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_VIEW": {
-                    "samtools": 1.21
+                    "samtools": "1.23.1"
                 },
                 "UNTAR": {
                     "untar": 1.34
@@ -28,7 +28,7 @@
                     "wget": "1.21.4"
                 },
                 "Workflow": {
-                    "nf-core/hlatyping": "v2.2.0"
+                    "nf-core/hlatyping": "v2.2.0dev"
                 }
             },
             [
@@ -123,17 +123,21 @@
                 "hlala/SAMPLE_PAIRED_END_BAM/remapped_with_a.bam.bai",
                 "multiqc",
                 "multiqc/multiqc_data",
+                "multiqc/multiqc_data/.stub",
                 "multiqc/multiqc_plots",
+                "multiqc/multiqc_plots/.stub",
                 "multiqc/multiqc_report.html",
                 "pipeline_info",
                 "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"
             ],
             [
                 "SAMPLE_PAIRED_END_BAM.html:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "SAMPLE_PAIRED_END_BAM.zip:md5,d41d8cd98f00b204e9800998ecf8427e"
+                "SAMPLE_PAIRED_END_BAM.zip:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-04-29T08:47:17.751407737",
+        "timestamp": "2026-05-06T14:04:15.907437454",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
