@@ -17,6 +17,7 @@
 include { CHECK_PAIRED           } from '../modules/local/check_paired'
 include { HLAHD_INSTALL          } from '../modules/local/hlahd/install'
 include { HLAHD                  } from '../modules/local/hlahd/genotype'
+include { IMMUNOTYPE             } from '../modules/local/immunotype/main'
 
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -64,9 +65,10 @@ workflow HLATYPING {
     ch_versions = channel.empty()
     ch_multiqc_files = channel.empty()
 
-    // Split by input type (bam/fastq)
+    // Split by input type (bam/fastq/tsv)
     ch_samplesheet
         .branch { meta, files ->
+            tsv: files[0].getExtension() == "tsv"
             bam: files[0].getExtension() == "bam"
             fastq_multiple: (meta.single_end && files.size() > 1) || (!meta.single_end && files.size() > 2)
             fastq_single: true
@@ -170,6 +172,13 @@ workflow HLATYPING {
         ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.hla_type.collect { entry -> entry[1] })
         ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.coverage_plot.collect { entry -> entry[1] })
         ch_versions = ch_versions.mix(OPTITYPE.out.versions)
+    }
+
+    if ("immunotype" in tools.tokenize(",")) {
+        //
+        // MODULE: Run immunotype peptide-based HLA typing
+        //
+        IMMUNOTYPE(ch_input_files.tsv.map { meta, files -> [meta, files[0]] })
     }
 
     if ("hlahd" in tools.tokenize(",")) {

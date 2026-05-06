@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Added`
 
 - [#213](https://github.com/nf-core/hlatyping/pull/213) - Add metro map pipeline overview
+- [#214](https://github.com/nf-core/hlatyping/pull/214) - Add [Immunotype](https://github.com/AG-Walz/immunotype) support for peptide-based HLA class I typing (@jonasscheid)
+
+### `Dependencies`
+
+| Dependency   | Old version | New version |
+| ------------ | ----------- | ----------- |
+| `Immunotype` | -           | 1.0.2       |
 
 ### `Dependencies`
 

@@ -99,6 +99,7 @@
                 "optitype/SAMPLE_PAIRED_END_BAM",
                 "optitype/SAMPLE_PAIRED_END_BAM/SAMPLE_PAIRED_END_BAM_coverage_plot.pdf",
                 "optitype/SAMPLE_PAIRED_END_BAM/SAMPLE_PAIRED_END_BAM_result.tsv",
+                "optitype/versions.yml",
                 "pipeline_info",
                 "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
                 "samtools",
@@ -124,11 +125,13 @@
                 "yara/hla_reference_dna.fasta.sa.val",
                 "yara/hla_reference_dna.fasta.txt.concat",
                 "yara/hla_reference_dna.fasta.txt.limits",
-                "yara/hla_reference_dna.fasta.txt.size"
+                "yara/hla_reference_dna.fasta.txt.size",
+                "yara/versions.yml"
             ],
             [
                 "example_pe.bam:md5,e6145c17fef62ea071238f8b0aca841c",
                 "is_singleend.txt:md5,d42f2da1df5ecdf29be4ac27edda0c12",
+                "versions.yml:md5,ca9029dc17c86cce8226ae4345c54112",
                 "SAMPLE_PAIRED_END_BAM_1.fq.gz:md5,361598a72f419e19c4de108267fa330c",
                 "SAMPLE_PAIRED_END_BAM_2.fq.gz:md5,45854c8203e7b26e0e2904c2f2dd6d3f",
                 "SAMPLE_PAIRED_END_BAM_other.fq.gz:md5,d41d8cd98f00b204e9800998ecf8427e",
@@ -145,7 +148,8 @@
                 "hla_reference_dna.fasta.sa.val:md5,a04df027b40bb0aa08dd61a765a79c02",
                 "hla_reference_dna.fasta.txt.concat:md5,d9da1795da878cdaacf5e41d88732edf",
                 "hla_reference_dna.fasta.txt.limits:md5,e84e544db01cc5090be2857f765a3f80",
-                "hla_reference_dna.fasta.txt.size:md5,704808ea26959edde70643c8e44afeb0"
+                "hla_reference_dna.fasta.txt.size:md5,704808ea26959edde70643c8e44afeb0",
+                "versions.yml:md5,988254b8cd0b353f40d0d3c3c955014a"
             ]
         ],
         "timestamp": "2026-04-28T15:14:12.206264547",

@@ -32,6 +32,10 @@
 
 > Kawaguchi S, Higasa K, Shimizu M, Yamada R, Matsuda F. HLA-HD: An accurate HLA typing algorithm for next-generation sequencing data. Hum Mutat. 2017 Jul;38(7):788-797. doi: 10.1002/humu.23230. Epub 2017 May 12. PMID: 28419628.
 
+- [Immunotype](https://doi.org/10.64898/2026.04.08.717021)
+
+> Pilz M, Scheid J, Bauer A, Lemke S, Sachsenberg T, Bauer J, Nelde A, Stadelmaier J, Walter A, Rammensee H-G, Nahnsen S, Kohlbacher O, Walz JS. Deep learning enables direct HLA typing from immunopeptidomics data. bioRxiv. 2026. doi: 10.64898/2026.04.08.717021.
+
 - [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
 
   > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016 Oct 1;32(19):3047-8. doi: 10.1093/bioinformatics/btw354. Epub 2016 Jun 16. PubMed PMID: 27312411; PubMed Central PMCID: PMC5039924.

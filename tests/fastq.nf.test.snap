@@ -90,6 +90,7 @@
                 "optitype/SAMPLE_PAIRED_END",
                 "optitype/SAMPLE_PAIRED_END/SAMPLE_PAIRED_END_coverage_plot.pdf",
                 "optitype/SAMPLE_PAIRED_END/SAMPLE_PAIRED_END_result.tsv",
+                "optitype/versions.yml",
                 "pipeline_info",
                 "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
                 "yara",
@@ -110,9 +111,11 @@
                 "yara/hla_reference_dna.fasta.sa.val",
                 "yara/hla_reference_dna.fasta.txt.concat",
                 "yara/hla_reference_dna.fasta.txt.limits",
-                "yara/hla_reference_dna.fasta.txt.size"
+                "yara/hla_reference_dna.fasta.txt.size",
+                "yara/versions.yml"
             ],
             [
+                "versions.yml:md5,ca9029dc17c86cce8226ae4345c54112",
                 "versions.yml:md5,3d67d5a34bf0044c6567763154ac1719",
                 "hla_reference_dna.fasta.lf.drp:md5,28d863bdb814bccb8212a7b451e2af0a",
                 "hla_reference_dna.fasta.lf.drs:md5,8666683506aacd900bbd5a74ac4edf68",
@@ -125,7 +128,8 @@
                 "hla_reference_dna.fasta.sa.val:md5,a04df027b40bb0aa08dd61a765a79c02",
                 "hla_reference_dna.fasta.txt.concat:md5,d9da1795da878cdaacf5e41d88732edf",
                 "hla_reference_dna.fasta.txt.limits:md5,e84e544db01cc5090be2857f765a3f80",
-                "hla_reference_dna.fasta.txt.size:md5,704808ea26959edde70643c8e44afeb0"
+                "hla_reference_dna.fasta.txt.size:md5,704808ea26959edde70643c8e44afeb0",
+                "versions.yml:md5,988254b8cd0b353f40d0d3c3c955014a"
             ]
         ],
         "timestamp": "2026-04-28T14:52:07.85616183",
