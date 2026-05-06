@@ -2,8 +2,6 @@
 // Subworkflow with functionality specific to the nf-core/hlatyping pipeline
 //
 
-import org.apache.commons.codec.digest.DigestUtils
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS
@@ -356,6 +354,6 @@ def methodsDescriptionText(mqc_methods_yaml) {
 //
 def validateMd5(file, expectedMd5, label = null) {
     if (workflow.stubRun) return
-    def actual = file.withInputStream { DigestUtils.md5Hex(it) }
+    def actual = file.withInputStream { org.apache.commons.codec.digest.DigestUtils.md5Hex(it) }
     if (actual != expectedMd5) error "MD5 mismatch for ${label ?: file.name}: expected ${expectedMd5}, got ${actual}"
 }

@@ -136,7 +136,6 @@ workflow HLATYPING {
         ch_all_fastq
     )
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect { _meta, zip -> zip })
-    ch_versions = ch_versions.mix(FASTQC.out.versions.first())
 
     //
     // Run modules for each selected tool
@@ -227,11 +226,11 @@ workflow HLATYPING {
         //
         SAMTOOLS_VIEW(
             ch_bam_for_hlala.map { meta, files -> [meta, files, []] },
+            [[:], [], []],
             [[:], []],
-            [],
-            'bai'
+            [[:], []],
+            'bai',
         )
-        ch_versions = ch_versions.mix(SAMTOOLS_VIEW.out.versions.first())
 
         SAMTOOLS_VIEW.out.bam
             .join(SAMTOOLS_VIEW.out.bai)
