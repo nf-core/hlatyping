@@ -32,6 +32,10 @@
 
 > Kawaguchi S, Higasa K, Shimizu M, Yamada R, Matsuda F. HLA-HD: An accurate HLA typing algorithm for next-generation sequencing data. Hum Mutat. 2017 Jul;38(7):788-797. doi: 10.1002/humu.23230. Epub 2017 May 12. PMID: 28419628.
 
+- [HLA\*LA](https://pubmed.ncbi.nlm.nih.gov/30942877/)
+
+  > Dilthey AT, Mentzer AJ, Caber R, Sherber C, Mentzer AA, Lundgren J, Stefansson K, Power RA, McVean G. HLA\*LA — HLA typing from linearly projected graph alignments. Bioinformatics. 2019 Nov 1;35(21):4394-4396. doi: 10.1093/bioinformatics/btz235. PMID: 30942877; PMCID: PMC6821181.
+
 - [Immunotype](https://doi.org/10.64898/2026.04.08.717021)
 
 > Pilz M, Scheid J, Bauer A, Lemke S, Sachsenberg T, Bauer J, Nelde A, Stadelmaier J, Walter A, Rammensee H-G, Nahnsen S, Kohlbacher O, Walz JS. Deep learning enables direct HLA typing from immunopeptidomics data. bioRxiv. 2026. doi: 10.64898/2026.04.08.717021.

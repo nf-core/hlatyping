@@ -197,7 +197,7 @@ def validateInputParameters() {
 //
 def validateToolsParam() {
     def tools = params.tools ?: 'optitype'
-    def valid_tools = ['optitype', 'hlahd', 'immunotype']
+    def valid_tools = ['optitype', 'hlahd', 'hlala', 'immunotype']
     def tool_list = tools.tokenize(',')
     def invalid_tools = tool_list.findAll { tool -> tool.trim() !in valid_tools }
     if (invalid_tools) {
@@ -346,4 +346,14 @@ def methodsDescriptionText(mqc_methods_yaml) {
     def description_html = engine.createTemplate(methods_text).make(meta)
 
     return description_html.toString()
+}
+
+//
+// Validate the MD5 of a file against an expected hex digest. Streams the file via
+// DigestUtils so memory is bounded regardless of file size. No-ops under -stub.
+//
+def validateMd5(file, expectedMd5, label = null) {
+    if (workflow.stubRun) return
+    def actual = file.withInputStream { org.apache.commons.codec.digest.DigestUtils.md5Hex(it) }
+    if (actual != expectedMd5) error "MD5 mismatch for ${label ?: file.name}: expected ${expectedMd5}, got ${actual}"
 }
