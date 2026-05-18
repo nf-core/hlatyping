@@ -108,15 +108,14 @@
                 "optitype/SAMPLE_FASTQ_RNA_CAT",
                 "optitype/SAMPLE_FASTQ_RNA_CAT/SAMPLE_FASTQ_RNA_CAT_coverage_plot.pdf",
                 "optitype/SAMPLE_FASTQ_RNA_CAT/SAMPLE_FASTQ_RNA_CAT_result.tsv",
-                "optitype/versions.yml",
                 "pipeline_info",
                 "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"
             ],
             [
-                "versions.yml:md5,ca9029dc17c86cce8226ae4345c54112"
+                
             ]
         ],
-        "timestamp": "2026-05-06T14:00:01.004667896",
+        "timestamp": "2026-05-18T18:03:43.524135398",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

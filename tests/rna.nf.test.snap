@@ -94,15 +94,14 @@
                 "optitype/SAMPLE_RNA",
                 "optitype/SAMPLE_RNA/SAMPLE_RNA_coverage_plot.pdf",
                 "optitype/SAMPLE_RNA/SAMPLE_RNA_result.tsv",
-                "optitype/versions.yml",
                 "pipeline_info",
                 "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"
             ],
             [
-                "versions.yml:md5,ca9029dc17c86cce8226ae4345c54112"
+                
             ]
         ],
-        "timestamp": "2026-05-06T14:02:51.400712017",
+        "timestamp": "2026-05-18T17:59:47.899774775",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

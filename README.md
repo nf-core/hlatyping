@@ -21,9 +21,9 @@
 
 ## Introduction
 
-**nf-core/hlatyping** is a bioinformatics pipeline that can be used to perform HLA typing from next-generation sequencing data. It supports three HLA typing tools:
+**nf-core/hlatyping** is a bioinformatics pipeline that can be used to perform HLA typing from next-generation sequencing data. It supports three HLA typing tools, selectable via `--tools` (OptiType is run by default if `--tools` is not set):
 
-- [**OptiType**](https://github.com/FRED-2/OptiType) (default, open-source): HLA Class I genotyping based on integer linear programming from FASTQ or BAM input.
+- [**OptiType**](https://github.com/FRED-2/OptiType) (open-source): HLA Class I genotyping based on integer linear programming from FASTQ or BAM input.
 - [**HLA-HD**](https://w3.genome.med.kyoto-u.ac.jp/HLA-HD/) (requires local installation): HLA Class I + II typing from FASTQ or BAM input.
 - [**HLA\*LA**](https://github.com/DiltheyLab/HLA-LA) (open-source): HLA typing from BAM files using a population reference graph of the MHC region.
 
@@ -39,10 +39,11 @@ On release, automated continuous integration tests run the pipeline on a full-si
 2. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 3. Generate reference indices ([`yara`](https://www.seqan.de/apps/yara.html))
 4. Map reads to reference ([`yara`](https://www.seqan.de/apps/yara.html))
-5. Run HLA class I typing ([`OptiType`](https://github.com/FRED-2/OptiType))
-6. Optional: HLA class I+II typing ([`HLA-HD`](https://w3.genome.med.kyoto-u.ac.jp/HLA-HD/), requires local installation)
-7. Optional: HLA typing from BAM ([`HLA*LA`](https://github.com/DiltheyLab/HLA-LA))
-8. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+5. HLA typing with any combination of (selected via `--tools`, default: `optitype`):
+   - HLA class I typing ([`OptiType`](https://github.com/FRED-2/OptiType))
+   - HLA class I+II typing ([`HLA-HD`](https://w3.genome.med.kyoto-u.ac.jp/HLA-HD/), requires local installation)
+   - HLA typing from BAM ([`HLA*LA`](https://github.com/DiltheyLab/HLA-LA))
+6. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
 
 ## Usage
 

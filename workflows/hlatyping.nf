@@ -193,7 +193,6 @@ workflow HLATYPING {
 
         ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.hla_type.collect { _meta, tsv -> tsv })
         ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.coverage_plot.collect { _meta, plot -> plot })
-        ch_versions      = ch_versions.mix(OPTITYPE.out.versions)
     }
 
     if ("immunotype" in tool_list) {
@@ -236,33 +235,35 @@ workflow HLATYPING {
             .join(SAMTOOLS_VIEW.out.bai)
             .set { ch_bam_with_index }
 
-        // Graph acquisition: use pre-built directory, or (download +) extract tarball
+        // Graph acquisition: pre-built directory takes precedence; otherwise
+        // extract from a user-provided or downloaded tarball.
         def hlala_meta = new groovy.json.JsonSlurper().parse(file("$projectDir/assets/software_meta.json", checkIfExists: true))['hlala']
-        def ch_graph_dir
-        if (params.hlala_graph_dir) {
-            ch_graph_dir = channel.value(file(params.hlala_graph_dir, checkIfExists: true))
-        } else {
-            def ch_graph_tarball
-            if (params.hlala_graph_tarball) {
-                ch_graph_tarball = channel.of([[id: hlala_meta.graph], file(params.hlala_graph_tarball, checkIfExists: true)])
-            } else {
-                WGET(channel.of([[id: hlala_meta.graph], hlala_meta.graph_url, 'tar.gz']))
-                ch_versions = ch_versions.mix(WGET.out.versions)
-                ch_graph_tarball = WGET.out.outfile
-            }
 
-            // Validate MD5 checksum before extracting the multi-GB graph tarball.
-            def ch_graph_validated = ch_graph_tarball.map { meta, tarball ->
+        WGET(
+            params.hlala_graph_dir || params.hlala_graph_tarball
+                ? channel.empty()
+                : channel.of([[id: hlala_meta.graph], hlala_meta.graph_url, 'tar.gz'])
+        )
+        ch_versions = ch_versions.mix(WGET.out.versions)
+
+        def ch_tarball = (params.hlala_graph_tarball
+                ? channel.of([[id: hlala_meta.graph], file(params.hlala_graph_tarball, checkIfExists: true)])
+                : channel.empty())
+            .mix(WGET.out.outfile)
+            .map { meta, tarball ->
                 validateMd5(tarball, hlala_meta.graph_md5, "HLA*LA graph ${tarball.name}")
                 [meta, tarball]
             }
 
-            UNTAR(ch_graph_validated)
-            HLALA_PREPAREGRAPH(UNTAR.out.untar)
+        UNTAR(ch_tarball)
+        HLALA_PREPAREGRAPH(UNTAR.out.untar)
 
-            // HLALA_TYPING needs the parent directory (--customGraphDir), not the graph dir itself
-            ch_graph_dir = HLALA_PREPAREGRAPH.out.graph.map { _meta, graph -> graph.parent }.first()
-        }
+        // HLALA_TYPING needs the parent directory (--customGraphDir).
+        def ch_graph_dir = (params.hlala_graph_dir
+                ? channel.value(file(params.hlala_graph_dir, checkIfExists: true))
+                : channel.empty())
+            .mix(HLALA_PREPAREGRAPH.out.graph.map { _meta, graph -> graph.parent })
+            .first()
 
         ch_bam_with_index
             .combine(ch_graph_dir)

@@ -90,15 +90,14 @@
                 "optitype/SAMPLE_PAIRED_END",
                 "optitype/SAMPLE_PAIRED_END/SAMPLE_PAIRED_END_coverage_plot.pdf",
                 "optitype/SAMPLE_PAIRED_END/SAMPLE_PAIRED_END_result.tsv",
-                "optitype/versions.yml",
                 "pipeline_info",
                 "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"
             ],
             [
-                "versions.yml:md5,ca9029dc17c86cce8226ae4345c54112"
+                
             ]
         ],
-        "timestamp": "2026-05-06T13:54:50.430277754",
+        "timestamp": "2026-05-18T18:03:35.610151944",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
