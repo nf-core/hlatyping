@@ -116,14 +116,12 @@
                 "optitype/SAMPLE_FASTQ_RNA",
                 "optitype/SAMPLE_FASTQ_RNA/SAMPLE_FASTQ_RNA_coverage_plot.pdf",
                 "optitype/SAMPLE_FASTQ_RNA/SAMPLE_FASTQ_RNA_result.tsv",
-                "optitype/versions.yml",
                 "pipeline_info",
                 "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"
             ],
             [
                 "SAMPLE_FASTQ_final.result.txt:md5,8dd033e1f53fc12976a8cce71f378e93",
-                "SAMPLE_FASTQ_RNA_final.result.txt:md5,15e8f8fe058169c02f4136e092981500",
-                "versions.yml:md5,ca9029dc17c86cce8226ae4345c54112"
+                "SAMPLE_FASTQ_RNA_final.result.txt:md5,15e8f8fe058169c02f4136e092981500"
             ]
         ],
         "meta": {
