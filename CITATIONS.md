@@ -36,6 +36,10 @@
 
   > Dilthey AT, Mentzer AJ, Caber R, Sherber C, Mentzer AA, Lundgren J, Stefansson K, Power RA, McVean G. HLA\*LA — HLA typing from linearly projected graph alignments. Bioinformatics. 2019 Nov 1;35(21):4394-4396. doi: 10.1093/bioinformatics/btz235. PMID: 30942877; PMCID: PMC6821181.
 
+- [SpecHLA](https://pubmed.ncbi.nlm.nih.gov/37714157/)
+
+  > Wang S, Wang H, Liu Y, Gong J, Zou Q, Xiao Y, Pan H, Wang B, Mei Z, Li S. SpecHLA enables full-resolution HLA typing from sequencing data. Cell Rep Methods. 2023 Sep 8;3(9):100589. doi: 10.1016/j.crmeth.2023.100589. PMID: 37714157; PMCID: PMC10545945.
+
 - [Immunotype](https://doi.org/10.64898/2026.04.08.717021)
 
 > Pilz M, Scheid J, Bauer A, Lemke S, Sachsenberg T, Bauer J, Nelde A, Stadelmaier J, Walter A, Rammensee H-G, Nahnsen S, Kohlbacher O, Walz JS. Deep learning enables direct HLA typing from immunopeptidomics data. bioRxiv. 2026. doi: 10.64898/2026.04.08.717021.

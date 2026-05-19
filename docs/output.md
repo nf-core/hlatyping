@@ -15,6 +15,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [OptiType](#optitype) - HLA genotyping based on integer linear programming
 - [HLA-HD](#hla-hd) - HLA Class I + II genotyping (optional, requires a local installation of HLA-HD)
 - [HLA\*LA](#hlala) - HLA typing from BAM files using a graph-based approach (optional)
+- [SpecHLA](#spechla) - Full-resolution HLA Class I + II typing with phased per-locus haplotypes (optional)
 - [MultiQC](#multiqc) - Aggregate report describing results from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
@@ -101,6 +102,28 @@ DPB1  DPB1*04:01:01:01  DPB1*04:02:01:01
     - `reads_per_level.txt`: Read counts at each level of the typing hierarchy.
 
 </details>
+
+### SpecHLA
+
+[SpecHLA](https://github.com/deepomicslab/SpecHLA) is an open-source, full-resolution HLA typing tool that reconstructs phased per-locus haplotypes from paired-end short reads. It covers HLA class I (A, B, C) and class II (DPA1, DPB1, DQA1, DQB1, DRB1) at 4-field resolution and works on DNA WGS, WES, and RNA-seq.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `spechla/<sample>/`
+  - `hla.result.txt` — final HLA typing call (one row per locus, 4-field resolution)
+  - `hla.result.details.txt` — all candidate alleles with mapping scores
+  - `hla.result.g.group.txt` — G-group resolution call (when available)
+  - `HLA_*.rephase.vcf.gz` — per-locus phased VCFs
+  - `hla.allele.*.HLA_*.fasta` — reconstructed full-allele sequences (low-depth regions masked with N)
+  - `HLA_*_freq.txt` — per-locus haplotype frequencies
+
+</details>
+
+Notes:
+
+- SpecHLA requires paired-end input. Single-end samples are skipped with a warning.
+- DNA samples run in full mode (`-u 0`); RNA samples are forced to exon-only mode (`-u 1`). WES users wanting exon-only DNA mode override via the `withName: SPECHLA_TYPING { ext.args = ... }` config snippet shown in [`docs/usage.md`](usage.md).
 
 ### Immunotype
 

@@ -95,17 +95,19 @@ If you wish to repeatedly use the same parameters for multiple runs, rather than
 
 ### HLA typing tools
 
-The pipeline supports three HLA typing tools, controlled by the `--tools` parameter:
+The pipeline supports four HLA typing tools, controlled by the `--tools` parameter:
 
 - **OptiType** (default): HLA Class I typing from FASTQ or BAM input. Open-source, included in pipeline containers.
 - **HLA-HD**: HLA Class I + II typing from FASTQ or BAM input. Requires a local installation due to licensing restrictions (see [HLA-HD section](#hla-hd-setup)).
 - **HLA\*LA**: HLA typing from BAM input only. Open-source, included in pipeline containers. Uses a graph-based approach with the PRG_MHC_GRCh38_withIMGT reference graph.
+- **SpecHLA**: Full-resolution HLA Class I + II typing from paired-end FASTQ or BAM input. Open-source, included in pipeline containers (see [SpecHLA-specific notes](#spechla-specific-notes)).
 
 Tools can be combined:
 
 ```bash
 --tools optitype,hlala      # Run both OptiType and HLA*LA (BAM input required)
 --tools optitype,hlahd      # Run both OptiType and HLA-HD
+--tools optitype,spechla    # Run both OptiType and SpecHLA
 ```
 
 > [!NOTE]
@@ -133,6 +135,30 @@ HLA-HD is not distributed with the pipeline's containers due to licensing restri
 ```bash
 --tools hlahd --hlahd_path /path/to/hlahd.1.7.1.tar.gz
 ```
+
+### SpecHLA-specific notes
+
+- **Paired-end only.** Single-end samples are skipped with a warning; use OptiType or HLA-HD for SE.
+- **Mode auto-selection.** DNA samples run with `-u 0` (full mode). RNA samples run with `-u 1` (exon-only — required by SpecHLA for transcript-derived reads).
+- **Exome (WES) DNA samples** are not auto-detected (the samplesheet's `seq_type` only distinguishes `dna` / `rna` / `peptide`). To force exon-only mode for a WES run, override `ext.args`:
+
+  ```nextflow
+  process {
+      withName: SPECHLA_TYPING {
+          ext.args = '-u 1 -p nonuse'
+      }
+  }
+  ```
+
+- **Population prior.** The pipeline defaults to `-p nonuse` (ancestry-neutral). To enable a population prior on borderline-coverage data, override `ext.args` with one of `Asian`, `Black`, `Caucasian`, or `Unknown`:
+
+  ```nextflow
+  process {
+      withName: SPECHLA_TYPING {
+          ext.args = { "-u ${meta.seq_type == 'rna' ? 1 : 0} -p Caucasian" }
+      }
+  }
+  ```
 
 ## Running the pipeline
 
