@@ -1,0 +1,80 @@
+{
+    "-profile test_optitype_spechla (stub)": {
+        "content": [
+            15,
+            {
+                "FASTQC": {
+                    "fastqc": "0.12.1"
+                },
+                "OPTITYPE": {
+                    "optitype": "1.3.1"
+                },
+                "SAMTOOLS_CAT": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_COLLATEFASTQ_SPECHLA": {
+                    "samtools": "1.23.1"
+                },
+                "SPECHLA_TYPING": {
+                    "spechla": "1.0.11"
+                },
+                "Workflow": {
+                    "nf-core/hlatyping": "v2.2.0dev"
+                },
+                "YARA_INDEX": {
+                    "yara": "1.0.2"
+                },
+                "YARA_MAPPER": {
+                    "yara": "1.0.2",
+                    "samtools": "1.16.1"
+                }
+            },
+            [
+                "fastqc",
+                "fastqc/SAMPLE_FASTQ.html",
+                "fastqc/SAMPLE_FASTQ.zip",
+                "fastqc/SAMPLE_FASTQ_RNA.html",
+                "fastqc/SAMPLE_FASTQ_RNA.zip",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_data/.stub",
+                "multiqc/multiqc_plots",
+                "multiqc/multiqc_plots/.stub",
+                "multiqc/multiqc_report.html",
+                "optitype",
+                "optitype/SAMPLE_FASTQ",
+                "optitype/SAMPLE_FASTQ/SAMPLE_FASTQ_coverage_plot.pdf",
+                "optitype/SAMPLE_FASTQ/SAMPLE_FASTQ_result.tsv",
+                "optitype/SAMPLE_FASTQ_RNA",
+                "optitype/SAMPLE_FASTQ_RNA/SAMPLE_FASTQ_RNA_coverage_plot.pdf",
+                "optitype/SAMPLE_FASTQ_RNA/SAMPLE_FASTQ_RNA_result.tsv",
+                "pipeline_info",
+                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
+                "spechla",
+                "spechla/SAMPLE_FASTQ",
+                "spechla/SAMPLE_FASTQ/hla.result.details.txt",
+                "spechla/SAMPLE_FASTQ/hla.result.txt",
+                "spechla/SAMPLE_FASTQ_RNA",
+                "spechla/SAMPLE_FASTQ_RNA/hla.result.details.txt",
+                "spechla/SAMPLE_FASTQ_RNA/hla.result.txt"
+            ],
+            [
+                "SAMPLE_FASTQ.html:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SAMPLE_FASTQ.zip:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SAMPLE_FASTQ_RNA.html:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SAMPLE_FASTQ_RNA.zip:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "hla.result.details.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "hla.result.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "hla.result.details.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "hla.result.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+            ]
+        ],
+        "timestamp": "2026-05-19T14:15:04.200718059",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    }
+}

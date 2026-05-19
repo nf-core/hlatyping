@@ -1,0 +1,67 @@
+{
+    "-profile test_spechla (stub)": {
+        "content": [
+            9,
+            {
+                "CHECK_PAIRED": {
+                    "samtools": "1.16.1"
+                },
+                "FASTQC": {
+                    "fastqc": "0.12.1"
+                },
+                "SAMTOOLS_CAT": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_COLLATEFASTQ": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_COLLATEFASTQ_SPECHLA": {
+                    "samtools": "1.23.1"
+                },
+                "SPECHLA_TYPING": {
+                    "spechla": "1.0.11"
+                },
+                "Workflow": {
+                    "nf-core/hlatyping": "v2.2.0dev"
+                },
+                "YARA_INDEX": {
+                    "yara": "1.0.2"
+                },
+                "YARA_MAPPER": {
+                    "yara": "1.0.2",
+                    "samtools": "1.16.1"
+                }
+            },
+            [
+                "fastqc",
+                "fastqc/SAMPLE_PAIRED_END_BAM.html",
+                "fastqc/SAMPLE_PAIRED_END_BAM.zip",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_data/.stub",
+                "multiqc/multiqc_plots",
+                "multiqc/multiqc_plots/.stub",
+                "multiqc/multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
+                "spechla",
+                "spechla/SAMPLE_PAIRED_END_BAM",
+                "spechla/SAMPLE_PAIRED_END_BAM/hla.result.details.txt",
+                "spechla/SAMPLE_PAIRED_END_BAM/hla.result.txt"
+            ],
+            [
+                "SAMPLE_PAIRED_END_BAM.html:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SAMPLE_PAIRED_END_BAM.zip:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "hla.result.details.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "hla.result.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+            ]
+        ],
+        "timestamp": "2026-05-19T14:12:37.72755543",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    }
+}

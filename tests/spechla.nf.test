@@ -5,8 +5,9 @@ nextflow_pipeline {
     tag "pipeline"
     tag "spechla"
     profile "test_spechla"
+    options "-stub-run"
 
-    test("-profile test_spechla") {
+    test("-profile test_spechla (stub)") {
 
         when {
             params {
