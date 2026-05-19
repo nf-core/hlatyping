@@ -197,7 +197,7 @@ def validateInputParameters() {
 //
 def validateToolsParam() {
     def tools = params.tools ?: 'optitype'
-    def valid_tools = ['optitype', 'hlahd', 'hlala', 'immunotype']
+    def valid_tools = ['optitype', 'hlahd', 'hlala', 'immunotype', 'spechla']
     def tool_list = tools.tokenize(',')
     def invalid_tools = tool_list.findAll { tool -> tool.trim() !in valid_tools }
     if (invalid_tools) {
