@@ -39,7 +39,10 @@ include { FASTQC                 } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
 include { GUNZIP                 } from '../modules/nf-core/gunzip/main'
 include { OPTITYPE               } from '../modules/nf-core/optitype/main'
+include { SAMTOOLS_CAT           } from '../modules/nf-core/samtools/cat/main'
 include { SAMTOOLS_COLLATEFASTQ  } from '../modules/nf-core/samtools/collatefastq/main'
+include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SPECHLA } from '../modules/nf-core/samtools/collatefastq/main'
+include { SPECHLA_TYPING         } from '../modules/local/spechla/typing/main'
 include { HLALA_TYPING           } from '../modules/nf-core/hlala/typing/main'
 include { SAMTOOLS_VIEW          } from '../modules/nf-core/samtools/view/main'
 include { UNTAR                  } from '../modules/nf-core/untar/main'
@@ -140,7 +143,7 @@ workflow HLATYPING {
     //
     // Run modules for each selected tool
     //
-    if ("optitype" in tool_list) {
+    if (tool_list.intersect(['optitype', 'spechla'])) {
 
         ch_all_fastq
             .map { meta, _reads ->
@@ -184,15 +187,43 @@ workflow HLATYPING {
         )
         ch_versions = ch_versions.mix(YARA_MAPPER.out.versions)
 
-        //
-        // MODULE: OptiType
-        //
-        OPTITYPE(
-            YARA_MAPPER.out.bam.join(YARA_MAPPER.out.bai)
-        )
+        if ("optitype" in tool_list) {
+            //
+            // MODULE: OptiType
+            //
+            OPTITYPE(
+                YARA_MAPPER.out.bam.join(YARA_MAPPER.out.bai)
+            )
 
-        ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.hla_type.collect { _meta, tsv -> tsv })
-        ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.coverage_plot.collect { _meta, plot -> plot })
+            ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.hla_type.collect { _meta, tsv -> tsv })
+            ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.coverage_plot.collect { _meta, plot -> plot })
+        }
+
+        if ("spechla" in tool_list) {
+            //
+            // MODULE: SpecHLA — merge per-mate Yara BAMs, name-collate to FASTQ, then type
+            //
+            SAMTOOLS_CAT(YARA_MAPPER.out.bam)
+
+            SAMTOOLS_COLLATEFASTQ_SPECHLA(
+                SAMTOOLS_CAT.out.bam,
+                SAMTOOLS_CAT.out.bam.map { meta, _bam -> [[id: meta.id], [], []] },
+                false,
+            )
+
+            SAMTOOLS_COLLATEFASTQ_SPECHLA.out.fastq
+                .branch { meta, _reads ->
+                    paired: !meta.single_end
+                    single: meta.single_end
+                }
+                .set { ch_spechla_input }
+
+            ch_spechla_input.single.subscribe { meta, _reads ->
+                log.warn "Skipping SpecHLA for sample '${meta.id}': SpecHLA requires paired-end data."
+            }
+
+            SPECHLA_TYPING(ch_spechla_input.paired)
+        }
     }
 
     if ("immunotype" in tool_list) {
