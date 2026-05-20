@@ -138,14 +138,13 @@ HLA-HD is not distributed with the pipeline's containers due to licensing restri
 
 ### SpecHLA-specific notes
 
-- **Paired-end only.** Single-end samples are skipped with a warning; use OptiType or HLA-HD for SE.
-- **Mode auto-selection.** DNA samples run with `-u 0` (full mode). RNA samples run with `-u 1` (exon-only — required by SpecHLA for transcript-derived reads).
-- **Exome (WES) DNA samples** are not auto-detected (the samplesheet's `seq_type` only distinguishes `dna` / `rna` / `peptide`). To force exon-only mode for a WES run, override `ext.args`:
+- **Paired-end only.** If `--tools spechla` is combined with any single-end sample, the pipeline fails at parameter validation with a clear message; use OptiType or HLA-HD for single-end data.
+- **Exon typing is the default.** SpecHLA runs with `-u 1` (exon typing) for every sample, which is correct for whole-exome (WES) and RNA-seq data — the common inputs to this pipeline. The samplesheet's `seq_type` only distinguishes `dna` / `rna` / `peptide`, so WES and WGS cannot be told apart automatically. For whole-genome sequencing, override `ext.args` to full-length mode (`-u 0`):
 
   ```nextflow
   process {
       withName: SPECHLA_TYPING {
-          ext.args = '-u 1 -p nonuse'
+          ext.args = '-u 0 -p nonuse'
       }
   }
   ```
@@ -155,7 +154,7 @@ HLA-HD is not distributed with the pipeline's containers due to licensing restri
   ```nextflow
   process {
       withName: SPECHLA_TYPING {
-          ext.args = { "-u ${meta.seq_type == 'rna' ? 1 : 0} -p Caucasian" }
+          ext.args = '-u 1 -p Caucasian'
       }
   }
   ```

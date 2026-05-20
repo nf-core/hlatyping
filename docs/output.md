@@ -122,8 +122,8 @@ DPB1  DPB1*04:01:01:01  DPB1*04:02:01:01
 
 Notes:
 
-- SpecHLA requires paired-end input. Single-end samples are skipped with a warning.
-- DNA samples run in full mode (`-u 0`); RNA samples are forced to exon-only mode (`-u 1`). WES users wanting exon-only DNA mode override via the `withName: SPECHLA_TYPING { ext.args = ... }` config snippet shown in [`docs/usage.md`](usage.md).
+- SpecHLA requires paired-end input. Combining `--tools spechla` with any single-end sample fails the run at parameter validation.
+- SpecHLA runs in exon typing mode (`-u 1`) for every sample, which is correct for WES and RNA-seq. Whole-genome users can override to full-length mode (`-u 0`) — see the [`SpecHLA-specific notes`](usage.md#spechla-specific-notes) in `docs/usage.md`.
 
 ### Immunotype
 
