@@ -6,6 +6,9 @@ process SPECHLA_EXTRACTREF {
         'https://depot.galaxyproject.org/singularity/spechla:1.0.11--py312pl5321hdef70a9_0' :
         'quay.io/biocontainers/spechla:1.0.11--py312pl5321hdef70a9_0' }"
 
+    input:
+    val ready
+
     output:
     path "hla_gen.format.filter.extend.DRB.no26789.v2.fasta", emit: fasta
 

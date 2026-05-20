@@ -71,12 +71,10 @@
                 "SAMPLE_FASTQ_RNA.html:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "SAMPLE_FASTQ_RNA.zip:md5,d41d8cd98f00b204e9800998ecf8427e",
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
-                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "hla.result.details.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "hla.result.details.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-05-20T11:48:42.214136196",
+        "timestamp": "2026-05-20T19:19:25.278857372",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

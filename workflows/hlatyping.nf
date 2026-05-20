@@ -208,7 +208,7 @@ workflow HLATYPING {
         // Single-end + spechla is rejected at parameter validation, so every
         // sample reaching here is paired-end.
         //
-        SPECHLA_EXTRACTREF()
+        SPECHLA_EXTRACTREF(channel.value(true))
 
         YARA_INDEX_SPECHLA(
             SPECHLA_EXTRACTREF.out.fasta.map { fasta -> [[id: 'spechla_ref'], fasta] }

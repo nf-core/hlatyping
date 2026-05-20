@@ -11,6 +11,8 @@ optitype/**/*
 hlahd/**/*.{bam,bai,pdf,tsv}
 hlala/**/*
 spechla/*/hla.result.txt
+spechla/*/hla.result.details.txt
+spechla/*/hla.result.g.group.txt
 spechla/*/HLA_*.rephase.vcf.gz
 spechla/*/hla.allele.*.HLA_*.fasta
 spechla/*/HLA_*_freq.txt

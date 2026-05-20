@@ -49,7 +49,7 @@ output:
       description: Per-locus haplotype frequencies
       pattern: "HLA_*_freq.txt"
   - versions_spechla:
-      type: file
-      description: Topic-channel version emission
+      type: list
+      description: Tuple of (process, tool, version) emitted to the `versions` topic channel
 authors:
   - "@jonasscheid"
