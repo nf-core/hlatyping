@@ -17,6 +17,8 @@ process SPECHLA_TYPING {
     tuple val(meta), path("${prefix}/HLA_*.rephase.vcf.gz"),                    emit: phased_vcfs,   optional: true
     tuple val(meta), path("${prefix}/hla.allele.*.HLA_*.fasta"),                emit: alleles_fasta, optional: true
     tuple val(meta), path("${prefix}/HLA_*_freq.txt"),                          emit: freq,          optional: true
+    // Version hardcoded: the spechla CLI exposes no parseable version string
+    // (`--version` errors, `-h` prints none). Kept in sync with environment.yml.
     tuple val("${task.process}"), val('spechla'), val('1.0.11'), topic: versions, emit: versions_spechla
 
     when:
@@ -26,7 +28,17 @@ process SPECHLA_TYPING {
     prefix = task.ext.prefix ?: meta.id
     def args = task.ext.args ?: ''
     """
-    spechla -n ${prefix} -1 ${reads[0]} -2 ${reads[1]} -o ${prefix} -j ${task.cpus} ${args}
+    # TODO(remove-shim): the biocontainer is missing zless, which SpecHLA.sh calls
+    # non-interactively. Remove this shim once bioconda-recipes#65570 lands and the
+    # container is bumped to build _1. Tracking:
+    #   https://github.com/bioconda/bioconda-recipes/pull/65570
+    #   https://github.com/deepomicslab/SpecHLA/pull/73
+    mkdir -p shim_bin
+    printf '#!/bin/sh\\nexec zcat "\$@"\\n' > shim_bin/zless
+    chmod +x shim_bin/zless
+    export PATH="\$PWD/shim_bin:\$PATH"
+
+    spechla -n ${prefix} -1 ${reads[0]} -2 ${reads[1]} -o . -j ${task.cpus} ${args}
     """
 
     stub:
