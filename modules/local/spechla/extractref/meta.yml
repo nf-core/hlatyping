@@ -1,0 +1,16 @@
+name: spechla_extractref
+description: Copy the bundled HLA read-collection reference FASTA out of the SpecHLA container
+keywords:
+  - hla
+  - reference
+  - spechla
+tools:
+  - spechla:
+      description: Full-resolution HLA typing from sequencing data
+      homepage: https://github.com/deepomicslab/SpecHLA
+      licence: ["MIT"]
+output:
+  - fasta:
+      type: file
+      description: SpecHLA's bundled whole-gene HLA reference covering all 8 loci
+      pattern: "hla_gen.format.filter.extend.DRB.no26789.v2.fasta"
