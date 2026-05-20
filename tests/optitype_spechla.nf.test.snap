@@ -1,7 +1,7 @@
 {
     "-profile test_optitype_spechla (stub)": {
         "content": [
-            15,
+            19,
             {
                 "FASTQC": {
                     "fastqc": "0.12.1"
@@ -24,7 +24,14 @@
                 "YARA_INDEX": {
                     "yara": "1.0.2"
                 },
+                "YARA_INDEX_SPECHLA": {
+                    "yara": "1.0.2"
+                },
                 "YARA_MAPPER": {
+                    "yara": "1.0.2",
+                    "samtools": "1.16.1"
+                },
+                "YARA_MAPPER_SPECHLA": {
                     "yara": "1.0.2",
                     "samtools": "1.16.1"
                 }
@@ -66,12 +73,10 @@
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "hla.result.details.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "hla.result.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "hla.result.details.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "hla.result.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                "hla.result.details.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-05-19T14:15:04.200718059",
+        "timestamp": "2026-05-20T11:48:42.214136196",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

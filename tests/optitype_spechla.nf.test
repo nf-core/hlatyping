@@ -7,6 +7,8 @@ nextflow_pipeline {
     profile "test_optitype_spechla"
     options "-stub-run"
 
+    // SpecHLA real run measured at 7m51s on the standard test data (over the ~5min CI
+    // budget); stub used per spec Decision 6. Real wiring verified manually.
     test("-profile test_optitype_spechla (stub)") {
 
         when {
