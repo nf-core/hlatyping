@@ -27,10 +27,10 @@ output:
   - results:
       type: file
       description: |
-        SpecHLA typing results: the per-locus HLA calls (`hla.result*.txt`),
-        candidate alleles with mapping scores, per-locus haplotype frequencies,
-        and reconstructed full-allele FASTA sequences.
-      pattern: "*.{txt,fasta}"
+        SpecHLA typing result text files: the per-locus HLA calls
+        (`hla.result*.txt`), candidate alleles with mapping scores, and
+        per-locus haplotype frequencies.
+      pattern: "*.txt"
   - versions_spechla:
       type: list
       description: Tuple of (process, tool, version) emitted to the `versions` topic channel

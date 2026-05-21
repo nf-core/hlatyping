@@ -10,6 +10,5 @@ fastqc/*_fastqc.{html,zip}
 optitype/**/*
 hlahd/**/*.{bam,bai,pdf,tsv}
 hlala/**/*
-spechla/**/*
 yara/**/*.{bam,bai}
 pipeline_info/*.{html,json,txt,yml}

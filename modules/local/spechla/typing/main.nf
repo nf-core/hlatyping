@@ -11,7 +11,7 @@ process SPECHLA_TYPING {
     tuple val(meta), path(fastq)
 
     output:
-    tuple val(meta), path("${prefix}/*.{txt,fasta}"), emit: results
+    tuple val(meta), path("${prefix}/*.txt"), emit: results
     // Version hardcoded: the spechla CLI exposes no parseable version string
     // (`--version` errors, `-h` prints none). Kept in sync with environment.yml.
     tuple val("${task.process}"), val('spechla'), val('1.0.12'), topic: versions, emit: versions_spechla

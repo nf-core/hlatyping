@@ -110,36 +110,30 @@
                 "spechla/SAMPLE_PAIRED_END_BAM/HLA_DQB1_freq.txt",
                 "spechla/SAMPLE_PAIRED_END_BAM/HLA_DRB1_break_points_spechap.txt",
                 "spechla/SAMPLE_PAIRED_END_BAM/HLA_DRB1_freq.txt",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.1.HLA_A.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.1.HLA_B.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.1.HLA_C.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.1.HLA_DPA1.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.1.HLA_DPB1.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.1.HLA_DQA1.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.1.HLA_DQB1.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.1.HLA_DRB1.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.2.HLA_A.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.2.HLA_B.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.2.HLA_C.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.2.HLA_DPA1.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.2.HLA_DPB1.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.2.HLA_DQA1.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.2.HLA_DQB1.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.allele.2.HLA_DRB1.fasta",
                 "spechla/SAMPLE_PAIRED_END_BAM/hla.result.details.txt",
                 "spechla/SAMPLE_PAIRED_END_BAM/hla.result.g.group.txt",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.result.txt",
-                "spechla/SAMPLE_PAIRED_END_BAM/result.HLA_A.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/result.HLA_DPA1.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/result.HLA_DQA1.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/result.HLA_DQB1.fasta",
-                "spechla/SAMPLE_PAIRED_END_BAM/result.HLA_DRB1.fasta"
+                "spechla/SAMPLE_PAIRED_END_BAM/hla.result.txt"
             ],
             [
-                
+                "HLA_A_break_points_spechap.txt:md5,2bbe8ce79f19387471f3983dbbcfb0a6",
+                "HLA_A_freq.txt:md5,865d7e1bf0553103bbd239011b2a28ed",
+                "HLA_B_freq.txt:md5,3dbde47d014d1236b7bfaa9ff861355a",
+                "HLA_C_freq.txt:md5,be77c551598934a15aaf3c13a0b5284a",
+                "HLA_DPA1_break_points_spechap.txt:md5,2bbe8ce79f19387471f3983dbbcfb0a6",
+                "HLA_DPA1_freq.txt:md5,31db7ad856b9a156854ec88028ba8274",
+                "HLA_DPB1_freq.txt:md5,ed724ad766e511f3d295d2d7cb0fe5c4",
+                "HLA_DQA1_break_points_spechap.txt:md5,7f6cc0a4679cd4c35abc4192f99c6de4",
+                "HLA_DQA1_freq.txt:md5,eef60b8ffae3f5ba6b6af4f5d2e3e07f",
+                "HLA_DQB1_break_points_spechap.txt:md5,7632a8fcdac257f4a261066892ffe63f",
+                "HLA_DQB1_freq.txt:md5,41bd3cb03c20d3c9b11c3b8794c0e2da",
+                "HLA_DRB1_break_points_spechap.txt:md5,4abc26c9a69a2cb32618f0eeefd8fd04",
+                "HLA_DRB1_freq.txt:md5,14dd9b110d9c6050eab97d95682f5a26",
+                "hla.result.details.txt:md5,433102ec09d84c3d799ae2a0536cf713",
+                "hla.result.g.group.txt:md5,c9b514cb779c8fcd000b59cbe2ad4139",
+                "hla.result.txt:md5,7b8a4cb56d1e56ab427b2f4a901e5f2f"
             ]
         ],
-        "timestamp": "2026-05-21T10:58:03.104308015",
+        "timestamp": "2026-05-21T11:35:24.538685368",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
@@ -199,10 +193,12 @@
                 "SAMPLE_PAIRED_END_BAM.html:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "SAMPLE_PAIRED_END_BAM.zip:md5,d41d8cd98f00b204e9800998ecf8427e",
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
-                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "hla.result.details.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "hla.result.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-05-21T10:59:48.700196853",
+        "timestamp": "2026-05-21T11:37:20.868653678",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

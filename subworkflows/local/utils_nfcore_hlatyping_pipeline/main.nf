@@ -190,7 +190,6 @@ def validateInputParameters() {
     genomeExistsError()
     validateToolsParam()
     validateHlahdPath()
-    validateSpechlaCompatibility()
 }
 
 //
@@ -203,27 +202,6 @@ def validateToolsParam() {
     def invalid_tools = tool_list.findAll { tool -> tool.trim() !in valid_tools }
     if (invalid_tools) {
         error("Invalid tools found: ${invalid_tools.join(',')}.\nValid tools: ${valid_tools.join(',')}")
-    }
-}
-
-//
-// SpecHLA requires paired-end input. Fail at parameter validation rather than
-// silently skipping mid-workflow so headless/CI runs surface the problem.
-//
-def validateSpechlaCompatibility() {
-    def tools = params.tools ?: 'optitype'
-    if (!("spechla" in tools.tokenize(','))) return
-
-    def single_end_samples = samplesheetToList(params.input, "${projectDir}/assets/schema_input.json")
-        .findAll { _meta, fastq_1, fastq_2, bam, tsv -> fastq_1 && !fastq_2 && !bam && !tsv }
-        .collect { meta, _fastq_1, _fastq_2, _bam, _tsv -> meta.id }
-
-    if (single_end_samples) {
-        error(
-            "SpecHLA requires paired-end input. The following samples are single-end and cannot be typed by SpecHLA:\n" +
-            single_end_samples.collect { id -> "  - ${id}" }.join('\n') +
-            "\nEither remove --tools spechla, or remove single-end samples from the samplesheet."
-        )
     }
 }
 
@@ -274,6 +252,15 @@ def validateInputSamplesheet(input) {
                 "Check input samplesheet -> Multiple runs of the same " + "bam sample is not currently supported: ${metas[0].id}"
             )
         }
+    }
+
+    // SpecHLA requires paired-end input; reject single-end samples here rather
+    // than re-parsing the samplesheet, since meta.single_end is already known.
+    if (metas[0].single_end && "spechla" in (params.tools ?: 'optitype').tokenize(',')) {
+        error(
+            "SpecHLA requires paired-end input, but sample '${metas[0].id}' is single-end.\n" +
+            "Either remove --tools spechla, or remove single-end samples from the samplesheet."
+        )
     }
 
     return [metas[0], fastqs]

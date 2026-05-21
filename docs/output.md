@@ -114,7 +114,6 @@ DPB1  DPB1*04:01:01:01  DPB1*04:02:01:01
   - `hla.result.txt` — final HLA typing call (one row per locus, 4-field resolution)
   - `hla.result.details.txt` — all candidate alleles with mapping scores
   - `hla.result.g.group.txt` — G-group resolution call (when available)
-  - `hla.allele.*.HLA_*.fasta` — reconstructed full-allele sequences (low-depth regions masked with N)
   - `HLA_*_freq.txt` — per-locus haplotype frequencies
 
 </details>
