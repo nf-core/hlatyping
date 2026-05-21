@@ -12,8 +12,6 @@ process SPECHLA_TYPING {
 
     output:
     tuple val(meta), path("${prefix}/*.txt"), emit: results
-    // Version hardcoded: the spechla CLI exposes no parseable version string
-    // (`--version` errors, `-h` prints none). Kept in sync with environment.yml.
     tuple val("${task.process}"), val('spechla'), val('1.0.12'), topic: versions, emit: versions_spechla
 
     when:
@@ -36,7 +34,8 @@ process SPECHLA_TYPING {
     prefix = task.ext.prefix ?: meta.id
     """
     mkdir -p ${prefix}
-    touch ${prefix}/hla.result.txt
-    touch ${prefix}/hla.result.details.txt
+    touch ${prefix}/hla.result.txt ${prefix}/hla.result.details.txt ${prefix}/hla.result.g.group.txt
+    touch ${prefix}/HLA_{A,B,C,DPA1,DPB1,DQA1,DQB1,DRB1}_freq.txt
+    touch ${prefix}/HLA_{A,B,C,DPA1,DPB1,DQA1,DQB1,DRB1}_break_points_spechap.txt
     """
 }
