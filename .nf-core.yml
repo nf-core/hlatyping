@@ -4,13 +4,9 @@ lint:
     - assets/nf-core-hlatyping_logo_light.png
     - .prettierignore
   nf_test_content:
-    # nf-test.config uses `key = "value"` syntax (correct per template); 3.5.2 linter
-    # regex expects `key "value"` (without `=`) — false failure due to linter bug
     - nf-test.config
   schema_params: false
-  # ms2pip_model_dir is injected by the user's ~/.nextflow/config from another pipeline
-  # and causes a false-positive schema_params failure; disabled until linting env is clean
-nf_core_version: 4.0.1
+nf_core_version: 4.0.2
 repository_type: pipeline
 template:
   author: Christopher Mohr, Alexander Peltzer, Sven Fillinger
