@@ -43,7 +43,6 @@ include { SAMTOOLS_COLLATEFASTQ  } from '../modules/nf-core/samtools/collatefast
 include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SPECHLA } from '../modules/nf-core/samtools/collatefastq/main'
 include { SAMTOOLS_CAT           } from '../modules/nf-core/samtools/cat/main'
 include { SPECHLA_TYPING         } from '../modules/local/spechla/typing/main'
-include { SPECHLA_EXTRACTREF     } from '../modules/local/spechla/extractref/main'
 include { HLALA_TYPING           } from '../modules/nf-core/hlala/typing/main'
 include { SAMTOOLS_VIEW          } from '../modules/nf-core/samtools/view/main'
 include { UNTAR                  } from '../modules/nf-core/untar/main'
@@ -203,15 +202,13 @@ workflow HLATYPING {
 
     if ("spechla" in tool_list) {
         //
-        // MODULE: SpecHLA — pre-filter HLA reads with Yara against SpecHLA's own
-        // bundled reference, merge per-mate BAMs, name-collate to FASTQ, then type.
-        // Single-end + spechla is rejected at parameter validation, so every
-        // sample reaching here is paired-end.
+        // MODULE: Run SpecHLA typing (Yara pre-filter against SpecHLA's bundled reference)
         //
-        SPECHLA_EXTRACTREF(channel.value(true))
-
         YARA_INDEX_SPECHLA(
-            SPECHLA_EXTRACTREF.out.fasta.map { fasta -> [[id: 'spechla_ref'], fasta] }
+            channel.value([
+                [id: 'spechla_ref'],
+                file("${projectDir}/data/references/hla_gen.format.filter.extend.DRB.no26789.v2.fasta", checkIfExists: true),
+            ])
         )
         ch_versions = ch_versions.mix(YARA_INDEX_SPECHLA.out.versions)
 

@@ -1,6 +1,0 @@
-channels:
-  - conda-forge
-  - bioconda
-
-dependencies:
-  - bioconda::spechla=1.0.11

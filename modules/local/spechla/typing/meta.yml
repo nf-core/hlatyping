@@ -19,35 +19,18 @@ input:
       description: |
         Groovy Map containing sample information.
         e.g. [ id:'sample1', single_end:false, seq_type:'dna' ]
-  - reads:
+  - fastq:
       type: list
       description: List of two paired-end FASTQ files (must be paired-end)
       pattern: "*.{fq,fastq}.gz"
 output:
-  - hla_type:
+  - results:
       type: file
-      description: Final HLA typing call (one row per locus, 4-field resolution)
-      pattern: "hla.result.txt"
-  - details:
-      type: file
-      description: All candidate alleles with mapping scores
-      pattern: "hla.result.details.txt"
-  - g_group:
-      type: file
-      description: G-group resolution call
-      pattern: "hla.result.g.group.txt"
-  - phased_vcfs:
-      type: file
-      description: Per-locus phased VCFs
-      pattern: "HLA_*.rephase.vcf.gz"
-  - alleles_fasta:
-      type: file
-      description: Reconstructed full-allele sequences (low-depth regions masked with N)
-      pattern: "hla.allele.*.HLA_*.fasta"
-  - freq:
-      type: file
-      description: Per-locus haplotype frequencies
-      pattern: "HLA_*_freq.txt"
+      description: |
+        SpecHLA typing results: the per-locus HLA calls (`hla.result*.txt`),
+        candidate alleles with mapping scores, per-locus haplotype frequencies,
+        and reconstructed full-allele FASTA sequences.
+      pattern: "*.{txt,fasta}"
   - versions_spechla:
       type: list
       description: Tuple of (process, tool, version) emitted to the `versions` topic channel

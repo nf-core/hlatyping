@@ -8,15 +8,10 @@ process SPECHLA_TYPING {
         'quay.io/biocontainers/spechla:1.0.11--py312pl5321hdef70a9_0' }"
 
     input:
-    tuple val(meta), path(reads)
+    tuple val(meta), path(fastq)
 
     output:
-    tuple val(meta), path("${prefix}/hla.result.txt"),                          emit: hla_type
-    tuple val(meta), path("${prefix}/hla.result.details.txt"),                  emit: details
-    tuple val(meta), path("${prefix}/hla.result.g.group.txt"),                  emit: g_group,       optional: true
-    tuple val(meta), path("${prefix}/HLA_*.rephase.vcf.gz"),                    emit: phased_vcfs,   optional: true
-    tuple val(meta), path("${prefix}/hla.allele.*.HLA_*.fasta"),                emit: alleles_fasta, optional: true
-    tuple val(meta), path("${prefix}/HLA_*_freq.txt"),                          emit: freq,          optional: true
+    tuple val(meta), path("${prefix}/*.{txt,fasta}"), emit: results
     // Version hardcoded: the spechla CLI exposes no parseable version string
     // (`--version` errors, `-h` prints none). Kept in sync with environment.yml.
     tuple val("${task.process}"), val('spechla'), val('1.0.11'), topic: versions, emit: versions_spechla
@@ -38,7 +33,13 @@ process SPECHLA_TYPING {
     chmod +x shim_bin/zless
     export PATH="\$PWD/shim_bin:\$PATH"
 
-    spechla -n ${prefix} -1 ${reads[0]} -2 ${reads[1]} -o . -j ${task.cpus} ${args}
+    spechla \\
+        -n ${prefix} \\
+        -1 ${fastq[0]} \\
+        -2 ${fastq[1]} \\
+        -o . \\
+        -j ${task.cpus} \\
+        ${args}
     """
 
     stub:

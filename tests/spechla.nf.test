@@ -5,11 +5,8 @@ nextflow_pipeline {
     tag "pipeline"
     tag "spechla"
     profile "test_spechla"
-    options "-stub-run"
 
-    // Real run measured at 7m51s on the standard test data (over the ~5min CI budget);
-    // stub used per spec Decision 6. Real wiring verified manually.
-    test("-profile test_spechla (stub)") {
+    test("-profile test_spechla") {
 
         when {
             params {
@@ -32,6 +29,31 @@ nextflow_pipeline {
                     // All stable path name, with a relative path
                     stable_name,
                     // All files with stable contents
+                    stable_path
+                ).match() }
+            )
+        }
+    }
+
+    test("-profile test_spechla (stub)") {
+
+        options "-stub-run"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.trace.succeeded().size(),
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"),
+                    stable_name,
                     stable_path
                 ).match() }
             )
