@@ -4,8 +4,8 @@ process SPECHLA_TYPING {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/spechla:1.0.11--py312pl5321hdef70a9_0' :
-        'quay.io/biocontainers/spechla:1.0.11--py312pl5321hdef70a9_0' }"
+        'https://depot.galaxyproject.org/singularity/spechla:1.0.12--py312pl5321hdef70a9_0' :
+        'quay.io/biocontainers/spechla:1.0.12--py312pl5321hdef70a9_0' }"
 
     input:
     tuple val(meta), path(fastq)
@@ -14,7 +14,7 @@ process SPECHLA_TYPING {
     tuple val(meta), path("${prefix}/*.{txt,fasta}"), emit: results
     // Version hardcoded: the spechla CLI exposes no parseable version string
     // (`--version` errors, `-h` prints none). Kept in sync with environment.yml.
-    tuple val("${task.process}"), val('spechla'), val('1.0.11'), topic: versions, emit: versions_spechla
+    tuple val("${task.process}"), val('spechla'), val('1.0.12'), topic: versions, emit: versions_spechla
 
     when:
     task.ext.when == null || task.ext.when
@@ -23,16 +23,6 @@ process SPECHLA_TYPING {
     prefix = task.ext.prefix ?: meta.id
     def args = task.ext.args ?: ''
     """
-    # TODO(remove-shim): the biocontainer is missing zless, which SpecHLA.sh calls
-    # non-interactively. Remove this shim once bioconda-recipes#65570 lands and the
-    # container is bumped to build _1. Tracking:
-    #   https://github.com/bioconda/bioconda-recipes/pull/65570
-    #   https://github.com/deepomicslab/SpecHLA/pull/73
-    mkdir -p shim_bin
-    printf '#!/bin/sh\\nexec zcat "\$@"\\n' > shim_bin/zless
-    chmod +x shim_bin/zless
-    export PATH="\$PWD/shim_bin:\$PATH"
-
     spechla \\
         -n ${prefix} \\
         -1 ${fastq[0]} \\

@@ -19,7 +19,7 @@
                     "samtools": "1.23.1"
                 },
                 "SPECHLA_TYPING": {
-                    "spechla": "1.0.11"
+                    "spechla": "1.0.12"
                 },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
@@ -139,7 +139,7 @@
                 
             ]
         ],
-        "timestamp": "2026-05-21T09:30:44.785501043",
+        "timestamp": "2026-05-21T10:58:03.104308015",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
@@ -165,7 +165,7 @@
                     "samtools": "1.23.1"
                 },
                 "SPECHLA_TYPING": {
-                    "spechla": "1.0.11"
+                    "spechla": "1.0.12"
                 },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
@@ -202,7 +202,7 @@
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-05-21T09:32:56.738716575",
+        "timestamp": "2026-05-21T10:59:48.700196853",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

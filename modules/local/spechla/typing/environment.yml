@@ -3,4 +3,4 @@ channels:
   - bioconda
 
 dependencies:
-  - bioconda::spechla=1.0.11
+  - bioconda::spechla=1.0.12

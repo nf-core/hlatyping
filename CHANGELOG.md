@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | ------------ | ----------- | ----------- |
 | `HLA*LA`     | -           | 1.0.4       |
 | `Immunotype` | -           | 1.0.2       |
-| `SpecHLA`    | -           | 1.0.11      |
+| `SpecHLA`    | -           | 1.0.12      |
 | `MultiQC`    | 1.32        | 1.34        |
 | `samtools`   | 1.21        | 1.23.1      |
 | `nf-core`    | 3.5.1       | 4.0.0       |
