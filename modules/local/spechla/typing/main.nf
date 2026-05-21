@@ -34,7 +34,9 @@ process SPECHLA_TYPING {
     prefix = task.ext.prefix ?: meta.id
     """
     mkdir -p ${prefix}
-    touch ${prefix}/hla.result.txt ${prefix}/hla.result.details.txt ${prefix}/hla.result.g.group.txt
+    touch ${prefix}/hla.result.txt
+    touch ${prefix}/hla.result.details.txt
+    touch ${prefix}/hla.result.g.group.txt
     touch ${prefix}/HLA_{A,B,C,DPA1,DPB1,DQA1,DQB1,DRB1}_freq.txt
     touch ${prefix}/HLA_{A,B,C,DPA1,DPB1,DQA1,DQB1,DRB1}_break_points_spechap.txt
     """
