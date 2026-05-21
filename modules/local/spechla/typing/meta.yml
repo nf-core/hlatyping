@@ -7,7 +7,7 @@ keywords:
   - immunology
 tools:
   - spechla:
-      description: SpecHLA enables full-resolution HLA typing and HLA LOH detection from sequencing data.
+      description: SpecHLA enables full-resolution HLA typing from sequencing data.
       homepage: https://github.com/deepomicslab/SpecHLA
       documentation: https://github.com/deepomicslab/SpecHLA/blob/master/README.MD
       tool_dev_url: https://github.com/deepomicslab/SpecHLA
