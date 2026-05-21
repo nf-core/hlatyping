@@ -1,0 +1,11 @@
+{
+    "hlahd": {
+        "version": "1.7.1",
+        "software_md5": "44f0185f514f026fdd709fb34743980a"
+    },
+    "hlala": {
+        "graph": "PRG_MHC_GRCh38_withIMGT",
+        "graph_url": "https://zenodo.org/records/19336310/files/PRG_MHC_GRCh38_withIMGT.tar.gz?download=1",
+        "graph_md5": "525a8aa0c7f357bf29fe2c75ef1d477d"
+    }
+}

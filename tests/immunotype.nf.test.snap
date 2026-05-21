@@ -1,0 +1,39 @@
+{
+    "-profile test_immunotype": {
+        "content": [
+            2,
+            {
+                "IMMUNOTYPE": {
+                    "immunotype": "1.0.2"
+                },
+                "Workflow": {
+                    "nf-core/hlatyping": "v2.2.0dev"
+                }
+            },
+            [
+                "immunotype",
+                "immunotype/HepG2_A_typing.tsv",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_data/llms-full.txt",
+                "multiqc/multiqc_data/multiqc.log",
+                "multiqc/multiqc_data/multiqc.parquet",
+                "multiqc/multiqc_data/multiqc_citations.txt",
+                "multiqc/multiqc_data/multiqc_data.json",
+                "multiqc/multiqc_data/multiqc_software_versions.txt",
+                "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"
+            ],
+            [
+                "HepG2_A_typing.tsv:md5,66ce514a1ba4d546083338b1629c1f9a"
+            ]
+        ],
+        "timestamp": "2026-05-06T14:01:23.723402634",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    }
+}

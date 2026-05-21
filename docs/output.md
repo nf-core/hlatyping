@@ -13,7 +13,8 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [cat](#cat) - Merge FastQ files
 - [FastQC](#fastqc) - Raw read QC
 - [OptiType](#optitype) - HLA genotyping based on integer linear programming
-- [HLA-HD](#hlahd) - HLA Class I + II genotyping (optional, requires a local installation of HLA-HD)
+- [HLA-HD](#hla-hd) - HLA Class I + II genotyping (optional, requires a local installation of HLA-HD)
+- [HLA\*LA](#hlala) - HLA typing from BAM files using a graph-based approach (optional)
 - [MultiQC](#multiqc) - Aggregate report describing results from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
@@ -83,6 +84,36 @@ DPB1  DPB1*04:01:01:01  DPB1*04:02:01:01
   - TSV file, containing the predicted optimal (anf if enumerated, sub-optimal) HLA genotype
 - `{prefix}_{timestamp}_coverage_plot.pdf`
   - pdf file, containing a coverage plot of the predicted alleles
+
+### HLA\*LA
+
+[HLA\*LA](https://github.com/DiltheyLab/HLA-LA) (HLA typing using a graph-based reference) performs HLA typing directly from BAM files using a population reference graph of the MHC region. It supports typing of Class I and Class II HLA alleles.
+
+> **Note:** HLA\*LA requires BAM file input and will only run for samples that provide a BAM file in the samplesheet. The tool uses a large graph reference (~5 GB) that is either downloaded automatically or provided by the user.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `hlala/`
+  - `<sample_id>/`: Directory containing HLA\*LA typing results including:
+    - `hla/R1_bestguess_G.txt`: Best-guess HLA genotype calls at G-group resolution.
+    - `hla/R1_bestguess.txt`: Best-guess HLA genotype calls.
+    - `reads_per_level.txt`: Read counts at each level of the typing hierarchy.
+
+</details>
+
+### Immunotype
+
+[Immunotype](https://github.com/AG-Walz/immunotype) predicts HLA class I alleles directly from a list of immunopeptidomics peptide sequences. It takes the `tsv` samplesheet column as input (MHCquant-style or a headerless peptide list — see the [usage docs](usage.md#samplesheet-input)) and is selected via `--tools immunotype`.
+
+**Output directory: `immunotype/`**
+
+- `{prefix}_typing.tsv` — two-column TSV with the predicted HLA class I alleles joined by `;`
+
+```tsv
+sample  typing
+sample_0  HLA-A*02:01;HLA-A*24:02;HLA-B*51:08;HLA-C*04:01;HLA-C*16:02
+```
 
 ### MultiQC
 

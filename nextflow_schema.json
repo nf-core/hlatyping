@@ -47,7 +47,7 @@
                 "tools": {
                     "type": "string",
                     "default": "optitype",
-                    "help_text": "Specifies the tool(s) to use. Multiple tools can be combined in a list separated by comma.\nAvailable are: `optitype`, `hlahd`.",
+                    "help_text": "Specifies the tool(s) to use. Multiple tools can be combined in a list separated by comma.\nAvailable are: `optitype`, `hlahd`, `hlala`, `immunotype`.",
                     "description": "Specifies the hlatyping tool(s) to use."
                 }
             }
@@ -107,6 +107,47 @@
                     "fa_icon": "fas fa-check",
                     "description": "Update HLA-HD reference dictionary to the latest version before running HLA-HD.",
                     "help_text": "By default, the HLA-HD reference dictionary is not updated. To update the dictionary to the latest version from the IGMT/HLA database, set this parameter to `true`. Note that an internet connection is required for updating the dictionary from https://github.com/ANHIG/IMGTHLA/raw/refs/heads/Latest/hla.dat.zip"
+                }
+            }
+        },
+        "hlala_options": {
+            "title": "HLA*LA options",
+            "type": "object",
+            "description": "Options for running HLA*LA for HLA typing from BAM files.",
+            "default": "",
+            "fa_icon": "fas fa-dna",
+            "properties": {
+                "hlala_graph_tarball": {
+                    "type": "string",
+                    "default": null,
+                    "fa_icon": "fas fa-file-archive",
+                    "description": "Path to HLA*LA graph tarball (optional).",
+                    "help_text": "Path to the HLA*LA graph tarball (PRG_MHC_GRCh38_withIMGT.tar.gz). If provided, it will be validated and extracted. If not provided, the graph will be downloaded automatically from Oxford servers."
+                },
+                "hlala_graph_dir": {
+                    "type": "string",
+                    "default": null,
+                    "format": "directory-path",
+                    "fa_icon": "fas fa-folder-open",
+                    "description": "Path to pre-built HLA*LA graph parent directory (optional).",
+                    "help_text": "Path to the parent directory containing the HLA*LA graph (e.g., the directory that contains `PRG_MHC_GRCh38_withIMGT/`). If provided, skips graph download entirely. Takes precedence over `hlala_graph_tarball`."
+                }
+            }
+        },
+        "immunotype_options": {
+            "title": "Immunotype options",
+            "type": "object",
+            "description": "Options for running Immunotype for peptide-based HLA class I typing.",
+            "default": "",
+            "fa_icon": "fas fa-cog",
+            "properties": {
+                "peptide_col_name": {
+                    "type": "string",
+                    "default": "sequence",
+                    "fa_icon": "fas fa-columns",
+                    "description": "Name of the column containing peptide sequences in the input TSV.",
+                    "help_text": "Immunotype requires a list of peptide sequences. When the input TSV has multiple columns (e.g. MHCquant output), this parameter selects which column holds the peptides. Default is `sequence`.",
+                    "hidden": true
                 }
             }
         },
@@ -314,6 +355,12 @@
         },
         {
             "$ref": "#/$defs/hlahd_options"
+        },
+        {
+            "$ref": "#/$defs/hlala_options"
+        },
+        {
+            "$ref": "#/$defs/immunotype_options"
         },
         {
             "$ref": "#/$defs/reference_genome_options"
