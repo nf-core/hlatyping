@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#211](https://github.com/nf-core/hlatyping/pull/211) - Add HLA\*LA as a third HLA typing tool for HLA typing from BAM files (@jonasscheid)
 - [#213](https://github.com/nf-core/hlatyping/pull/213) - Add metro map pipeline overview diagram (@jonasscheid)
 - [#214](https://github.com/nf-core/hlatyping/pull/214) - Add [Immunotype](https://github.com/AG-Walz/immunotype) support for peptide-based HLA class I typing (@jonasscheid)
-- [#NNN](https://github.com/nf-core/hlatyping/pull/NNN) - Add [SpecHLA](https://github.com/deepomicslab/SpecHLA) as a fourth HLA typing tool, plumbed through the existing Yara HLA-region pre-mapping (@jonasscheid)
+- [#219](https://github.com/nf-core/hlatyping/pull/219) - Add SpecHLA as a BAM-only HLA-typing tool (genome-aligned BAM → ExtractHLAread → SpecHLA) (@jonasscheid)
 
 ### `Changed`
 

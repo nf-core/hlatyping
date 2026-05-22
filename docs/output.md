@@ -105,23 +105,23 @@ DPB1  DPB1*04:01:01:01  DPB1*04:02:01:01
 
 ### SpecHLA
 
-[SpecHLA](https://github.com/deepomicslab/SpecHLA) is an open-source, full-resolution HLA typing tool that reconstructs phased per-locus haplotypes from paired-end short reads. It covers HLA class I (A, B, C) and class II (DPA1, DPB1, DQA1, DQB1, DRB1) at 4-field resolution and works on DNA WGS, WES, and RNA-seq.
-
 <details markdown="1">
 <summary>Output files</summary>
 
 - `spechla/<sample>/`
-  - `hla.result.txt` — final HLA typing call (one row per locus, 4-field resolution)
-  - `hla.result.details.txt` — all candidate alleles with mapping scores
-  - `hla.result.g.group.txt` — G-group resolution call (when available)
-  - `HLA_*_freq.txt` — per-locus haplotype frequencies
+  - `hla.result.txt`: the per-locus 4-field HLA typing calls.
+  - `hla.result.details.txt`, `hla.result.g.group.txt`: detailed and G-group calls.
+  - `HLA_*_freq.txt`, `HLA_*_break_points_spechap.txt`: per-locus frequency and breakpoint files.
 
 </details>
 
+[SpecHLA](https://github.com/deepomicslab/SpecHLA) types HLA reads extracted
+from a genome-aligned BAM.
+
 Notes:
 
-- SpecHLA requires paired-end input. Combining `--tools spechla` with any single-end sample fails the run at parameter validation.
-- SpecHLA runs in exon typing mode (`-u 1`) for every sample, which is correct for WES and RNA-seq. Whole-genome users can override to full-length mode (`-u 0`) — see the [`SpecHLA-specific notes`](usage.md#spechla-specific-notes) in `docs/usage.md`.
+- SpecHLA requires BAM input. Combining `--tools spechla` with any FASTQ-only sample fails the run at parameter validation.
+- SpecHLA runs in exon typing mode (`-u 1`) for every sample, which is correct for WES and RNA-seq. Whole-genome users can override to full-length mode (`-u 0`) — see the [SpecHLA section](usage.md#spechla) in `docs/usage.md`.
 
 ### Immunotype
 

@@ -26,7 +26,7 @@
 - [**OptiType**](https://github.com/FRED-2/OptiType) (open-source): HLA Class I genotyping based on integer linear programming from FASTQ or BAM input.
 - [**HLA-HD**](https://w3.genome.med.kyoto-u.ac.jp/HLA-HD/) (requires local installation): HLA Class I + II typing from FASTQ or BAM input.
 - [**HLA\*LA**](https://github.com/DiltheyLab/HLA-LA) (open-source): HLA typing from BAM files using a population reference graph of the MHC region.
-- [**SpecHLA**](https://github.com/deepomicslab/SpecHLA) (open-source): Full-resolution HLA Class I + II typing across all 8 loci, producing phased per-locus VCFs and reconstructed allele FASTAs, from paired-end FASTQ or BAM input.
+- [**SpecHLA**](https://github.com/deepomicslab/SpecHLA) (open-source): Full-resolution HLA Class I + II typing across all 8 loci, producing phased per-locus VCFs and reconstructed allele FASTAs, from a genome-aligned BAM input.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
@@ -44,7 +44,7 @@ On release, automated continuous integration tests run the pipeline on a full-si
    - HLA class I typing ([`OptiType`](https://github.com/FRED-2/OptiType))
    - HLA class I+II typing ([`HLA-HD`](https://w3.genome.med.kyoto-u.ac.jp/HLA-HD/), requires local installation)
    - HLA typing from BAM ([`HLA*LA`](https://github.com/DiltheyLab/HLA-LA))
-   - Full-resolution HLA class I+II typing ([`SpecHLA`](https://github.com/deepomicslab/SpecHLA))
+   - Full-resolution HLA class I+II typing from genome-aligned BAM ([`SpecHLA`](https://github.com/deepomicslab/SpecHLA))
 6. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
 
 ## Usage

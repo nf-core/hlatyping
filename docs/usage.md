@@ -102,7 +102,7 @@ The pipeline supports four HLA typing tools, controlled by the `--tools` paramet
 - **OptiType** (default): HLA Class I typing from FASTQ or BAM input. Open-source, included in pipeline containers.
 - **HLA-HD**: HLA Class I + II typing from FASTQ or BAM input. Requires a local installation due to licensing restrictions (see [HLA-HD section](#hla-hd-setup)).
 - **HLA\*LA**: HLA typing from BAM input only. Open-source, included in pipeline containers. Uses a graph-based approach with the PRG_MHC_GRCh38_withIMGT reference graph.
-- **SpecHLA**: Full-resolution HLA Class I + II typing from paired-end FASTQ or BAM input. Open-source, included in pipeline containers (see [SpecHLA-specific notes](#spechla-specific-notes)).
+- **SpecHLA**: Full-resolution HLA Class I + II typing from a genome-aligned BAM input (BAM only). Open-source, included in pipeline containers (see [SpecHLA-specific notes](#spechla-specific-notes)).
 
 Tools can be combined:
 
@@ -138,9 +138,19 @@ HLA-HD is not distributed with the pipeline's containers due to licensing restri
 --tools hlahd --hlahd_path /path/to/hlahd.1.7.1.tar.gz
 ```
 
-### SpecHLA-specific notes
+### SpecHLA
 
-- **Paired-end only.** If `--tools spechla` is combined with any single-end sample, the pipeline fails at parameter validation with a clear message; use OptiType or HLA-HD for single-end data.
+SpecHLA performs full-resolution (4-field) HLA typing for Class I and Class II
+across 8 loci. In nf-core/hlatyping it is **BAM-only**: `--tools spechla`
+requires a coordinate-sorted, genome-aligned BAM (hg38 by default) as input —
+FASTQ samples are rejected at parameter validation. The pipeline runs SpecHLA's
+own `ExtractHLAread` step to pull HLA reads from the BAM before typing.
+
+- **BAM-only.** If `--tools spechla` is combined with any FASTQ-only sample, the pipeline fails at parameter validation with a clear message.
+- For BAMs aligned to hg19, override the reference build:
+  ```
+  process { withName: SPECHLA_EXTRACT { ext.args = '-r hg19' } }
+  ```
 - **Exon typing is the default.** SpecHLA runs with `-u 1` (exon typing) for every sample, which is correct for whole-exome (WES) and RNA-seq data — the common inputs to this pipeline. The samplesheet's `seq_type` only distinguishes `dna` / `rna` / `peptide`, so WES and WGS cannot be told apart automatically. For whole-genome sequencing, override `ext.args` to full-length mode (`-u 0`):
 
   ```nextflow
