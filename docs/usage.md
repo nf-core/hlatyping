@@ -88,8 +88,6 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 
 The **nf-core/hlatyping** pipeline ships its HLA references in the pipeline root directory under `./data/references`. OptiType uses `hla_reference_dna.fasta` and `hla_reference_rna.fasta`, selected automatically from the `seq_type` column of the samplesheet (`dna` or `rna`). These are based on the IMGT/HLA Release `3.14.0`, July 2013, and have been processed as described in the [publication](https://doi.org/10.1093/bioinformatics/btu548) of OptiType.
 
-SpecHLA uses its own whole-gene reference `hla_gen.format.filter.extend.DRB.no26789.v2.fasta` (also in `./data/references`), which covers all eight HLA loci. It is the reference SpecHLA bundles in its container, vendored here unchanged so Yara can pre-filter HLA reads before typing.
-
 You can always download new versions from the [HLA database](https://www.ebi.ac.uk/ipd/imgt/hla/docs/release.html), but be aware that these allele sets are missing intron sequence information, which will have a negative influence in the HLA typing outcome in case of DNAseq.
 
 We are currently looking into a dynamic solution, in order to build pre-processed input HLA references from current HLA allele information from the IPD-IMGT/HLA database.
@@ -102,7 +100,7 @@ The pipeline supports four HLA typing tools, controlled by the `--tools` paramet
 - **OptiType** (default): HLA Class I typing from FASTQ or BAM input. Open-source, included in pipeline containers.
 - **HLA-HD**: HLA Class I + II typing from FASTQ or BAM input. Requires a local installation due to licensing restrictions (see [HLA-HD section](#hla-hd-setup)).
 - **HLA\*LA**: HLA typing from BAM input only. Open-source, included in pipeline containers. Uses a graph-based approach with the PRG_MHC_GRCh38_withIMGT reference graph.
-- **SpecHLA**: Full-resolution HLA Class I + II typing from a genome-aligned BAM input (BAM only). Open-source, included in pipeline containers (see [SpecHLA-specific notes](#spechla-specific-notes)).
+- **SpecHLA**: Full-resolution HLA Class I + II typing from a genome-aligned BAM input (BAM only). Open-source, included in pipeline containers (see [SpecHLA notes](#spechla)).
 
 Tools can be combined:
 

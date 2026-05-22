@@ -15,7 +15,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [OptiType](#optitype) - HLA genotyping based on integer linear programming
 - [HLA-HD](#hla-hd) - HLA Class I + II genotyping (optional, requires a local installation of HLA-HD)
 - [HLA\*LA](#hlala) - HLA typing from BAM files using a graph-based approach (optional)
-- [SpecHLA](#spechla) - HLA Class I + II genotyping from DNA/RNA
+- [SpecHLA](#spechla) - HLA Class I + II genotyping from a genome-aligned BAM
 - [MultiQC](#multiqc) - Aggregate report describing results from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
