@@ -40,8 +40,7 @@ include { MULTIQC                } from '../modules/nf-core/multiqc/main'
 include { GUNZIP                 } from '../modules/nf-core/gunzip/main'
 include { OPTITYPE               } from '../modules/nf-core/optitype/main'
 include { SAMTOOLS_COLLATEFASTQ  } from '../modules/nf-core/samtools/collatefastq/main'
-include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SPECHLA } from '../modules/nf-core/samtools/collatefastq/main'
-include { SAMTOOLS_CAT           } from '../modules/nf-core/samtools/cat/main'
+include { SPECHLA_EXTRACT        } from '../modules/local/spechla/extract/main'
 include { SPECHLA_TYPING         } from '../modules/local/spechla/typing/main'
 include { HLALA_TYPING           } from '../modules/nf-core/hlala/typing/main'
 include { SAMTOOLS_VIEW          } from '../modules/nf-core/samtools/view/main'
@@ -49,8 +48,6 @@ include { UNTAR                  } from '../modules/nf-core/untar/main'
 include { WGET                   } from '../modules/nf-core/wget/main'
 include { YARA_INDEX             } from '../modules/nf-core/yara/index/main'
 include { YARA_MAPPER            } from '../modules/nf-core/yara/mapper/main'
-include { YARA_INDEX  as YARA_INDEX_SPECHLA  } from '../modules/nf-core/yara/index/main'
-include { YARA_MAPPER as YARA_MAPPER_SPECHLA } from '../modules/nf-core/yara/mapper/main'
 
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 
@@ -86,22 +83,14 @@ workflow HLATYPING {
         }
         .set { ch_input_files }
 
-    // When HLA*LA is selected, fork BAM channel for both FASTQ conversion and direct BAM input
-    def ch_bam_for_fastq
-    def ch_bam_for_hlala
-    if ("hlala" in tool_list) {
-        ch_input_files.bam
-            .multiMap { meta, files ->
-                for_fastq_conversion: [meta, files]
-                for_hlala: [meta, files]
-            }
-            .set { ch_bam_split }
-        ch_bam_for_fastq = ch_bam_split.for_fastq_conversion
-        ch_bam_for_hlala = ch_bam_split.for_hlala
-    } else {
-        ch_bam_for_fastq = ch_input_files.bam
-        ch_bam_for_hlala = channel.empty()
-    }
+    // Fan the BAM branch out so each consuming tool gets an independent copy
+    ch_input_files.bam
+        .multiMap { meta, files ->
+            for_fastq_conversion: [meta, files]
+            for_hlala: [meta, files]
+            for_spechla: [meta, files]
+        }
+        .set { ch_bam }
 
     //
     // MODULE: Concatenate FastQ files from same sample if required
@@ -109,7 +98,7 @@ workflow HLATYPING {
     CAT_FASTQ(ch_input_files.fastq_multiple).reads.set { ch_cat_fastq }
 
     // determine BAM pairedness for fastq conversion
-    CHECK_PAIRED(ch_bam_for_fastq)
+    CHECK_PAIRED(ch_bam.for_fastq_conversion)
     CHECK_PAIRED.out.reads
         .map { meta, reads, single_end ->
             meta["single_end"] = single_end.text.toBoolean()
@@ -202,31 +191,13 @@ workflow HLATYPING {
 
     if ("spechla" in tool_list) {
         //
-        // MODULE: Run SpecHLA typing (Yara pre-filter against SpecHLA's bundled reference)
+        // MODULE: Extract HLA reads from the genome-aligned BAM, then type with SpecHLA
         //
-        YARA_INDEX_SPECHLA(
-            channel.value([
-                [id: 'spechla_ref'],
-                file("${projectDir}/data/references/hla_gen.format.filter.extend.DRB.no26789.v2.fasta", checkIfExists: true),
-            ])
-        )
-        ch_versions = ch_versions.mix(YARA_INDEX_SPECHLA.out.versions)
-
-        YARA_MAPPER_SPECHLA(
-            ch_all_fastq,
-            YARA_INDEX_SPECHLA.out.index.first(),
-        )
-        ch_versions = ch_versions.mix(YARA_MAPPER_SPECHLA.out.versions)
-
-        SAMTOOLS_CAT(YARA_MAPPER_SPECHLA.out.bam)
-
-        SAMTOOLS_COLLATEFASTQ_SPECHLA(
-            SAMTOOLS_CAT.out.bam,
-            SAMTOOLS_CAT.out.bam.map { meta, _bam -> [[id: meta.id], [], []] },
-            false,
+        SPECHLA_EXTRACT(
+            ch_bam.for_spechla.map { meta, files -> [meta, files[0]] }
         )
 
-        SPECHLA_TYPING(SAMTOOLS_COLLATEFASTQ_SPECHLA.out.fastq)
+        SPECHLA_TYPING(SPECHLA_EXTRACT.out.reads)
     }
 
     if ("immunotype" in tool_list) {
@@ -258,7 +229,7 @@ workflow HLATYPING {
         // MODULE: Run HLA*LA typing (requires genome-aligned BAM + BAI input)
         //
         SAMTOOLS_VIEW(
-            ch_bam_for_hlala.map { meta, files -> [meta, files, []] },
+            ch_bam.for_hlala.map { meta, files -> [meta, files, []] },
             [[:], [], []],
             [[:], []],
             [[:], []],
