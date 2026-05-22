@@ -1,19 +1,22 @@
 {
     "-profile test_optitype_spechla": {
         "content": [
-            18,
+            9,
             {
+                "CHECK_PAIRED": {
+                    "samtools": "1.16.1"
+                },
                 "FASTQC": {
                     "fastqc": "0.12.1"
                 },
                 "OPTITYPE": {
                     "optitype": "1.3.1"
                 },
-                "SAMTOOLS_CAT": {
+                "SAMTOOLS_COLLATEFASTQ": {
                     "samtools": "1.23.1"
                 },
-                "SAMTOOLS_COLLATEFASTQ_SPECHLA": {
-                    "samtools": "1.23.1"
+                "SPECHLA_EXTRACT": {
+                    "spechla": "1.0.12"
                 },
                 "SPECHLA_TYPING": {
                     "spechla": "1.0.12"
@@ -24,33 +27,21 @@
                 "YARA_INDEX": {
                     "yara": "1.0.2"
                 },
-                "YARA_INDEX_SPECHLA": {
-                    "yara": "1.0.2"
-                },
                 "YARA_MAPPER": {
-                    "yara": "1.0.2",
-                    "samtools": "1.16.1"
-                },
-                "YARA_MAPPER_SPECHLA": {
                     "yara": "1.0.2",
                     "samtools": "1.16.1"
                 }
             },
             [
                 "fastqc",
-                "fastqc/SAMPLE_FASTQ_1_fastqc.html",
-                "fastqc/SAMPLE_FASTQ_1_fastqc.zip",
-                "fastqc/SAMPLE_FASTQ_2_fastqc.html",
-                "fastqc/SAMPLE_FASTQ_2_fastqc.zip",
-                "fastqc/SAMPLE_FASTQ_RNA_1_fastqc.html",
-                "fastqc/SAMPLE_FASTQ_RNA_1_fastqc.zip",
-                "fastqc/SAMPLE_FASTQ_RNA_2_fastqc.html",
-                "fastqc/SAMPLE_FASTQ_RNA_2_fastqc.zip",
+                "fastqc/SAMPLE_GENOME_BAM_1_fastqc.html",
+                "fastqc/SAMPLE_GENOME_BAM_1_fastqc.zip",
+                "fastqc/SAMPLE_GENOME_BAM_2_fastqc.html",
+                "fastqc/SAMPLE_GENOME_BAM_2_fastqc.zip",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/fastqc-status-check-heatmap.txt",
                 "multiqc/multiqc_data/fastqc_adapter_content_plot.txt",
-                "multiqc/multiqc_data/fastqc_overrepresented_sequences_plot.txt",
                 "multiqc/multiqc_data/fastqc_per_base_n_content_plot.txt",
                 "multiqc/multiqc_data/fastqc_per_base_sequence_quality_plot.txt",
                 "multiqc/multiqc_data/fastqc_per_sequence_gc_content_plot_Counts.txt",
@@ -58,7 +49,6 @@
                 "multiqc/multiqc_data/fastqc_per_sequence_quality_scores_plot.txt",
                 "multiqc/multiqc_data/fastqc_sequence_counts_plot.txt",
                 "multiqc/multiqc_data/fastqc_sequence_duplication_levels_plot.txt",
-                "multiqc/multiqc_data/fastqc_top_overrepresented_sequences_table.txt",
                 "multiqc/multiqc_data/llms-full.txt",
                 "multiqc/multiqc_data/multiqc.log",
                 "multiqc/multiqc_data/multiqc.parquet",
@@ -74,7 +64,6 @@
                 "multiqc/multiqc_plots/pdf",
                 "multiqc/multiqc_plots/pdf/fastqc-status-check-heatmap.pdf",
                 "multiqc/multiqc_plots/pdf/fastqc_adapter_content_plot.pdf",
-                "multiqc/multiqc_plots/pdf/fastqc_overrepresented_sequences_plot.pdf",
                 "multiqc/multiqc_plots/pdf/fastqc_per_base_n_content_plot.pdf",
                 "multiqc/multiqc_plots/pdf/fastqc_per_base_sequence_quality_plot.pdf",
                 "multiqc/multiqc_plots/pdf/fastqc_per_sequence_gc_content_plot_Counts.pdf",
@@ -83,12 +72,10 @@
                 "multiqc/multiqc_plots/pdf/fastqc_sequence_counts_plot-cnt.pdf",
                 "multiqc/multiqc_plots/pdf/fastqc_sequence_counts_plot-pct.pdf",
                 "multiqc/multiqc_plots/pdf/fastqc_sequence_duplication_levels_plot.pdf",
-                "multiqc/multiqc_plots/pdf/fastqc_top_overrepresented_sequences_table.pdf",
                 "multiqc/multiqc_plots/pdf/optitype_summary_plot.pdf",
                 "multiqc/multiqc_plots/png",
                 "multiqc/multiqc_plots/png/fastqc-status-check-heatmap.png",
                 "multiqc/multiqc_plots/png/fastqc_adapter_content_plot.png",
-                "multiqc/multiqc_plots/png/fastqc_overrepresented_sequences_plot.png",
                 "multiqc/multiqc_plots/png/fastqc_per_base_n_content_plot.png",
                 "multiqc/multiqc_plots/png/fastqc_per_base_sequence_quality_plot.png",
                 "multiqc/multiqc_plots/png/fastqc_per_sequence_gc_content_plot_Counts.png",
@@ -97,12 +84,10 @@
                 "multiqc/multiqc_plots/png/fastqc_sequence_counts_plot-cnt.png",
                 "multiqc/multiqc_plots/png/fastqc_sequence_counts_plot-pct.png",
                 "multiqc/multiqc_plots/png/fastqc_sequence_duplication_levels_plot.png",
-                "multiqc/multiqc_plots/png/fastqc_top_overrepresented_sequences_table.png",
                 "multiqc/multiqc_plots/png/optitype_summary_plot.png",
                 "multiqc/multiqc_plots/svg",
                 "multiqc/multiqc_plots/svg/fastqc-status-check-heatmap.svg",
                 "multiqc/multiqc_plots/svg/fastqc_adapter_content_plot.svg",
-                "multiqc/multiqc_plots/svg/fastqc_overrepresented_sequences_plot.svg",
                 "multiqc/multiqc_plots/svg/fastqc_per_base_n_content_plot.svg",
                 "multiqc/multiqc_plots/svg/fastqc_per_base_sequence_quality_plot.svg",
                 "multiqc/multiqc_plots/svg/fastqc_per_sequence_gc_content_plot_Counts.svg",
@@ -111,80 +96,38 @@
                 "multiqc/multiqc_plots/svg/fastqc_sequence_counts_plot-cnt.svg",
                 "multiqc/multiqc_plots/svg/fastqc_sequence_counts_plot-pct.svg",
                 "multiqc/multiqc_plots/svg/fastqc_sequence_duplication_levels_plot.svg",
-                "multiqc/multiqc_plots/svg/fastqc_top_overrepresented_sequences_table.svg",
                 "multiqc/multiqc_plots/svg/optitype_summary_plot.svg",
                 "multiqc/multiqc_report.html",
                 "optitype",
-                "optitype/SAMPLE_FASTQ",
-                "optitype/SAMPLE_FASTQ/SAMPLE_FASTQ_coverage_plot.pdf",
-                "optitype/SAMPLE_FASTQ/SAMPLE_FASTQ_result.tsv",
-                "optitype/SAMPLE_FASTQ_RNA",
-                "optitype/SAMPLE_FASTQ_RNA/SAMPLE_FASTQ_RNA_coverage_plot.pdf",
-                "optitype/SAMPLE_FASTQ_RNA/SAMPLE_FASTQ_RNA_result.tsv",
+                "optitype/SAMPLE_GENOME_BAM",
+                "optitype/SAMPLE_GENOME_BAM/SAMPLE_GENOME_BAM_coverage_plot.pdf",
+                "optitype/SAMPLE_GENOME_BAM/SAMPLE_GENOME_BAM_result.tsv",
                 "pipeline_info",
                 "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
                 "spechla",
-                "spechla/SAMPLE_FASTQ",
-                "spechla/SAMPLE_FASTQ/HLA_A_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ/HLA_A_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_B_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_C_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DPA1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DPA1_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DPB1_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DQA1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DQA1_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DQB1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DQB1_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DRB1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DRB1_freq.txt",
-                "spechla/SAMPLE_FASTQ/hla.result.details.txt",
-                "spechla/SAMPLE_FASTQ/hla.result.g.group.txt",
-                "spechla/SAMPLE_FASTQ/hla.result.txt",
-                "spechla/SAMPLE_FASTQ_RNA",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_A_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_B_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_C_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DPA1_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DPB1_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DQA1_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DQB1_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DRB1_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/hla.result.details.txt",
-                "spechla/SAMPLE_FASTQ_RNA/hla.result.g.group.txt",
-                "spechla/SAMPLE_FASTQ_RNA/hla.result.txt"
+                "spechla/SAMPLE_GENOME_BAM",
+                "spechla/SAMPLE_GENOME_BAM/HLA_A_break_points_spechap.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_A_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_B_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_C_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DPA1_break_points_spechap.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DPA1_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DPB1_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DQA1_break_points_spechap.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DQA1_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DQB1_break_points_spechap.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DQB1_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DRB1_break_points_spechap.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DRB1_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/hla.result.details.txt",
+                "spechla/SAMPLE_GENOME_BAM/hla.result.g.group.txt",
+                "spechla/SAMPLE_GENOME_BAM/hla.result.txt"
             ],
             [
-                "HLA_A_break_points_spechap.txt:md5,2bbe8ce79f19387471f3983dbbcfb0a6",
-                "HLA_A_freq.txt:md5,865d7e1bf0553103bbd239011b2a28ed",
-                "HLA_B_freq.txt:md5,3dbde47d014d1236b7bfaa9ff861355a",
-                "HLA_C_freq.txt:md5,be77c551598934a15aaf3c13a0b5284a",
-                "HLA_DPA1_break_points_spechap.txt:md5,2bbe8ce79f19387471f3983dbbcfb0a6",
-                "HLA_DPA1_freq.txt:md5,31db7ad856b9a156854ec88028ba8274",
-                "HLA_DPB1_freq.txt:md5,ed724ad766e511f3d295d2d7cb0fe5c4",
-                "HLA_DQA1_break_points_spechap.txt:md5,7f6cc0a4679cd4c35abc4192f99c6de4",
-                "HLA_DQA1_freq.txt:md5,eef60b8ffae3f5ba6b6af4f5d2e3e07f",
-                "HLA_DQB1_break_points_spechap.txt:md5,7632a8fcdac257f4a261066892ffe63f",
-                "HLA_DQB1_freq.txt:md5,41bd3cb03c20d3c9b11c3b8794c0e2da",
-                "HLA_DRB1_break_points_spechap.txt:md5,4abc26c9a69a2cb32618f0eeefd8fd04",
-                "HLA_DRB1_freq.txt:md5,14dd9b110d9c6050eab97d95682f5a26",
-                "hla.result.details.txt:md5,433102ec09d84c3d799ae2a0536cf713",
-                "hla.result.g.group.txt:md5,08bd384adbcf74b0960843074b944a84",
-                "hla.result.txt:md5,a54f1735470ee85ffbccc1b7280002ba",
-                "HLA_A_freq.txt:md5,2a0b99ecc08363eed43493c1f5bdde42",
-                "HLA_B_freq.txt:md5,3dbde47d014d1236b7bfaa9ff861355a",
-                "HLA_C_freq.txt:md5,be77c551598934a15aaf3c13a0b5284a",
-                "HLA_DPA1_freq.txt:md5,83d8af63f1979f16b841da9cd12e8ec3",
-                "HLA_DPB1_freq.txt:md5,ed724ad766e511f3d295d2d7cb0fe5c4",
-                "HLA_DQA1_freq.txt:md5,fac5ebb91b3ba906c098710a7658e06d",
-                "HLA_DQB1_freq.txt:md5,9c3452ced9dfe4adc3207c94ea8efdc8",
-                "HLA_DRB1_freq.txt:md5,763e9285d02364811728a6aff8e37595",
-                "hla.result.details.txt:md5,cbff0091710e969d3b0d6d3c84ba9b89",
-                "hla.result.g.group.txt:md5,204f6b8b2a77cae5f0084650dfb779ab",
-                "hla.result.txt:md5,5fe1547f4b60715f59353e5be757500e"
+                
             ]
         ],
-        "timestamp": "2026-05-21T11:24:36.155062393",
+        "timestamp": "2026-05-22T20:39:54.27784124",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
@@ -192,19 +135,22 @@
     },
     "-profile test_optitype_spechla (stub)": {
         "content": [
-            18,
+            9,
             {
+                "CHECK_PAIRED": {
+                    "samtools": "1.16.1"
+                },
                 "FASTQC": {
                     "fastqc": "0.12.1"
                 },
                 "OPTITYPE": {
                     "optitype": "1.3.1"
                 },
-                "SAMTOOLS_CAT": {
+                "SAMTOOLS_COLLATEFASTQ": {
                     "samtools": "1.23.1"
                 },
-                "SAMTOOLS_COLLATEFASTQ_SPECHLA": {
-                    "samtools": "1.23.1"
+                "SPECHLA_EXTRACT": {
+                    "spechla": "1.0.12"
                 },
                 "SPECHLA_TYPING": {
                     "spechla": "1.0.12"
@@ -215,24 +161,15 @@
                 "YARA_INDEX": {
                     "yara": "1.0.2"
                 },
-                "YARA_INDEX_SPECHLA": {
-                    "yara": "1.0.2"
-                },
                 "YARA_MAPPER": {
-                    "yara": "1.0.2",
-                    "samtools": "1.16.1"
-                },
-                "YARA_MAPPER_SPECHLA": {
                     "yara": "1.0.2",
                     "samtools": "1.16.1"
                 }
             },
             [
                 "fastqc",
-                "fastqc/SAMPLE_FASTQ.html",
-                "fastqc/SAMPLE_FASTQ.zip",
-                "fastqc/SAMPLE_FASTQ_RNA.html",
-                "fastqc/SAMPLE_FASTQ_RNA.zip",
+                "fastqc/SAMPLE_GENOME_BAM.html",
+                "fastqc/SAMPLE_GENOME_BAM.zip",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/.stub",
@@ -240,104 +177,41 @@
                 "multiqc/multiqc_plots/.stub",
                 "multiqc/multiqc_report.html",
                 "optitype",
-                "optitype/SAMPLE_FASTQ",
-                "optitype/SAMPLE_FASTQ/SAMPLE_FASTQ_coverage_plot.pdf",
-                "optitype/SAMPLE_FASTQ/SAMPLE_FASTQ_result.tsv",
-                "optitype/SAMPLE_FASTQ_RNA",
-                "optitype/SAMPLE_FASTQ_RNA/SAMPLE_FASTQ_RNA_coverage_plot.pdf",
-                "optitype/SAMPLE_FASTQ_RNA/SAMPLE_FASTQ_RNA_result.tsv",
+                "optitype/SAMPLE_GENOME_BAM",
+                "optitype/SAMPLE_GENOME_BAM/SAMPLE_GENOME_BAM_coverage_plot.pdf",
+                "optitype/SAMPLE_GENOME_BAM/SAMPLE_GENOME_BAM_result.tsv",
                 "pipeline_info",
                 "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
                 "spechla",
-                "spechla/SAMPLE_FASTQ",
-                "spechla/SAMPLE_FASTQ/HLA_A_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ/HLA_A_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_B_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ/HLA_B_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_C_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ/HLA_C_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DPA1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DPA1_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DPB1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DPB1_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DQA1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DQA1_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DQB1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DQB1_freq.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DRB1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ/HLA_DRB1_freq.txt",
-                "spechla/SAMPLE_FASTQ/hla.result.details.txt",
-                "spechla/SAMPLE_FASTQ/hla.result.g.group.txt",
-                "spechla/SAMPLE_FASTQ/hla.result.txt",
-                "spechla/SAMPLE_FASTQ_RNA",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_A_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_A_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_B_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_B_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_C_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_C_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DPA1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DPA1_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DPB1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DPB1_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DQA1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DQA1_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DQB1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DQB1_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DRB1_break_points_spechap.txt",
-                "spechla/SAMPLE_FASTQ_RNA/HLA_DRB1_freq.txt",
-                "spechla/SAMPLE_FASTQ_RNA/hla.result.details.txt",
-                "spechla/SAMPLE_FASTQ_RNA/hla.result.g.group.txt",
-                "spechla/SAMPLE_FASTQ_RNA/hla.result.txt"
+                "spechla/SAMPLE_GENOME_BAM",
+                "spechla/SAMPLE_GENOME_BAM/HLA_A_break_points_spechap.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_A_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_B_break_points_spechap.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_B_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_C_break_points_spechap.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_C_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DPA1_break_points_spechap.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DPA1_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DPB1_break_points_spechap.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DPB1_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DQA1_break_points_spechap.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DQA1_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DQB1_break_points_spechap.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DQB1_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DRB1_break_points_spechap.txt",
+                "spechla/SAMPLE_GENOME_BAM/HLA_DRB1_freq.txt",
+                "spechla/SAMPLE_GENOME_BAM/hla.result.details.txt",
+                "spechla/SAMPLE_GENOME_BAM/hla.result.g.group.txt",
+                "spechla/SAMPLE_GENOME_BAM/hla.result.txt"
             ],
             [
-                "SAMPLE_FASTQ.html:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "SAMPLE_FASTQ.zip:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "SAMPLE_FASTQ_RNA.html:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "SAMPLE_FASTQ_RNA.zip:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SAMPLE_GENOME_BAM.html:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SAMPLE_GENOME_BAM.zip:md5,d41d8cd98f00b204e9800998ecf8427e",
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
-                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_A_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_A_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_B_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_B_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_C_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_C_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DPA1_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DPA1_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DPB1_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DPB1_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DQA1_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DQA1_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DQB1_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DQB1_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DRB1_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DRB1_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "hla.result.details.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "hla.result.g.group.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "hla.result.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_A_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_A_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_B_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_B_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_C_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_C_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DPA1_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DPA1_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DPB1_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DPB1_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DQA1_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DQA1_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DQB1_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DQB1_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DRB1_break_points_spechap.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "HLA_DRB1_freq.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "hla.result.details.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "hla.result.g.group.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "hla.result.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-05-21T12:04:06.036049157",
+        "timestamp": "2026-05-22T20:40:59.324072045",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
