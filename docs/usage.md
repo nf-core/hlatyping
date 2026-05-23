@@ -138,33 +138,19 @@ HLA-HD is not distributed with the pipeline's containers due to licensing restri
 
 ### SpecHLA
 
-SpecHLA performs full-resolution (4-field) HLA typing for Class I and Class II
-across 8 loci. In nf-core/hlatyping it is **BAM-only**: `--tools spechla`
-requires a coordinate-sorted, genome-aligned BAM (hg38 by default) as input —
-FASTQ samples are rejected at parameter validation. The pipeline runs SpecHLA's
-own `ExtractHLAread` step to pull HLA reads from the BAM before typing.
+SpecHLA performs HLA typing for Class I and Class II across 8 loci. See the [SpecHLA documentation](https://github.com/deepomicslab/SpecHLA) for tool-specific details.
 
-- **BAM-only.** If `--tools spechla` is combined with any FASTQ-only sample, the pipeline fails at parameter validation with a clear message.
+In nf-core/hlatyping it is **BAM-only**: `--tools spechla` requires a coordinate-sorted, genome-aligned BAM (hg38 by default) as input — FASTQ samples are rejected at parameter validation. The pipeline runs SpecHLA's own `ExtractHLAread` step to pull HLA reads from the BAM before typing.
+
 - For BAMs aligned to hg19, override the reference build:
-  ```
+  ```nextflow
   process { withName: SPECHLA_EXTRACT { ext.args = '-r hg19' } }
   ```
-- **Exon typing is the default.** SpecHLA runs with `-u 1` (exon typing) for every sample, which is correct for whole-exome (WES) and RNA-seq data — the common inputs to this pipeline. The samplesheet's `seq_type` only distinguishes `dna` / `rna` / `peptide`, so WES and WGS cannot be told apart automatically. For whole-genome sequencing, override `ext.args` to full-length mode (`-u 0`):
-
+- Typing mode (`-u`) and population prior (`-p`) default to `-u 1 -p nonuse` (exon typing, ancestry-neutral). `-u`: `0` = full-length, `1` = exon. `-p`: `Asian | Black | Caucasian | Unknown | nonuse`. Override via `ext.args`:
   ```nextflow
   process {
       withName: SPECHLA_TYPING {
           ext.args = '-u 0 -p nonuse'
-      }
-  }
-  ```
-
-- **Population prior.** The pipeline defaults to `-p nonuse` (ancestry-neutral). To enable a population prior on borderline-coverage data, override `ext.args` with one of `Asian`, `Black`, `Caucasian`, or `Unknown`:
-
-  ```nextflow
-  process {
-      withName: SPECHLA_TYPING {
-          ext.args = '-u 1 -p Caucasian'
       }
   }
   ```

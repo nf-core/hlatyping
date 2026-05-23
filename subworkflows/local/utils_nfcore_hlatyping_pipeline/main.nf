@@ -254,15 +254,6 @@ def validateInputSamplesheet(input) {
         }
     }
 
-    // SpecHLA requires paired-end input; reject single-end samples here rather
-    // than re-parsing the samplesheet, since meta.single_end is already known.
-    if (metas[0].single_end && "spechla" in (params.tools ?: 'optitype').tokenize(',')) {
-        error(
-            "SpecHLA requires paired-end input, but sample '${metas[0].id}' is single-end.\n" +
-            "Either remove --tools spechla, or remove single-end samples from the samplesheet."
-        )
-    }
-
     // SpecHLA is BAM-only in hlatyping: it consumes a genome-aligned BAM via
     // ExtractHLAread. Reject FASTQ/TSV samples here rather than failing later.
     def first_file = fastqs[0][0]
