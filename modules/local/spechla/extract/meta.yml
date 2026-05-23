@@ -2,7 +2,7 @@ name: spechla_extract
 description: Extract HLA-related reads from a genome-aligned BAM using SpecHLA's ExtractHLAread.sh.
 keywords:
   - hla
-  - extraction
+  - typing
   - mhc
   - immunology
 tools:

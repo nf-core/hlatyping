@@ -146,13 +146,9 @@ In nf-core/hlatyping it is **BAM-only**: `--tools spechla` requires a coordinate
   ```nextflow
   process { withName: SPECHLA_EXTRACT { ext.args = '-r hg19' } }
   ```
-- Typing mode (`-u`) and population prior (`-p`) default to `-u 1 -p nonuse` (exon typing, ancestry-neutral). `-u`: `0` = full-length, `1` = exon. `-p`: `Asian | Black | Caucasian | Unknown | nonuse`. Override via `ext.args`:
+- Typing mode (`-u`) and population prior (`-p`) default to `-u 1 -p nonuse` (exon typing, ancestry-neutral). `-u`: `0` = full-length, `1` = exon (required for WES and RNA-seq). `-p`: `Asian | Black | Caucasian | Unknown | nonuse`. Override via `ext.args`:
   ```nextflow
-  process {
-      withName: SPECHLA_TYPING {
-          ext.args = '-u 0 -p nonuse'
-      }
-  }
+  process { withName: SPECHLA_TYPING { ext.args = '-u 0 -p nonuse' } }
   ```
 
 ## Running the pipeline
