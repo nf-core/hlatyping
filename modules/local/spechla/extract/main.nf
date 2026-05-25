@@ -23,7 +23,7 @@ process SPECHLA_EXTRACT {
     """
     # Nextflow changes the container --entrypoint to /bin/bash (container default entrypoint: /usr/local/env-execute)
     # Check for container variable initialisation script and source it.
-    # The spechla-extract-hla-reads wrapper runs under \`set -u\` and references \$CONDA_PREFIX,
+    # The spechla-extract-hla-reads wrapper runs under set -u and references \$CONDA_PREFIX,
     # which under Apptainer/Singularity is otherwise unset because the entrypoint is bypassed.
     if [ -f "/usr/local/env-activate.sh" ]; then
         set +u  # Otherwise, errors out because of various unbound variables
