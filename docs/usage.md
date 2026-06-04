@@ -86,9 +86,18 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 
 ### HLA references
 
-The **nf-core/hlatyping** pipeline ships its HLA references in the pipeline root directory under `./data/references`. OptiType uses `hla_reference_dna.fasta` and `hla_reference_rna.fasta`, selected automatically from the `seq_type` column of the samplesheet (`dna` or `rna`). These are based on the IMGT/HLA Release `3.14.0`, July 2013, and have been processed as described in the [publication](https://doi.org/10.1093/bioinformatics/btu548) of OptiType.
+Each HLA typing tool ships its own allele reference, so results are reported against different IPD-IMGT/HLA releases:
 
-You can always download new versions from the [HLA database](https://www.ebi.ac.uk/ipd/imgt/hla/docs/release.html), but be aware that these allele sets are missing intron sequence information, which will have a negative influence in the HLA typing outcome in case of DNAseq.
+| Tool         | IPD-IMGT/HLA release                    | Source                                                                                                                                  |
+| ------------ | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **OptiType** | `3.14.0` (July 2013)                    | `hla_reference_dna.fasta` / `hla_reference_rna.fasta` shipped in `./data/references`, selected from the `seq_type` column (`dna`/`rna`) |
+| **SpecHLA**  | `3.38.0`                                | Bundled in the SpecHLA container; shown in the header of its `hla.result.details.txt` output                                            |
+| **HLA\*LA**  | embedded in the reference graph         | IMGT alleles built into the `PRG_MHC_GRCh38_withIMGT` population reference graph                                                        |
+| **HLA-HD**   | depends on the installed HLA-HD version | Allele dictionary bundled with your local HLA-HD installation                                                                           |
+
+The OptiType references in `./data/references` have been processed as described in the OptiType [publication](https://doi.org/10.1093/bioinformatics/btu548).
+
+For OptiType you can always download new versions from the [HLA database](https://www.ebi.ac.uk/ipd/imgt/hla/docs/release.html), but be aware that these allele sets are missing intron sequence information, which will have a negative influence in the HLA typing outcome in case of DNAseq.
 
 We are currently looking into a dynamic solution, in order to build pre-processed input HLA references from current HLA allele information from the IPD-IMGT/HLA database.
 If you wish to repeatedly use the same parameters for multiple runs, rather than specifying each flag in the command, you can specify these in a params file.
