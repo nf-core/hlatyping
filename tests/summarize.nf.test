@@ -1,0 +1,81 @@
+nextflow_process {
+
+    name "Test SUMMARIZE_TYPING"
+    script "../modules/local/summarize/main.nf"
+    process "SUMMARIZE_TYPING"
+    tag "pipeline"
+    tag "summarize"
+
+    test("harmonize five tool outputs into one TSV") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    file("\$projectDir/tests/fixtures/summarize/sampleA__optitype.txt", checkIfExists: true),
+                    file("\$projectDir/tests/fixtures/summarize/sampleA__hlahd.txt", checkIfExists: true),
+                    file("\$projectDir/tests/fixtures/summarize/sampleA__hlala.txt", checkIfExists: true),
+                    file("\$projectDir/tests/fixtures/summarize/sampleA__spechla.txt", checkIfExists: true),
+                    file("\$projectDir/tests/fixtures/summarize/sampleA__immunotype.txt", checkIfExists: true),
+                    file("\$projectDir/tests/fixtures/summarize/sampleB__optitype.txt", checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            def tsv = path(process.out.summary.get(0)).readLines()
+
+            // header
+            def header = "sample\tpredictor\tclass_i_original\tclass_ii_original\tclass_i_2field\tclass_ii_2field"
+
+            // index rows by "sample/predictor"
+            def rows = tsv[1..-1].collectEntries { line ->
+                def c = line.split("\t", -1)
+                [(c[0] + "/" + c[1]): c]
+            }
+            def opti = rows["sampleA/optitype"]
+            def hd   = rows["sampleA/hlahd"]
+            def la   = rows["sampleA/hlala"]
+            def im   = rows["sampleA/immunotype"]
+
+            assertAll(
+                { assert process.success },
+                { assert tsv[0] == header },
+                // sampleA contributes 5 rows, sampleB 1 row => 6 data rows + header
+                { assert tsv.size() == 7 },
+                // row order: sampleA before sampleB
+                { assert tsv[1].startsWith("sampleA\t") },
+                { assert tsv[6].startsWith("sampleB\t") },
+                // within sampleA, fixed tool order optitype < hlahd < hlala < spechla < immunotype
+                { assert tsv[1].split("\t")[1] == "optitype" },
+                { assert tsv[2].split("\t")[1] == "hlahd" },
+                { assert tsv[3].split("\t")[1] == "hlala" },
+                { assert tsv[4].split("\t")[1] == "spechla" },
+                { assert tsv[5].split("\t")[1] == "immunotype" },
+                // OptiType: homozygous A duplicated; class II is NA
+                { assert opti[2].count("A*01:01") == 2 },
+                { assert opti[3] == "NA" },
+                { assert opti[5] == "NA" },
+                // HLA-HD: original keeps full depth, 2field truncates to two fields
+                { assert hd[2].contains("A*24:02:01:01") },
+                { assert hd[4].contains("A*24:02") },
+                { assert !hd[4].contains("A*24:02:01") },
+                // HLA-HD: class II present (not NA)
+                { assert hd[3] != "NA" },
+                { assert hd[5] != "NA" },
+                // HLA-HD: non-reportable locus H is dropped from both classes
+                { assert !hd[2].contains("H*01:01") },
+                // HLA*LA: G-group alleles normalize to 2-field A*01:01 / A*02:01; class II present
+                { assert la[4].contains("A*01:01") },
+                { assert la[4].contains("A*02:01") },
+                { assert la[3] != "NA" },
+                // immunotype: class I only -> both class II columns NA
+                { assert im[3] == "NA" },
+                { assert im[5] == "NA" },
+                // full regression snapshot (review on first run)
+                { assert snapshot(tsv).match() }
+            )
+        }
+    }
+}
