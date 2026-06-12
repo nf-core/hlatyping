@@ -1,7 +1,7 @@
 {
     "-profile test_hlahd": {
         "content": [
-            6,
+            7,
             {
                 "FASTQC": {
                     "fastqc": "0.12.1"
@@ -11,6 +11,9 @@
                 },
                 "HLAHD_INSTALL": {
                     "hlahd": "1.7.1"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
                 },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
@@ -31,6 +34,7 @@
                 "hlahd/SAMPLE_FASTQ/SAMPLE_FASTQ_final.result.txt",
                 "hlahd/SAMPLE_FASTQ_RNA",
                 "hlahd/SAMPLE_FASTQ_RNA/SAMPLE_FASTQ_RNA_final.result.txt",
+                "hlatyping_results.tsv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/fastqc-status-check-heatmap.txt",
@@ -102,10 +106,10 @@
                 "SAMPLE_FASTQ_RNA_final.result.txt:md5,15e8f8fe058169c02f4136e092981500"
             ]
         ],
+        "timestamp": "2026-06-12T19:53:26.83827479",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.3"
-        },
-        "timestamp": "2026-02-27T11:36:22.421062456"
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
     }
 }
