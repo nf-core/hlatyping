@@ -73,6 +73,8 @@ nextflow_process {
                 // immunotype: class I only -> both class II columns NA
                 { assert im[3] == "NA" },
                 { assert im[5] == "NA" },
+                // unparseable token is dropped and never appears in output
+                { assert !tsv.any { it.contains("not_an_allele") } },
                 // full regression snapshot (review on first run)
                 { assert snapshot(tsv).match() }
             )
