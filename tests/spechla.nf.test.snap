@@ -31,6 +31,7 @@
                 "fastqc/SAMPLE_PAIRED_END_BAM_1_fastqc.zip",
                 "fastqc/SAMPLE_PAIRED_END_BAM_2_fastqc.html",
                 "fastqc/SAMPLE_PAIRED_END_BAM_2_fastqc.zip",
+                "hlatyping_results.tsv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/fastqc-status-check-heatmap.txt",
@@ -105,15 +106,13 @@
                 "spechla/SAMPLE_PAIRED_END_BAM/HLA_DRB1_freq.txt",
                 "spechla/SAMPLE_PAIRED_END_BAM/hla.result.details.txt",
                 "spechla/SAMPLE_PAIRED_END_BAM/hla.result.g.group.txt",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.result.txt",
-                "summary",
-                "summary/hla_summary.tsv"
+                "spechla/SAMPLE_PAIRED_END_BAM/hla.result.txt"
             ],
             [
                 
             ]
         ],
-        "timestamp": "2026-06-12T15:57:21.969095131",
+        "timestamp": "2026-06-12T19:18:22.704180296",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
@@ -149,6 +148,7 @@
                 "fastqc",
                 "fastqc/SAMPLE_PAIRED_END_BAM.html",
                 "fastqc/SAMPLE_PAIRED_END_BAM.zip",
+                "hlatyping_results.tsv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/.stub",
@@ -177,9 +177,7 @@
                 "spechla/SAMPLE_PAIRED_END_BAM/HLA_DRB1_freq.txt",
                 "spechla/SAMPLE_PAIRED_END_BAM/hla.result.details.txt",
                 "spechla/SAMPLE_PAIRED_END_BAM/hla.result.g.group.txt",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.result.txt",
-                "summary",
-                "summary/hla_summary.tsv"
+                "spechla/SAMPLE_PAIRED_END_BAM/hla.result.txt"
             ],
             [
                 "SAMPLE_PAIRED_END_BAM.html:md5,d41d8cd98f00b204e9800998ecf8427e",
@@ -188,7 +186,7 @@
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-06-12T15:58:26.845330199",
+        "timestamp": "2026-06-12T19:19:14.292218753",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

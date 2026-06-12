@@ -12,5 +12,5 @@ hlahd/**/*.{bam,bai,pdf,tsv}
 hlala/**/*
 yara/**/*.{bam,bai}
 spechla/**/*
-summary/*
+hlatyping_results.tsv
 pipeline_info/*.{html,json,txt,yml}

@@ -10,7 +10,7 @@ process SUMMARIZE_TYPING {
     path(typings)
 
     output:
-    path("hla_summary.tsv"), emit: summary
+    path("hlatyping_results.tsv"), emit: summary
     tuple val("${task.process}"), val('mhcgnomes'), eval("python -c 'import importlib.metadata as m; print(m.version(\"mhcgnomes\"))'"), topic: versions
 
     when:
@@ -22,11 +22,11 @@ process SUMMARIZE_TYPING {
     summarize_hla_typing.py \\
         ${args} \\
         ${typings} \\
-        -o hla_summary.tsv
+        -o hlatyping_results.tsv
     """
 
     stub:
     """
-    touch hla_summary.tsv
+    touch hlatyping_results.tsv
     """
 }

@@ -142,9 +142,9 @@ sample_0  HLA-A*02:01;HLA-A*24:02;HLA-B*51:08;HLA-C*04:01;HLA-C*16:02
 The pipeline harmonizes the calls from every selected typing tool into a single
 tidy table for quick comparison.
 
-**Output directory: `summary/`**
+**Output file: `hlatyping_results.tsv`** (written to the top level of the results directory)
 
-- `hla_summary.tsv` — one row per sample and tool, with HLA class I and class II
+- `hlatyping_results.tsv` — one row per sample and tool, with HLA class I and class II
   calls at both the tool's native resolution and normalized to 2-field. Allele
   names are parsed and standardized with
   [mhcgnomes](https://github.com/pirl-unc/mhcgnomes) and keep the `HLA-` prefix.

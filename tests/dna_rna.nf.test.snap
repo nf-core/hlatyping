@@ -33,6 +33,7 @@
                 "fastqc/SAMPLE_FASTQ_RNA_1_fastqc.zip",
                 "fastqc/SAMPLE_FASTQ_RNA_2_fastqc.html",
                 "fastqc/SAMPLE_FASTQ_RNA_2_fastqc.zip",
+                "hlatyping_results.tsv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/fastqc-status-check-heatmap.txt",
@@ -109,15 +110,13 @@
                 "optitype/SAMPLE_FASTQ_RNA/SAMPLE_FASTQ_RNA_coverage_plot.pdf",
                 "optitype/SAMPLE_FASTQ_RNA/SAMPLE_FASTQ_RNA_result.tsv",
                 "pipeline_info",
-                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
-                "summary",
-                "summary/hla_summary.tsv"
+                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"
             ],
             [
                 
             ]
         ],
-        "timestamp": "2026-06-12T15:16:39.46724098",
+        "timestamp": "2026-06-12T18:59:40.179356384",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

@@ -20,10 +20,10 @@ input:
         pattern: "*__*.txt"
 output:
   - summary:
-      - "hla_summary.tsv":
+      - "hlatyping_results.tsv":
           type: file
           description: Harmonized HLA typing summary, one row per sample x tool
-          pattern: "hla_summary.tsv"
+          pattern: "hlatyping_results.tsv"
 authors:
   - "@jonasscheid"
 maintainers:

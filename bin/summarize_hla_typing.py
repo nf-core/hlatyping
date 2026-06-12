@@ -184,7 +184,7 @@ def parse_filename(path):
 def main():
     ap = argparse.ArgumentParser(description="Harmonize HLA typing outputs into one TSV")
     ap.add_argument("inputs", nargs="+", help="<sample>__<tool>.txt result files")
-    ap.add_argument("-o", "--output", default="hla_summary.tsv")
+    ap.add_argument("-o", "--output", default="hlatyping_results.tsv")
     args = ap.parse_args()
 
     rows = []

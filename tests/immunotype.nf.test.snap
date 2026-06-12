@@ -14,6 +14,7 @@
                 }
             },
             [
+                "hlatyping_results.tsv",
                 "immunotype",
                 "immunotype/HepG2_A_typing.tsv",
                 "multiqc",
@@ -27,15 +28,13 @@
                 "multiqc/multiqc_data/multiqc_sources.txt",
                 "multiqc/multiqc_report.html",
                 "pipeline_info",
-                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
-                "summary",
-                "summary/hla_summary.tsv"
+                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"
             ],
             [
                 "HepG2_A_typing.tsv:md5,66ce514a1ba4d546083338b1629c1f9a"
             ]
         ],
-        "timestamp": "2026-06-12T15:48:03.658794233",
+        "timestamp": "2026-06-12T19:11:48.190801778",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
