@@ -15,6 +15,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [OptiType](#optitype) - HLA genotyping based on integer linear programming
 - [HLA-HD](#hla-hd) - HLA Class I + II genotyping (optional, requires a local installation of HLA-HD)
 - [HLA\*LA](#hlala) - HLA typing from BAM files using a graph-based approach (optional)
+- [SpecHLA](#spechla) - HLA Class I + II genotyping from a genome-aligned BAM
 - [MultiQC](#multiqc) - Aggregate report describing results from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
@@ -101,6 +102,26 @@ DPB1  DPB1*04:01:01:01  DPB1*04:02:01:01
     - `reads_per_level.txt`: Read counts at each level of the typing hierarchy.
 
 </details>
+
+### SpecHLA
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `spechla/<sample>/`
+  - `hla.result.txt`: the per-locus 4-field HLA typing calls.
+  - `hla.result.details.txt`, `hla.result.g.group.txt`: detailed and G-group calls.
+  - `HLA_*_freq.txt`, `HLA_*_break_points_spechap.txt`: per-locus frequency and breakpoint files.
+
+</details>
+
+[SpecHLA](https://github.com/deepomicslab/SpecHLA) types HLA reads extracted
+from a genome-aligned BAM.
+
+Notes:
+
+- SpecHLA requires BAM input. Combining `--tools spechla` with any FASTQ-only sample fails the run at parameter validation.
+- SpecHLA runs in exon typing mode (`-u 1`) for every sample, which is correct for WES and RNA-seq. Whole-genome users can override to full-length mode (`-u 0`) — see the [SpecHLA section](usage.md#spechla) in `docs/usage.md`.
 
 ### Immunotype
 

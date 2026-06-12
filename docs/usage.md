@@ -86,26 +86,37 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 
 ### HLA references
 
-The **nf-core/hlatyping** pipeline uses a default HLA reference which is located in the pipelines root directory in `./data/references`. The references are based on the IMGT/HLA Release `3.14.0`, July 2013, and have been processed as described in the [publication](https://doi.org/10.1093/bioinformatics/btu548) of OptiType. The reference is automatically set during the pipeline execution based on the information provided in the `seq_type` column of the samplesheet (`dna` or `rna`).
+Each HLA typing tool ships its own allele reference, so results are reported against different IPD-IMGT/HLA releases:
 
-You can always download new versions from the [HLA database](https://www.ebi.ac.uk/ipd/imgt/hla/docs/release.html), but be aware that these allele sets are missing intron sequence information, which will have a negative influence in the HLA typing outcome in case of DNAseq.
+| Tool         | IPD-IMGT/HLA release                    | Source                                                                                                                                  |
+| ------------ | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **OptiType** | `3.14.0` (July 2013)                    | `hla_reference_dna.fasta` / `hla_reference_rna.fasta` shipped in `./data/references`, selected from the `seq_type` column (`dna`/`rna`) |
+| **SpecHLA**  | `3.38.0`                                | Bundled in the SpecHLA container; shown in the header of its `hla.result.details.txt` output                                            |
+| **HLA\*LA**  | embedded in the reference graph         | IMGT alleles built into the `PRG_MHC_GRCh38_withIMGT` population reference graph                                                        |
+| **HLA-HD**   | depends on the installed HLA-HD version | Allele dictionary bundled with your local HLA-HD installation                                                                           |
+
+The OptiType references in `./data/references` have been processed as described in the OptiType [publication](https://doi.org/10.1093/bioinformatics/btu548).
+
+For OptiType you can always download new versions from the [HLA database](https://www.ebi.ac.uk/ipd/imgt/hla/docs/release.html), but be aware that these allele sets are missing intron sequence information, which will have a negative influence in the HLA typing outcome in case of DNAseq.
 
 We are currently looking into a dynamic solution, in order to build pre-processed input HLA references from current HLA allele information from the IPD-IMGT/HLA database.
 If you wish to repeatedly use the same parameters for multiple runs, rather than specifying each flag in the command, you can specify these in a params file.
 
 ### HLA typing tools
 
-The pipeline supports three HLA typing tools, controlled by the `--tools` parameter:
+The pipeline supports four HLA typing tools, controlled by the `--tools` parameter:
 
 - **OptiType** (default): HLA Class I typing from FASTQ or BAM input. Open-source, included in pipeline containers.
 - **HLA-HD**: HLA Class I + II typing from FASTQ or BAM input. Requires a local installation due to licensing restrictions (see [HLA-HD section](#hla-hd-setup)).
 - **HLA\*LA**: HLA typing from BAM input only. Open-source, included in pipeline containers. Uses a graph-based approach with the PRG_MHC_GRCh38_withIMGT reference graph.
+- **SpecHLA**: Full-resolution HLA Class I + II typing from a genome-aligned BAM input (BAM only). Open-source, included in pipeline containers (see [SpecHLA notes](#spechla)).
 
 Tools can be combined:
 
 ```bash
 --tools optitype,hlala      # Run both OptiType and HLA*LA (BAM input required)
 --tools optitype,hlahd      # Run both OptiType and HLA-HD
+--tools optitype,spechla    # Run both OptiType and SpecHLA
 ```
 
 > [!NOTE]
@@ -133,6 +144,21 @@ HLA-HD is not distributed with the pipeline's containers due to licensing restri
 ```bash
 --tools hlahd --hlahd_path /path/to/hlahd.1.7.1.tar.gz
 ```
+
+### SpecHLA
+
+SpecHLA performs HLA typing for Class I and Class II across 8 loci. See the [SpecHLA documentation](https://github.com/deepomicslab/SpecHLA) for tool-specific details.
+
+In nf-core/hlatyping it is **BAM-only**: `--tools spechla` requires a coordinate-sorted, genome-aligned BAM (hg38 by default) as input — FASTQ samples are rejected at parameter validation. The pipeline runs SpecHLA's own `ExtractHLAread` step to pull HLA reads from the BAM before typing.
+
+- For BAMs aligned to hg19, override the reference build:
+  ```nextflow
+  process { withName: SPECHLA_EXTRACT { ext.args = '-r hg19' } }
+  ```
+- Typing mode (`-u`) and population prior (`-p`) default to `-u 1 -p nonuse` (exon typing, ancestry-neutral). `-u`: `0` = full-length, `1` = exon (required for WES and RNA-seq). `-p`: `Asian | Black | Caucasian | Unknown | nonuse`. Override via `ext.args`:
+  ```nextflow
+  process { withName: SPECHLA_TYPING { ext.args = '-u 0 -p nonuse' } }
+  ```
 
 ## Running the pipeline
 

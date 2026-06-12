@@ -197,7 +197,7 @@ def validateInputParameters() {
 //
 def validateToolsParam() {
     def tools = params.tools ?: 'optitype'
-    def valid_tools = ['optitype', 'hlahd', 'hlala', 'immunotype']
+    def valid_tools = ['optitype', 'hlahd', 'hlala', 'immunotype', 'spechla']
     def tool_list = tools.tokenize(',')
     def invalid_tools = tool_list.findAll { tool -> tool.trim() !in valid_tools }
     if (invalid_tools) {
@@ -252,6 +252,18 @@ def validateInputSamplesheet(input) {
                 "Check input samplesheet -> Multiple runs of the same " + "bam sample is not currently supported: ${metas[0].id}"
             )
         }
+    }
+
+    // SpecHLA is BAM-only in hlatyping: it consumes a genome-aligned BAM via
+    // ExtractHLAread. Reject FASTQ/TSV samples here rather than failing later.
+    def first_file = fastqs[0][0]
+    def input_type = first_file.name.endsWith('.bam') ? 'bam'
+        : (first_file.name.endsWith('.tsv') ? 'tsv' : 'fastq')
+    if (input_type != 'bam' && "spechla" in (params.tools ?: 'optitype').tokenize(',')) {
+        error(
+            "SpecHLA requires a genome-aligned BAM, but sample '${metas[0].id}' is '${input_type}' input.\n" +
+            "Either remove --tools spechla, or supply a genome-aligned BAM for this sample."
+        )
     }
 
     return [metas[0], fastqs]
