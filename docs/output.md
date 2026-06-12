@@ -139,32 +139,18 @@ sample_0  HLA-A*02:01;HLA-A*24:02;HLA-B*51:08;HLA-C*04:01;HLA-C*16:02
 
 ### Summary
 
-The pipeline harmonizes the calls from every selected typing tool into a single
-tidy table for quick comparison.
+`hlatyping_results.tsv`, at the top level of the results directory, harmonizes every selected tool's calls into one table — one row per sample and tool. Alleles are parsed with [mhcgnomes](https://github.com/pirl-unc/mhcgnomes) (keeping the `HLA-` prefix) and given at full resolution and 2-field, with class I and II in separate columns. They are `;`-joined; homozygous loci appear twice; `NA` marks a class a tool does not report.
 
-**Output file: `hlatyping_results.tsv`** (written to the top level of the results directory)
-
-- `hlatyping_results.tsv` — one row per sample and tool, with HLA class I and class II
-  calls at both the tool's native resolution and normalized to 2-field. Allele
-  names are parsed and standardized with
-  [mhcgnomes](https://github.com/pirl-unc/mhcgnomes) and keep the `HLA-` prefix.
-
-| Column              | Description                                                             |
-| ------------------- | ----------------------------------------------------------------------- |
-| `sample`            | Sample identifier from the input samplesheet                            |
-| `predictor`         | The typing tool (`optitype`, `hlahd`, `hlala`, `spechla`, `immunotype`) |
-| `class_i_original`  | Class I alleles at the tool's native resolution (`NA` if none)          |
-| `class_ii_original` | Class II alleles at native resolution (`NA` if none)                    |
-| `class_i_2field`    | Class I alleles truncated to 2-field (`NA` if none)                     |
-| `class_ii_2field`   | Class II alleles truncated to 2-field (`NA` if none)                    |
-
-Within a cell, alleles are `;`-joined and ordered by locus; homozygous loci list
-the allele twice. Tools that report only class I (OptiType, immunotype) leave the
-class II columns as `NA`.
+| Column                               | Description                                                         |
+| ------------------------------------ | ------------------------------------------------------------------- |
+| `sample`                             | Sample identifier                                                   |
+| `predictor`                          | Typing tool (`optitype`, `hlahd`, `hlala`, `spechla`, `immunotype`) |
+| `class_I` / `class_II`               | Class I / II calls at full resolution                               |
+| `class_I_2field` / `class_II_2field` | The same calls truncated to 2-field                                 |
 
 ```tsv
-sample    predictor   class_i_original                                            class_ii_original                       class_i_2field                              class_ii_2field
-sample_0  optitype    HLA-A*01:01;HLA-A*01:01;HLA-B*08:01;HLA-B*57:01;HLA-C*06:02;HLA-C*07:01   NA   HLA-A*01:01;HLA-A*01:01;HLA-B*08:01;HLA-B*57:01;HLA-C*06:02;HLA-C*07:01   NA
+sample    predictor  class_I                                  class_I_2field          class_II  class_II_2field
+sample_0  optitype   HLA-A*01:01;HLA-A*01:01;HLA-B*08:01;...   HLA-A*01:01;...         NA        NA
 ```
 
 ### MultiQC

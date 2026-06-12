@@ -1,2 +1,0 @@
-sample	typing
-sampleA	HLA-A*02:01;HLA-A*24:02;HLA-B*51:08;HLA-C*04:01;HLA-C*16:02

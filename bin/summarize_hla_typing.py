@@ -7,12 +7,11 @@ Each tool's native format is parsed into raw allele tokens, every token is
 normalized with mhcgnomes, alleles are split into class I / II by gene, and one
 row per (sample, tool) is written:
 
-    sample  predictor  class_i_original  class_ii_original  class_i_2field  class_ii_2field
+    sample  predictor  class_I  class_I_2field  class_II  class_II_2field
 """
 
 import argparse
 import csv
-import re
 import sys
 from pathlib import Path
 
@@ -31,7 +30,6 @@ GENE_ORDER = {g: i for i, g in enumerate(CLASS_I_ORDER + CLASS_II_ORDER)}
 
 TOOLS = ["optitype", "hlahd", "hlala", "spechla", "immunotype"]
 PLACEHOLDERS = {"-", "", "not typed", "couldn't read result.", "na"}
-GENE_RE = re.compile(r"^(?:HLA-)?([A-Z0-9]+)\*([0-9A-Z:]+)")
 
 
 # --- per-tool raw token extractors --------------------------------------------
@@ -102,32 +100,14 @@ EXTRACTORS = {
 }
 
 
-# --- normalization ------------------------------------------------------------
-def _gene_name(parsed):
-    """Best-effort gene symbol from a mhcgnomes result (defensive across versions)."""
-    name = getattr(parsed, "gene_name", None)
-    if name:
-        return name
-    gene = getattr(parsed, "gene", None)
-    if gene is not None:
-        return getattr(gene, "name", None)
-    return None
-
-
-def two_field(canonical):
-    """Truncate a canonical allele string to two fields, dropping any trailing
-    group/expression suffix letters (G, P, N, ...)."""
-    if "*" not in canonical:
-        return canonical
-    prefix, fields = canonical.split("*", 1)
-    parts = fields.split(":")
-    trunc = ":".join(parts[:2])
-    trunc = re.sub(r"[A-Za-z]+$", "", trunc)
-    return f"{prefix}*{trunc}"
-
-
+# --- normalization (delegated to mhcgnomes) -----------------------------------
 def normalize(token):
-    """Return (gene, cls, original, two_field_str) or None if it can't be classified."""
+    """Parse a raw allele token with mhcgnomes and return
+    (gene, cls, full_string, two_field_string), or None if the token is a
+    placeholder, unparseable, or a non-reportable locus.
+
+    mhcgnomes does all the normalization: canonical naming with the ``HLA-``
+    prefix (``to_string``) and the 2-field form (``restrict_allele_fields``)."""
     tok = token.strip()
     if tok.lower() in PLACEHOLDERS:
         return None
@@ -135,22 +115,14 @@ def normalize(token):
         parsed = mhcgnomes.parse(tok)
     except Exception:
         parsed = None
-    gene = _gene_name(parsed) if parsed is not None else None
-    original = parsed.to_string() if parsed is not None else None
-    if gene is None or original is None:
-        # mhcgnomes could not parse it cleanly: fall back to a regex render so
-        # G-groups / odd tokens still appear instead of silently vanishing.
-        m = GENE_RE.match(tok)
-        if not m:
-            sys.stderr.write(f"WARNING: could not parse allele '{token}'\n")
-            return None
-        gene = m.group(1)
-        original = tok if tok.upper().startswith("HLA-") else f"HLA-{tok}"
-    cls = GENE_CLASS.get(gene)
-    if cls is None:
-        sys.stderr.write(f"WARNING: skipping non-reportable locus '{gene}' ('{token}')\n")
+    if not isinstance(parsed, mhcgnomes.Allele):
+        sys.stderr.write(f"WARNING: could not parse allele '{token}'\n")
         return None
-    return gene, cls, original, two_field(original)
+    cls = GENE_CLASS.get(parsed.gene.name)
+    if cls is None:
+        sys.stderr.write(f"WARNING: skipping non-reportable locus '{parsed.gene.name}' ('{token}')\n")
+        return None
+    return parsed.gene.name, cls, parsed.to_string(), parsed.restrict_allele_fields(2).to_string()
 
 
 def summarize_one(tokens):
@@ -164,11 +136,11 @@ def summarize_one(tokens):
         buckets[cls].append((gene, original, tf))
 
     out = {}
-    for cls, prefix in (("I", "class_i"), ("II", "class_ii")):
-        # one sort drives both columns so original/2field stay row-aligned
+    for cls, label in (("I", "class_I"), ("II", "class_II")):
+        # one sort drives both columns so the full and 2-field stay row-aligned
         items = sorted(buckets[cls], key=lambda x: (GENE_ORDER.get(x[0], 99), x[1]))
-        out[f"{prefix}_original"] = ";".join(it[1] for it in items) if items else "NA"
-        out[f"{prefix}_2field"] = ";".join(it[2] for it in items) if items else "NA"
+        out[label] = ";".join(it[1] for it in items) if items else "NA"
+        out[f"{label}_2field"] = ";".join(it[2] for it in items) if items else "NA"
     return out
 
 
@@ -198,7 +170,7 @@ def main():
 
     rows.sort(key=lambda r: (r["sample"], TOOLS.index(r["predictor"]) if r["predictor"] in TOOLS else 99))
 
-    fieldnames = ["sample", "predictor", "class_i_original", "class_ii_original", "class_i_2field", "class_ii_2field"]
+    fieldnames = ["sample", "predictor", "class_I", "class_I_2field", "class_II", "class_II_2field"]
     with open(args.output, "w", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=fieldnames, delimiter="\t", lineterminator="\n")
         writer.writeheader()

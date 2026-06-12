@@ -5,7 +5,6 @@ lint:
     - .prettierignore
   nf_test_content:
     - nf-test.config
-    - tests/summarize.nf.test
   schema_params: false
 nf_core_version: 4.0.2
 repository_type: pipeline
