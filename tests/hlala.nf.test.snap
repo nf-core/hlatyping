@@ -1,7 +1,7 @@
 {
     "-profile test_hlala (stub)": {
         "content": [
-            9,
+            10,
             {
                 "CHECK_PAIRED": {
                     "samtools": "1.16.1"
@@ -20,6 +20,9 @@
                 },
                 "SAMTOOLS_VIEW": {
                     "samtools": "1.23.1"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
                 },
                 "UNTAR": {
                     "untar": 1.34
@@ -128,7 +131,9 @@
                 "multiqc/multiqc_plots/.stub",
                 "multiqc/multiqc_report.html",
                 "pipeline_info",
-                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"
+                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
+                "summary",
+                "summary/hla_summary.tsv"
             ],
             [
                 "SAMPLE_PAIRED_END_BAM.html:md5,d41d8cd98f00b204e9800998ecf8427e",
@@ -137,7 +142,7 @@
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-05-20T11:45:52.672369142",
+        "timestamp": "2026-06-12T15:50:17.181169851",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

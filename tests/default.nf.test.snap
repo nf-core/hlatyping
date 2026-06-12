@@ -1,7 +1,7 @@
 {
     "-profile test": {
         "content": [
-            7,
+            8,
             {
                 "CHECK_PAIRED": {
                     "samtools": "1.16.1"
@@ -14,6 +14,9 @@
                 },
                 "SAMTOOLS_COLLATEFASTQ": {
                     "samtools": "1.23.1"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
                 },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
@@ -97,13 +100,15 @@
                 "optitype/SAMPLE_PAIRED_END_BAM/SAMPLE_PAIRED_END_BAM_coverage_plot.pdf",
                 "optitype/SAMPLE_PAIRED_END_BAM/SAMPLE_PAIRED_END_BAM_result.tsv",
                 "pipeline_info",
-                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"
+                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
+                "summary",
+                "summary/hla_summary.tsv"
             ],
             [
                 
             ]
         ],
-        "timestamp": "2026-05-18T17:03:42.879944285",
+        "timestamp": "2026-06-12T13:28:30.96921563",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

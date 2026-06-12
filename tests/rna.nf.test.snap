@@ -1,13 +1,16 @@
 {
     "-profile test_rna": {
         "content": [
-            5,
+            6,
             {
                 "FASTQC": {
                     "fastqc": "0.12.1"
                 },
                 "OPTITYPE": {
                     "optitype": "1.3.1"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
                 },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
@@ -95,13 +98,15 @@
                 "optitype/SAMPLE_RNA/SAMPLE_RNA_coverage_plot.pdf",
                 "optitype/SAMPLE_RNA/SAMPLE_RNA_result.tsv",
                 "pipeline_info",
-                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"
+                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
+                "summary",
+                "summary/hla_summary.tsv"
             ],
             [
                 
             ]
         ],
-        "timestamp": "2026-05-18T17:59:47.899774775",
+        "timestamp": "2026-06-12T15:10:08.232688522",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

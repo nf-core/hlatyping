@@ -1,7 +1,7 @@
 {
     "-profile test_fastq_cat": {
         "content": [
-            11,
+            12,
             {
                 "CAT_FASTQ": {
                     "cat": 9.5
@@ -11,6 +11,9 @@
                 },
                 "OPTITYPE": {
                     "optitype": "1.3.1"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
                 },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
@@ -109,13 +112,15 @@
                 "optitype/SAMPLE_FASTQ_RNA_CAT/SAMPLE_FASTQ_RNA_CAT_coverage_plot.pdf",
                 "optitype/SAMPLE_FASTQ_RNA_CAT/SAMPLE_FASTQ_RNA_CAT_result.tsv",
                 "pipeline_info",
-                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"
+                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
+                "summary",
+                "summary/hla_summary.tsv"
             ],
             [
                 
             ]
         ],
-        "timestamp": "2026-05-18T18:03:43.524135398",
+        "timestamp": "2026-06-12T15:41:02.358570248",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

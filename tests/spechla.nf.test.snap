@@ -1,7 +1,7 @@
 {
     "-profile test_spechla": {
         "content": [
-            6,
+            7,
             {
                 "CHECK_PAIRED": {
                     "samtools": "1.16.1"
@@ -17,6 +17,9 @@
                 },
                 "SPECHLA_TYPING": {
                     "spechla": "1.0.12"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
                 },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
@@ -102,13 +105,15 @@
                 "spechla/SAMPLE_PAIRED_END_BAM/HLA_DRB1_freq.txt",
                 "spechla/SAMPLE_PAIRED_END_BAM/hla.result.details.txt",
                 "spechla/SAMPLE_PAIRED_END_BAM/hla.result.g.group.txt",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.result.txt"
+                "spechla/SAMPLE_PAIRED_END_BAM/hla.result.txt",
+                "summary",
+                "summary/hla_summary.tsv"
             ],
             [
                 
             ]
         ],
-        "timestamp": "2026-05-25T18:48:30.022827558",
+        "timestamp": "2026-06-12T15:57:21.969095131",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
@@ -116,7 +121,7 @@
     },
     "-profile test_spechla (stub)": {
         "content": [
-            6,
+            7,
             {
                 "CHECK_PAIRED": {
                     "samtools": "1.16.1"
@@ -132,6 +137,9 @@
                 },
                 "SPECHLA_TYPING": {
                     "spechla": "1.0.12"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
                 },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
@@ -169,7 +177,9 @@
                 "spechla/SAMPLE_PAIRED_END_BAM/HLA_DRB1_freq.txt",
                 "spechla/SAMPLE_PAIRED_END_BAM/hla.result.details.txt",
                 "spechla/SAMPLE_PAIRED_END_BAM/hla.result.g.group.txt",
-                "spechla/SAMPLE_PAIRED_END_BAM/hla.result.txt"
+                "spechla/SAMPLE_PAIRED_END_BAM/hla.result.txt",
+                "summary",
+                "summary/hla_summary.tsv"
             ],
             [
                 "SAMPLE_PAIRED_END_BAM.html:md5,d41d8cd98f00b204e9800998ecf8427e",
@@ -178,7 +188,7 @@
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-05-25T21:40:56.331495921",
+        "timestamp": "2026-06-12T15:58:26.845330199",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
