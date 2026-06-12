@@ -1,0 +1,5 @@
+Locus	Chromosome	Allele	Q1	AverageCoverage	CoverageFirstDecile	MinimumCoverage	proportionkMersCovered	LocusAvgColumnError	NColumns_UnaccountedAllele_fGT0.2	perfectG
+A	1	A*01:01:01G	1	30	28	20	1	0.001	0	1
+A	2	A*02:01:01G	1	30	28	20	1	0.001	0	1
+DRB1	1	DRB1*03:01:01G	1	30	28	20	1	0.001	0	1
+DRB1	2	DRB1*15:01:01G	1	30	28	20	1	0.001	0	1
