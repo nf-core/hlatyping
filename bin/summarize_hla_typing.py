@@ -72,8 +72,10 @@ def extract_hlala(path):
 
 
 def extract_spechla(path):
-    """SpecHLA hla.result.txt: 2-line wide TSV; data row col0 is Sample, rest are alleles."""
-    lines = Path(path).read_text().splitlines()
+    """SpecHLA hla.result.txt: an optional leading '# ...' comment line, then a
+    header row and a single data row (wide TSV); data row col0 is Sample, the
+    rest are alleles."""
+    lines = [ln for ln in Path(path).read_text().splitlines() if ln.strip() and not ln.startswith("#")]
     if len(lines) < 2:
         return []
     data = lines[1].split("\t")
@@ -198,7 +200,7 @@ def main():
 
     fieldnames = ["sample", "predictor", "class_i_original", "class_ii_original", "class_i_2field", "class_ii_2field"]
     with open(args.output, "w", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=fieldnames, delimiter="\t")
+        writer = csv.DictWriter(fh, fieldnames=fieldnames, delimiter="\t", lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
