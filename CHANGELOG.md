@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#213](https://github.com/nf-core/hlatyping/pull/213) - Add metro map pipeline overview diagram (@jonasscheid)
 - [#214](https://github.com/nf-core/hlatyping/pull/214) - Add [Immunotype](https://github.com/AG-Walz/immunotype) support for peptide-based HLA class I typing (@jonasscheid)
 - [#219](https://github.com/nf-core/hlatyping/pull/219) - Add SpecHLA as a BAM-only HLA-typing tool (genome-aligned BAM → ExtractHLAread → SpecHLA) (@jonasscheid)
+- [#XXXX](https://github.com/nf-core/hlatyping/pull/XXXX) - Add a `SUMMARIZE_TYPING` module that harmonizes all tools' HLA calls into a single `summary/hla_summary.tsv` using mhcgnomes (@jonasscheid)
 
 ### `Changed`
 
@@ -32,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | `MultiQC`    | 1.32        | 1.34        |
 | `samtools`   | 1.21        | 1.23.1      |
 | `nf-core`    | 3.5.1       | 4.0.2       |
+| `mhcgnomes`  | -           | 1.8.6       |
 | `Nextflow`   | 25.04.2     | 25.10.4     |
 
 ## 2.2.0 - Holocron - 2026-01-28

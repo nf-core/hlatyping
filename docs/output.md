@@ -16,6 +16,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [HLA-HD](#hla-hd) - HLA Class I + II genotyping (optional, requires a local installation of HLA-HD)
 - [HLA\*LA](#hlala) - HLA typing from BAM files using a graph-based approach (optional)
 - [SpecHLA](#spechla) - HLA Class I + II genotyping from a genome-aligned BAM
+- [Summary](#summary) - Harmonized HLA typing table across all tools
 - [MultiQC](#multiqc) - Aggregate report describing results from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
@@ -134,6 +135,36 @@ Notes:
 ```tsv
 sample  typing
 sample_0  HLA-A*02:01;HLA-A*24:02;HLA-B*51:08;HLA-C*04:01;HLA-C*16:02
+```
+
+### Summary
+
+The pipeline harmonizes the calls from every selected typing tool into a single
+tidy table for quick comparison.
+
+**Output directory: `summary/`**
+
+- `hla_summary.tsv` — one row per sample and tool, with HLA class I and class II
+  calls at both the tool's native resolution and normalized to 2-field. Allele
+  names are parsed and standardized with
+  [mhcgnomes](https://github.com/pirl-unc/mhcgnomes) and keep the `HLA-` prefix.
+
+| Column              | Description                                                             |
+| ------------------- | ----------------------------------------------------------------------- |
+| `sample`            | Sample identifier from the input samplesheet                            |
+| `predictor`         | The typing tool (`optitype`, `hlahd`, `hlala`, `spechla`, `immunotype`) |
+| `class_i_original`  | Class I alleles at the tool's native resolution (`NA` if none)          |
+| `class_ii_original` | Class II alleles at native resolution (`NA` if none)                    |
+| `class_i_2field`    | Class I alleles truncated to 2-field (`NA` if none)                     |
+| `class_ii_2field`   | Class II alleles truncated to 2-field (`NA` if none)                    |
+
+Within a cell, alleles are `;`-joined and ordered by locus; homozygous loci list
+the allele twice. Tools that report only class I (OptiType, immunotype) leave the
+class II columns as `NA`.
+
+```tsv
+sample    predictor   class_i_original                                            class_ii_original                       class_i_2field                              class_ii_2field
+sample_0  optitype    HLA-A*01:01;HLA-A*01:01;HLA-B*08:01;HLA-B*57:01;HLA-C*06:02;HLA-C*07:01   NA   HLA-A*01:01;HLA-A*01:01;HLA-B*08:01;HLA-B*57:01;HLA-C*06:02;HLA-C*07:01   NA
 ```
 
 ### MultiQC
