@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#211](https://github.com/nf-core/hlatyping/pull/211) - Replace local HLA\*LA modules with nf-core community modules `hlala/typing`, `hlala/preparegraph`, `wget`, and `untar`; checksum validation moved to the workflow (@jonasscheid)
 - [#211](https://github.com/nf-core/hlatyping/pull/211) - Clean up published output by disabling publishing for intermediate processes (CHECK_PAIRED, YARA_INDEX, YARA_MAPPER, SAMTOOLS_VIEW, SAMTOOLS_COLLATEFASTQ, HLAHD_INSTALL, WGET, UNTAR, HLALA_PREPAREGRAPH) (@jonasscheid)
 - [#218](https://github.com/nf-core/hlatyping/pull/218) - Merge nf-core template updates up to `4.0.2` (@jonasscheid)
-- [#221](https://github.com/nf-core/hlatyping/pull/221) - Update the metro map overview diagram to include HLA\*LA, SpecHLA, immunotype (TSV input) and the summary step; regenerated with nf-metro 0.7.2 (@jonasscheid)
+- [#221](https://github.com/nf-core/hlatyping/pull/221) - Update the metro map overview diagram to include HLA\*LA, SpecHLA, immunotype (TSV input) and the summary step, with animated lines, regenerated using nf-metro 0.7.2 (@jonasscheid)
 
 ### `Fixed`
 
