@@ -1,0 +1,66 @@
+nextflow_workflow {
+
+    name "Test FASTQ_ALIGN subworkflow (real bwa + STAR on chr22)"
+    script "../main.nf"
+    workflow "FASTQ_ALIGN"
+    config "./nextflow.config"
+    tag "subworkflows"
+    tag "fastq_align"
+
+    test("dna+rna fastq -> sorted indexed bam") {
+
+        setup {
+            run("STAR_GENOMEGENERATE") {
+                script "../../../../modules/nf-core/star/genomegenerate/main.nf"
+                process {
+                    """
+                    input[0] = channel.value([ [id:'genome'], file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true) ])
+                    input[1] = channel.value([ [id:'genome'], file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.gtf', checkIfExists: true) ])
+                    """
+                }
+            }
+            run("BWA_INDEX") {
+                script "../../../../modules/nf-core/bwa/index/main.nf"
+                process {
+                    """
+                    input[0] = channel.value([ [id:'genome'], file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true) ])
+                    """
+                }
+            }
+        }
+
+        when {
+            workflow {
+                """
+                def fasta = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true)
+                def fai   = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true)
+                input[0] = channel.of([ [id:'dna_test', single_end:false, seq_type:'dna'], [
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/fastq/test_1.fastq.gz', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/fastq/test_2.fastq.gz', checkIfExists: true)
+                ]])
+                input[1] = channel.of([ [id:'rna_test', single_end:false, seq_type:'rna'], [
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/fastq/test_rnaseq_1.fastq.gz', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/fastq/test_rnaseq_2.fastq.gz', checkIfExists: true)
+                ]])
+                input[2] = BWA_INDEX.out.index
+                input[3] = STAR_GENOMEGENERATE.out.index
+                input[4] = channel.value([ [id:'genome'], fasta, fai ])
+                input[5] = channel.value([ [:], [] ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.bam.size() == 2 },
+                { assert snapshot(
+                    workflow.out.bam.collect { meta, _bam -> meta.id }.sort(),
+                    workflow.out.bai.collect { meta, _bai -> meta.id }.sort(),
+                    workflow.out.flagstat,
+                    workflow.out.idxstats
+                ).match() }
+            )
+        }
+    }
+}
