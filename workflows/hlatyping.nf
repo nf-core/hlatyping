@@ -20,6 +20,8 @@ include { HLAHD                  } from '../modules/local/hlahd/genotype'
 include { HLALA_PREPAREGRAPH     } from '../modules/nf-core/hlala/preparegraph/main'
 include { IMMUNOTYPE             } from '../modules/local/immunotype/main'
 include { SUMMARIZE_TYPING       } from '../modules/local/summarize/main'
+include { PREPARE_GENOME         } from '../subworkflows/local/prepare_genome'
+include { FASTQ_ALIGN            } from '../subworkflows/local/fastq_align'
 
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -98,6 +100,70 @@ workflow HLATYPING {
     // MODULE: Concatenate FastQ files from same sample if required
     //
     CAT_FASTQ(ch_input_files.fastq_multiple).reads.set { ch_cat_fastq }
+
+    //
+    // Genome-align genuine FASTQ when a BAM-only tool (hlala/spechla) is selected.
+    // Samplesheet-BAM-derived FASTQ is excluded — those samples already have a BAM.
+    //
+    def need_align = ('hlala' in tool_list) || ('spechla' in tool_list)
+
+    def ch_aligned_hlala   = channel.empty()
+    def ch_aligned_spechla = channel.empty()
+
+    if (need_align) {
+        ch_input_files.fastq_single
+            .mix(ch_cat_fastq)
+            .branch { meta, _reads ->
+                rna: meta.seq_type == 'rna'
+                dna: true
+            }
+            .set { ch_align_by_type }
+
+        // Fan out each type: one copy gates index building, one copy is aligned.
+        ch_align_by_type.dna.multiMap { meta, reads -> gate: [meta, reads]; align: [meta, reads] }.set { ch_dna }
+        ch_align_by_type.rna.multiMap { meta, reads -> gate: [meta, reads]; align: [meta, reads] }.set { ch_rna }
+
+        def ch_gtf = params.gtf
+            ? channel.value([[id: 'genome'], file(params.gtf, checkIfExists: true)])
+            : channel.value([[:], []])
+
+        // Resolve the GRCh38 FASTA LAZILY: file(params.fasta) is only evaluated when FASTQ
+        // samples of that type exist, so a BAM-only hlala/spechla run never requires --fasta.
+        // .first() yields a reusable value channel; the map never runs on an empty gate.
+        def ch_fasta_bwa  = ch_dna.gate.map { _m, _r -> [[id: 'genome'], file(params.fasta, checkIfExists: true)] }.first()
+        def ch_fasta_star = ch_rna.gate.map { _m, _r -> [[id: 'genome'], file(params.fasta, checkIfExists: true)] }.first()
+        def ch_fasta_any  = ch_fasta_bwa.mix(ch_fasta_star).first()
+
+        PREPARE_GENOME(ch_fasta_any, ch_fasta_bwa, ch_fasta_star, ch_gtf)
+
+        FASTQ_ALIGN(
+            ch_dna.align,
+            ch_rna.align,
+            PREPARE_GENOME.out.bwa,
+            PREPARE_GENOME.out.star,
+            PREPARE_GENOME.out.fasta_fai,
+            ch_gtf,
+        )
+
+        // Module versions (bwa/star/samtools) flow via the `versions` topic channel,
+        // already collected globally below — no manual ch_versions.mix needed here.
+
+        // Alignment QC into MultiQC
+        ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN.out.stats.collect { _meta, f -> f })
+        ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN.out.flagstat.collect { _meta, f -> f })
+        ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN.out.idxstats.collect { _meta, f -> f })
+
+        // Shape aligned BAMs like samplesheet BAM input ([meta, [bam]]) and fan to both tools.
+        FASTQ_ALIGN.out.bam
+            .map { meta, bam -> [meta, [bam]] }
+            .multiMap { meta, files ->
+                for_hlala: [meta, files]
+                for_spechla: [meta, files]
+            }
+            .set { ch_aligned }
+        ch_aligned_hlala = ch_aligned.for_hlala
+        ch_aligned_spechla = ch_aligned.for_spechla
+    }
 
     // determine BAM pairedness for fastq conversion
     CHECK_PAIRED(ch_bam.for_fastq_conversion)
@@ -197,7 +263,7 @@ workflow HLATYPING {
         // MODULE: Extract HLA reads from the genome-aligned BAM, then type with SpecHLA
         //
         SPECHLA_EXTRACT(
-            ch_bam.for_spechla.map { meta, files -> [meta, files[0]] }
+            ch_bam.for_spechla.mix(ch_aligned_spechla).map { meta, files -> [meta, files[0]] }
         )
 
         SPECHLA_TYPING(SPECHLA_EXTRACT.out.reads)
@@ -239,7 +305,7 @@ workflow HLATYPING {
         // MODULE: Run HLA*LA typing (requires genome-aligned BAM + BAI input)
         //
         SAMTOOLS_VIEW(
-            ch_bam.for_hlala.map { meta, files -> [meta, files, []] },
+            ch_bam.for_hlala.mix(ch_aligned_hlala).map { meta, files -> [meta, files, []] },
             [[:], [], []],
             [[:], []],
             [[:], []],
