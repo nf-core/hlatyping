@@ -26,6 +26,12 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_hlat
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+params.fasta     = getGenomeAttribute('fasta')
+params.fasta_fai = getGenomeAttribute('fasta_fai')
+params.bwa       = getGenomeAttribute('bwa')
+// NOTE: star_index is deliberately NOT defaulted from igenomes — STAR indices are
+// version-locked and the igenomes one mismatches the installed STAR. Build it instead.
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
