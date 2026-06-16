@@ -254,16 +254,43 @@ def validateInputSamplesheet(input) {
         }
     }
 
-    // SpecHLA is BAM-only in hlatyping: it consumes a genome-aligned BAM via
-    // ExtractHLAread. Reject FASTQ/TSV samples here rather than failing later.
+    // HLA*LA and SpecHLA consume a genome-aligned BAM. FASTQ is now supported via the
+    // alignment step (DNA -> bwa, RNA -> STAR), but peptide/TSV input is not. A BAM sample
+    // needs NO reference; a FASTQ sample triggers GRCh38 alignment and so needs one — which
+    // is why these guards live here (per-sample), where input_type/seq_type are known, and
+    // NOT in validateInputParameters (a BAM-only hlala/spechla run must not require --fasta).
     def first_file = fastqs[0][0]
     def input_type = first_file.name.endsWith('.bam') ? 'bam'
         : (first_file.name.endsWith('.tsv') ? 'tsv' : 'fastq')
-    if (input_type != 'bam' && "spechla" in (params.tools ?: 'optitype').tokenize(',')) {
+    def selected = (params.tools ?: 'optitype').tokenize(',')*.trim()
+    def bam_tools = selected.findAll { it in ['hlala', 'spechla'] }
+    if (bam_tools && input_type == 'tsv') {
         error(
-            "SpecHLA requires a genome-aligned BAM, but sample '${metas[0].id}' is '${input_type}' input.\n" +
-            "Either remove --tools spechla, or supply a genome-aligned BAM for this sample."
+            "${bam_tools.join('/')} require sequencing reads (FASTQ or genome-aligned BAM), " +
+            "but sample '${metas[0].id}' is peptide/TSV input."
         )
+    }
+    if (bam_tools && input_type == 'fastq') {
+        // FASTQ + hlala/spechla -> GRCh38 alignment required (GRCh38-locked).
+        if (params.genome && !(params.genome in ['GRCh38', 'GATK.GRCh38', 'hg38'])) {
+            error(
+                "${bam_tools.join('/')} alignment from FASTQ is GRCh38-only, but --genome " +
+                "'${params.genome}' is not a GRCh38 build. Use --genome GRCh38 (or GATK.GRCh38), " +
+                "or provide a GRCh38 --fasta."
+            )
+        }
+        if (!params.fasta) {
+            error(
+                "${bam_tools.join('/')} with FASTQ sample '${metas[0].id}' needs a GRCh38 reference " +
+                "to align against. Provide --genome GRCh38 (iGenomes) or --fasta /path/to/GRCh38.fasta."
+            )
+        }
+        if ('hlala' in bam_tools && metas[0].seq_type == 'rna') {
+            log.warn(
+                "HLA*LA selected for RNA FASTQ sample '${metas[0].id}'. HLA*LA is designed for " +
+                "WGS/genome-aligned BAMs; RNA-derived results are unvalidated."
+            )
+        }
     }
 
     return [metas[0], fastqs]
