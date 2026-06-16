@@ -1,0 +1,35 @@
+nextflow_workflow {
+
+    name "Test PREPARE_GENOME (real index builds on chr22)"
+    script "../main.nf"
+    workflow "PREPARE_GENOME"
+    tag "subworkflows"
+    tag "prepare_genome"
+
+    test("build fai + bwa + star indices from chr22 fasta") {
+
+        when {
+            workflow {
+                """
+                def fasta = file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true)
+                def ch_fasta = channel.value([ [id:'genome'], fasta ])
+                input[0] = ch_fasta
+                input[1] = ch_fasta                      // DNA gate present -> build bwa
+                input[2] = ch_fasta                      // RNA gate present -> build star
+                input[3] = channel.value([ [:], [] ])    // genome-only STAR index
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.fasta_fai,
+                    file(workflow.out.bwa[0][1]).listFiles().collect { it.name }.sort().toString(),
+                    file(workflow.out.star[0][1]).listFiles().collect { it.name }.sort().toString()
+                ).match() }
+            )
+        }
+    }
+}

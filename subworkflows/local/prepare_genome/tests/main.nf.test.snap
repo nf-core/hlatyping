@@ -1,0 +1,22 @@
+{
+    "build fai + bwa + star indices from chr22 fasta": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "genome"
+                    },
+                    "/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta",
+                    "genome.fasta.fai:md5,3520cd30e1b100e55f578db9c855f685"
+                ]
+            ],
+            "[genome.amb, genome.ann, genome.bwt, genome.pac, genome.sa]",
+            "[Genome, Log.out, SA, SAindex, chrLength.txt, chrName.txt, chrNameLength.txt, chrStart.txt, genomeParameters.txt]"
+        ],
+        "timestamp": "2026-06-16T16:47:13.874038887",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    }
+}
