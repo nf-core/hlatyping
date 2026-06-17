@@ -37,7 +37,11 @@ workflow PREPARE_GENOME {
         : STAR_GENOMEGENERATE(ch_fasta_for_star, ch_gtf).index
 
     emit:
-    fasta_fai = ch_fasta_fai // channel: [ val(meta), path(fasta), path(fai) ]
-    bwa       = ch_bwa       // channel: [ val(meta), path(index) ]
-    star      = ch_star      // channel: [ val(meta), path(index) ]
+    // .first() converts these single-element queues into broadcast VALUE channels so the
+    // built (or provided) reference indices fan out to every per-sample alignment task.
+    // Without it, a built index pairs with only the first sample and 2nd+ same-type FASTQ
+    // samples never align.
+    fasta_fai = ch_fasta_fai.first() // value: [ val(meta), path(fasta), path(fai) ]
+    bwa       = ch_bwa.first()       // value: [ val(meta), path(index) ]
+    star      = ch_star.first()      // value: [ val(meta), path(index) ]
 }
