@@ -17,7 +17,27 @@ When `.fastq{.gz}` files are provided, the pipeline extracts reads and maps them
 When `.bam` files are provided, the pipeline handles them in two ways depending on the selected tools:
 
 - **OptiType / HLA-HD**: Reads are extracted from the BAM file using `samtools`, converted to FASTQ, and then processed through the standard FASTQ pipeline path.
-- **HLA\*LA**: BAM files are used directly. The BAM is re-compressed to BGZF format, indexed, and passed to HLA\*LA along with the graph reference. **Important:** HLA\*LA requires genome-aligned BAM files (e.g., aligned to GRCh38), not HLA-reference-aligned BAMs. FASTQ input is not supported for HLA\*LA.
+- **HLA\*LA**: BAM files are used directly. The BAM is re-compressed to BGZF format, indexed, and passed to HLA\*LA along with the graph reference. **Important:** HLA\*LA requires genome-aligned BAM files (e.g., aligned to GRCh38), not HLA-reference-aligned BAMs. FASTQ input is now also accepted — see [FASTQ input for HLA\*LA and SpecHLA](#fastq-input-for-hlala-and-spechla) below, where the pipeline aligns reads to GRCh38 first.
+
+### FASTQ input for HLA\*LA and SpecHLA
+
+HLA\*LA and SpecHLA require a genome-aligned BAM. You can now provide **FASTQ** for these
+tools as well: the pipeline first aligns reads to **GRCh38** — DNA with `bwa-mem`, RNA with
+`STAR` (genome-only) — producing the coordinate-sorted, indexed BAM these tools consume. The
+aligned BAM is published under `<outdir>/alignment/`.
+
+- The alignment is **GRCh38-only** (HLA\*LA's `PRG_MHC_GRCh38_withIMGT` graph and SpecHLA's
+  `-r hg38` are GRCh38-bound). Provide the reference with `--genome GRCh38` (iGenomes) or
+  `--fasta /path/to/GRCh38.fasta`. A raw `--fasta` is trusted to be GRCh38; a non-GRCh38
+  `--genome` is rejected for these tools.
+- A pre-built bwa index is reused if given via `--bwa` (otherwise built once). A STAR index is
+  built from the FASTA each run unless you supply a matching one via `--star_index`. Pass
+  `--gtf` to build an annotation-aware STAR index (otherwise genome-only). `--save_reference`
+  publishes built indices under `<outdir>/reference/`.
+- **HLA\*LA from RNA is off-label** — HLA\*LA targets WGS/genome-aligned DNA BAMs; the pipeline
+  emits a warning but proceeds. SpecHLA tolerates RNA-derived BAMs better.
+- Samplesheet BAM samples continue to be used directly (no re-alignment); FASTQ and BAM can be
+  mixed in one samplesheet.
 
 ## Samplesheet input
 
@@ -108,19 +128,19 @@ The pipeline supports four HLA typing tools, controlled by the `--tools` paramet
 
 - **OptiType** (default): HLA Class I typing from FASTQ or BAM input. Open-source, included in pipeline containers.
 - **HLA-HD**: HLA Class I + II typing from FASTQ or BAM input. Requires a local installation due to licensing restrictions (see [HLA-HD section](#hla-hd-setup)).
-- **HLA\*LA**: HLA typing from BAM input only. Open-source, included in pipeline containers. Uses a graph-based approach with the PRG_MHC_GRCh38_withIMGT reference graph.
-- **SpecHLA**: Full-resolution HLA Class I + II typing from a genome-aligned BAM input (BAM only). Open-source, included in pipeline containers (see [SpecHLA notes](#spechla)).
+- **HLA\*LA**: HLA typing from a genome-aligned (GRCh38) BAM, or from FASTQ (aligned to GRCh38 first; see [FASTQ input for HLA\*LA and SpecHLA](#fastq-input-for-hlala-and-spechla)). HLA\*LA from RNA is off-label. Open-source, included in pipeline containers. Uses a graph-based approach with the PRG_MHC_GRCh38_withIMGT reference graph.
+- **SpecHLA**: Full-resolution HLA Class I + II typing from a genome-aligned (GRCh38) BAM, or from FASTQ (aligned to GRCh38 first; see [FASTQ input for HLA\*LA and SpecHLA](#fastq-input-for-hlala-and-spechla)). Open-source, included in pipeline containers (see [SpecHLA notes](#spechla)).
 
 Tools can be combined:
 
 ```bash
---tools optitype,hlala      # Run both OptiType and HLA*LA (BAM input required)
+--tools optitype,hlala      # Run both OptiType and HLA*LA (BAM, or FASTQ aligned to GRCh38)
 --tools optitype,hlahd      # Run both OptiType and HLA-HD
 --tools optitype,spechla    # Run both OptiType and SpecHLA
 ```
 
 > [!NOTE]
-> HLA\*LA requires genome-aligned BAM input (e.g., aligned to GRCh38). Unlike OptiType and HLA-HD, it cannot work from FASTQ files or HLA-reference-aligned BAMs. If you specify `--tools hlala` with FASTQ-only samples, HLA\*LA will not run for those samples.
+> HLA\*LA requires a genome-aligned BAM (e.g., aligned to GRCh38), not an HLA-reference-aligned BAM. FASTQ input is now supported too: the pipeline aligns reads to GRCh38 first (see [FASTQ input for HLA\*LA and SpecHLA](#fastq-input-for-hlala-and-spechla)). This requires a GRCh38 reference via `--genome GRCh38` or `--fasta`, and running HLA\*LA from RNA is off-label.
 
 ### HLA\*LA setup
 
@@ -149,7 +169,7 @@ HLA-HD is not distributed with the pipeline's containers due to licensing restri
 
 SpecHLA performs HLA typing for Class I and Class II across 8 loci. See the [SpecHLA documentation](https://github.com/deepomicslab/SpecHLA) for tool-specific details.
 
-In nf-core/hlatyping it is **BAM-only**: `--tools spechla` requires a coordinate-sorted, genome-aligned BAM (hg38 by default) as input — FASTQ samples are rejected at parameter validation. The pipeline runs SpecHLA's own `ExtractHLAread` step to pull HLA reads from the BAM before typing.
+In nf-core/hlatyping, `--tools spechla` requires a coordinate-sorted, genome-aligned BAM (hg38/GRCh38 by default) as input. FASTQ samples are now also accepted: the pipeline aligns them to GRCh38 first (see [FASTQ input for HLA\*LA and SpecHLA](#fastq-input-for-hlala-and-spechla)) before running SpecHLA's own `ExtractHLAread` step to pull HLA reads from the BAM and type them.
 
 - For BAMs aligned to hg19, override the reference build:
   ```nextflow

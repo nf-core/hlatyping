@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#214](https://github.com/nf-core/hlatyping/pull/214) - Add [Immunotype](https://github.com/AG-Walz/immunotype) support for peptide-based HLA class I typing (@jonasscheid)
 - [#219](https://github.com/nf-core/hlatyping/pull/219) - Add SpecHLA as a BAM-only HLA-typing tool (genome-aligned BAM → ExtractHLAread → SpecHLA) (@jonasscheid)
 - [#220](https://github.com/nf-core/hlatyping/pull/220) - Add a `SUMMARIZE_TYPING` module that harmonizes all tools' HLA calls into a single `hlatyping_results.tsv` using mhcgnomes (@jonasscheid)
+- [#226](https://github.com/nf-core/hlatyping/pull/226) - FASTQ input support for HLA\*LA and SpecHLA via a GRCh38 genome-alignment step (DNA: bwa-mem, RNA: STAR) using the nf-core `fastq_align_bwa`/`fastq_align_star` subworkflows (@jonasscheid)
 
 ### `Changed`
 
@@ -31,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | `HLA*LA`     | -           | 1.0.4       |
 | `Immunotype` | -           | 1.0.2       |
 | `SpecHLA`    | -           | 1.0.12      |
+| `bwa`        | -           | 0.7.19      |
+| `STAR`       | -           | 2.7.11b     |
 | `MultiQC`    | 1.32        | 1.34        |
 | `samtools`   | 1.21        | 1.23.1      |
 | `nf-core`    | 3.5.1       | 4.0.2       |
