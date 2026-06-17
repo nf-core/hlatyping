@@ -1,8 +1,6 @@
 //
-// Build or resolve GRCh38 reference indices for the alignment step.
-// Indices are built only when not provided by the user (build-if-null); the bwa/STAR
-// builds are gated on the caller passing a non-empty per-aligner FASTA channel (present
-// only when DNA/RNA FASTQ samples exist).
+// Build-if-null GRCh38 indices (faidx/bwa/STAR). bwa/STAR builds are gated on a non-empty
+// per-aligner FASTA channel, present only when DNA/RNA FASTQ samples exist.
 //
 include { SAMTOOLS_FAIDX      } from '../../../modules/nf-core/samtools/faidx/main'
 include { BWA_INDEX           } from '../../../modules/nf-core/bwa/index/main'
@@ -16,10 +14,7 @@ workflow PREPARE_GENOME {
     ch_gtf            // channel (value): [ val(meta), path(gtf) ]  ([[:],[]] for genome-only)
 
     main:
-    // NOTE: bwa/index, star/genomegenerate and samtools/faidx emit tool versions on the
-    // `versions` TOPIC channel (not a classic `.versions` output). The main workflow
-    // collects them globally via channel.topic("versions") — do NOT mix .versions here.
-
+    // bwa/star/faidx emit versions on the `versions` topic (collected globally) — no .versions output.
     def ch_fai = params.fasta_fai
         ? channel.value([[id: 'genome'], file(params.fasta_fai, checkIfExists: true)])
         : SAMTOOLS_FAIDX(ch_fasta.map { meta, fasta -> [meta, fasta, []] }, false).fai
@@ -37,11 +32,8 @@ workflow PREPARE_GENOME {
         : STAR_GENOMEGENERATE(ch_fasta_for_star, ch_gtf).index
 
     emit:
-    // .first() converts these single-element queues into broadcast VALUE channels so the
-    // built (or provided) reference indices fan out to every per-sample alignment task.
-    // Without it, a built index pairs with only the first sample and 2nd+ same-type FASTQ
-    // samples never align.
-    fasta_fai = ch_fasta_fai.first() // value: [ val(meta), path(fasta), path(fai) ]
-    bwa       = ch_bwa.first()       // value: [ val(meta), path(index) ]
-    star      = ch_star.first()      // value: [ val(meta), path(index) ]
+    // .first() -> value channel so the single built index broadcasts to every sample (else only sample 1 aligns).
+    fasta_fai = ch_fasta_fai.first()
+    bwa       = ch_bwa.first()
+    star      = ch_star.first()
 }

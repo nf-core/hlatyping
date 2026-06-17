@@ -127,9 +127,7 @@ workflow HLATYPING {
             ? channel.value([[id: 'genome'], file(params.gtf, checkIfExists: true)])
             : channel.value([[:], []])
 
-        // Resolve the GRCh38 FASTA LAZILY: file(params.fasta) is only evaluated when FASTQ
-        // samples of that type exist, so a BAM-only hlala/spechla run never requires --fasta.
-        // .first() yields a reusable value channel; the map never runs on an empty gate.
+        // Lazy: file(params.fasta) runs only when a FASTQ sample of that type exists -> BAM-only needs no --fasta.
         def ch_fasta_bwa  = ch_dna.gate.map { _m, _r -> [[id: 'genome'], file(params.fasta, checkIfExists: true)] }.first()
         def ch_fasta_star = ch_rna.gate.map { _m, _r -> [[id: 'genome'], file(params.fasta, checkIfExists: true)] }.first()
         def ch_fasta_any  = ch_fasta_bwa.mix(ch_fasta_star).first()
@@ -144,9 +142,6 @@ workflow HLATYPING {
             PREPARE_GENOME.out.fasta_fai,
             ch_gtf,
         )
-
-        // Module versions (bwa/star/samtools) flow via the `versions` topic channel,
-        // already collected globally below — no manual ch_versions.mix needed here.
 
         // Alignment QC into MultiQC
         ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN.out.stats.collect { _meta, f -> f })

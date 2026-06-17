@@ -1,8 +1,6 @@
 //
-// Align genuine FASTQ to GRCh38, branching by sequencing type:
-//   DNA -> FASTQ_ALIGN_BWA (bwa-mem)
-//   RNA -> FASTQ_ALIGN_STAR (STAR, genome-only)
-// Both terminate in BAM_SORT_STATS_SAMTOOLS, so the genome emits share one shape.
+// Align genuine FASTQ to GRCh38: DNA -> FASTQ_ALIGN_BWA, RNA -> FASTQ_ALIGN_STAR (genome-only).
+// Both end in BAM_SORT_STATS_SAMTOOLS, so the genome emits share one shape.
 //
 include { FASTQ_ALIGN_BWA  } from '../../nf-core/fastq_align_bwa/main'
 include { FASTQ_ALIGN_STAR } from '../../nf-core/fastq_align_star/main'
@@ -17,23 +15,11 @@ workflow FASTQ_ALIGN {
     ch_gtf       // channel: [ val(meta), path(gtf) ]
 
     main:
-    // NOTE: neither fastq_align_bwa nor fastq_align_star exposes a `.versions` output;
-    // their modules emit on the `versions` topic, collected globally in the main workflow
-    // via channel.topic("versions"). Do NOT mix .versions here.
-
-    // DNA: bwa-mem, coordinate-sorted (val_sort_bam = true)
+    // DNA: bwa-mem, coordinate-sorted (3rd arg = val_sort_bam).
     FASTQ_ALIGN_BWA(ch_dna_reads, ch_bwa, true, ch_fasta_fai)
 
-    // RNA: STAR genome-only. star_ignore_sjdbgtf = true; transcripts fai is a dummy
-    // because we never set --quantMode, so the transcriptome branch no-ops.
-    FASTQ_ALIGN_STAR(
-        ch_rna_reads,
-        ch_star,
-        ch_gtf,
-        true,
-        ch_fasta_fai,
-        channel.value([[id: 'no_transcripts'], [], []]),
-    )
+    // STAR genome-only. Dummy transcripts fai: no --quantMode, so the transcriptome branch no-ops.
+    FASTQ_ALIGN_STAR(ch_rna_reads, ch_star, ch_gtf, true, ch_fasta_fai, channel.value([[id: 'no_transcripts'], [], []]))
 
     emit:
     bam      = FASTQ_ALIGN_BWA.out.bam.mix(FASTQ_ALIGN_STAR.out.bam)

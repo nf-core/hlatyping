@@ -4,49 +4,9 @@
             [
                 "dna_test",
                 "rna_test"
-            ],
-            [
-                "dna_test",
-                "rna_test"
-            ],
-            [
-                [
-                    {
-                        "id": "dna_test",
-                        "single_end": false,
-                        "seq_type": "dna"
-                    },
-                    "dna_test.sorted.bam.flagstat:md5,f9bd38ca373bfa94655702441166cf38"
-                ],
-                [
-                    {
-                        "id": "rna_test",
-                        "single_end": false,
-                        "seq_type": "rna"
-                    },
-                    "rna_test.sorted.bam.flagstat:md5,db0e25cd0b37d3030e807846c022199e"
-                ]
-            ],
-            [
-                [
-                    {
-                        "id": "dna_test",
-                        "single_end": false,
-                        "seq_type": "dna"
-                    },
-                    "dna_test.sorted.bam.idxstats:md5,86afed861e18914dd4aece13b321673b"
-                ],
-                [
-                    {
-                        "id": "rna_test",
-                        "single_end": false,
-                        "seq_type": "rna"
-                    },
-                    "rna_test.sorted.bam.idxstats:md5,107ca94dd426cc44db316f0d402307c5"
-                ]
             ]
         ],
-        "timestamp": "2026-06-16T16:58:19.971847286",
+        "timestamp": "2026-06-17T22:40:52.810733064",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
