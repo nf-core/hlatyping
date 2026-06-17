@@ -1,0 +1,172 @@
+{
+    "-profile test_fastq_hlala (stub)": {
+        "content": [
+            16,
+            {
+                "BWA_INDEX": {
+                    "bwa": "0.7.19-r1273"
+                },
+                "BWA_MEM": {
+                    "bwa": "0.7.19-r1273",
+                    "samtools": "1.22.1"
+                },
+                "FASTQC": {
+                    "fastqc": "0.12.1"
+                },
+                "HLALA_PREPAREGRAPH": {
+                    "hla-la": "1.0.4"
+                },
+                "HLALA_TYPING": {
+                    "hla-la": "1.0.4"
+                },
+                "SAMTOOLS_FAIDX": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_FLAGSTAT": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_IDXSTATS": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_INDEX": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_SORT": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_STATS": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_VIEW": {
+                    "samtools": "1.23.1"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
+                },
+                "UNTAR": {
+                    "untar": 1.34
+                },
+                "WGET": {
+                    "wget": "1.21.4"
+                },
+                "Workflow": {
+                    "nf-core/hlatyping": "v2.2.0dev"
+                }
+            },
+            [
+                "alignment",
+                "alignment/SAMPLE_PAIRED_END.sorted.bam",
+                "alignment/SAMPLE_PAIRED_END.sorted.bam.bai",
+                "fastqc",
+                "fastqc/SAMPLE_PAIRED_END.html",
+                "fastqc/SAMPLE_PAIRED_END.zip",
+                "hlala",
+                "hlala/SAMPLE_PAIRED_END",
+                "hlala/SAMPLE_PAIRED_END/R_1.fastq",
+                "hlala/SAMPLE_PAIRED_END/R_2.fastq",
+                "hlala/SAMPLE_PAIRED_END/R_U.fastq",
+                "hlala/SAMPLE_PAIRED_END/extraction.bam",
+                "hlala/SAMPLE_PAIRED_END/extraction.bam.bai",
+                "hlala/SAMPLE_PAIRED_END/extraction_mapped.bam",
+                "hlala/SAMPLE_PAIRED_END/extraction_unmapped.bam",
+                "hlala/SAMPLE_PAIRED_END/hla",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_A_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_B_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_C_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_DPA1_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_DPB1_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_DQA1_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_DQB1_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_DRA_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_DRB1_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_DRB3_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_DRB4_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_E_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_F_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_G_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_H_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_K_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_PP_V_pairs.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_bestguess.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_bestguess_G.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_A.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_B.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_C.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_DPA1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_DPB1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_DQA1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_DQB1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_DRA.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_DRB1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_DRB3.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_DRB4.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_E.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_F.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_G.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_H.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_K.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_columnIncompatibilities_V.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_parameters.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_A.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_B.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_C.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_DPA1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_DPB1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_DQA1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_DQB1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_DRA.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_DRB1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_DRB3.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_DRB4.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_E.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_F.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_G.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_H.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_K.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_pileup_V.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_A.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_B.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_C.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_DPA1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_DPB1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_DQA1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_DQB1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_DRA.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_DRB1.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_DRB3.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_DRB4.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_E.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_F.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_G.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_H.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_K.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/R1_readIDs_V.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/histogram_matchesPerRead.txt",
+                "hlala/SAMPLE_PAIRED_END/hla/summaryStatistics.txt",
+                "hlala/SAMPLE_PAIRED_END/reads_per_level.txt",
+                "hlala/SAMPLE_PAIRED_END/remapped_with_a.bam",
+                "hlala/SAMPLE_PAIRED_END/remapped_with_a.bam.bai",
+                "hlatyping_results.tsv",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_data/.stub",
+                "multiqc/multiqc_plots",
+                "multiqc/multiqc_plots/.stub",
+                "multiqc/multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"
+            ],
+            [
+                "SAMPLE_PAIRED_END.html:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SAMPLE_PAIRED_END.zip:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
+            ]
+        ],
+        "timestamp": "2026-06-17T10:50:42.434948708",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    }
+}

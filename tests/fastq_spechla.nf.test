@@ -1,0 +1,31 @@
+nextflow_pipeline {
+
+    name "Test FASTQ -> bwa -> SpecHLA (stub)"
+    script "../main.nf"
+    tag "pipeline"
+    profile "test_fastq_spechla"
+    options "-stub-run"
+
+    test("-profile test_fastq_spechla (stub)") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.trace.succeeded().size(),
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_hlatyping_software_mqc_versions.yml"),
+                    stable_name,
+                    stable_path
+                ).match() }
+            )
+        }
+    }
+}
