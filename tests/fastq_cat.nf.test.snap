@@ -1,7 +1,7 @@
 {
     "-profile test_fastq_cat": {
         "content": [
-            11,
+            12,
             {
                 "CAT_FASTQ": {
                     "cat": 9.5
@@ -11,6 +11,9 @@
                 },
                 "OPTITYPE": {
                     "optitype": "1.3.1"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
                 },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
@@ -33,6 +36,7 @@
                 "fastqc/SAMPLE_FASTQ_RNA_CAT_1_fastqc.zip",
                 "fastqc/SAMPLE_FASTQ_RNA_CAT_2_fastqc.html",
                 "fastqc/SAMPLE_FASTQ_RNA_CAT_2_fastqc.zip",
+                "hlatyping_results.tsv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/fastqc-status-check-heatmap.txt",
@@ -115,7 +119,7 @@
                 
             ]
         ],
-        "timestamp": "2026-05-18T18:03:43.524135398",
+        "timestamp": "2026-06-12T19:10:36.764506327",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

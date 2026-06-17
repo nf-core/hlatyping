@@ -1,16 +1,20 @@
 {
     "-profile test_immunotype": {
         "content": [
-            2,
+            3,
             {
                 "IMMUNOTYPE": {
                     "immunotype": "1.0.2"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
                 },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
                 }
             },
             [
+                "hlatyping_results.tsv",
                 "immunotype",
                 "immunotype/HepG2_A_typing.tsv",
                 "multiqc",
@@ -30,7 +34,7 @@
                 "HepG2_A_typing.tsv:md5,66ce514a1ba4d546083338b1629c1f9a"
             ]
         ],
-        "timestamp": "2026-05-06T14:01:23.723402634",
+        "timestamp": "2026-06-12T19:11:48.190801778",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

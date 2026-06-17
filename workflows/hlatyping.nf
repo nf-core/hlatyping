@@ -19,6 +19,7 @@ include { HLAHD_INSTALL          } from '../modules/local/hlahd/install'
 include { HLAHD                  } from '../modules/local/hlahd/genotype'
 include { HLALA_PREPAREGRAPH     } from '../modules/nf-core/hlala/preparegraph/main'
 include { IMMUNOTYPE             } from '../modules/local/immunotype/main'
+include { SUMMARIZE_TYPING       } from '../modules/local/summarize/main'
 
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -72,6 +73,7 @@ workflow HLATYPING {
 
     ch_versions = channel.empty()
     ch_multiqc_files = channel.empty()
+    ch_typings = channel.empty()
 
     // Split by input type (bam/fastq/tsv)
     ch_samplesheet
@@ -187,6 +189,7 @@ workflow HLATYPING {
 
         ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.hla_type.collect { _meta, tsv -> tsv })
         ch_multiqc_files = ch_multiqc_files.mix(OPTITYPE.out.coverage_plot.collect { _meta, plot -> plot })
+        ch_typings = ch_typings.mix(OPTITYPE.out.hla_type.map { meta, f -> [meta.id, 'optitype', f] })
     }
 
     if ("spechla" in tool_list) {
@@ -198,6 +201,11 @@ workflow HLATYPING {
         )
 
         SPECHLA_TYPING(SPECHLA_EXTRACT.out.reads)
+        ch_typings = ch_typings.mix(
+            SPECHLA_TYPING.out.results.map { meta, files ->
+                [meta.id, 'spechla', (files instanceof List ? files : [files]).find { it.name == 'hla.result.txt' }]
+            }
+        )
     }
 
     if ("immunotype" in tool_list) {
@@ -205,6 +213,7 @@ workflow HLATYPING {
         // MODULE: Run immunotype peptide-based HLA typing
         //
         IMMUNOTYPE(ch_input_files.tsv.map { meta, files -> [meta, files[0]] })
+        ch_typings = ch_typings.mix(IMMUNOTYPE.out.typing.map { meta, f -> [meta.id, 'immunotype', f] })
     }
 
     if ("hlahd" in tool_list) {
@@ -222,6 +231,7 @@ workflow HLATYPING {
 
         HLAHD_INSTALL(ch_hlahd_install)
         HLAHD(ch_all_fastq.combine(HLAHD_INSTALL.out.hlahd))
+        ch_typings = ch_typings.mix(HLAHD.out.hla.map { meta, f -> [meta.id, 'hlahd', f] })
     }
 
     if ( "hlala" in tool_list ) {
@@ -275,7 +285,23 @@ workflow HLATYPING {
             .set { ch_hlala_typing_input }
 
         HLALA_TYPING(ch_hlala_typing_input)
+        ch_typings = ch_typings.mix(
+            HLALA_TYPING.out.hla.map { meta, files ->
+                [meta.id, 'hlala', (files instanceof List ? files : [files]).find { it.name == 'R1_bestguess_G.txt' }]
+            }
+        )
     }
+
+    //
+    // MODULE: Harmonize all tools' typing results into one summary TSV
+    //
+    ch_typings
+        .filter { _id, _tool, f -> f != null }
+        .collectFile { id, tool, f -> ["${id}__${tool}.txt", f.text] }
+        .collect()
+        .set { ch_summarize_in }
+
+    SUMMARIZE_TYPING(ch_summarize_in)
 
     //
     // Collate and save software versions

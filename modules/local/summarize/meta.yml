@@ -1,0 +1,30 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "summarize_typing"
+description: Harmonize HLA typing results from all tools into one tidy TSV
+keywords:
+  - hla
+  - typing
+  - summary
+  - mhcgnomes
+tools:
+  - "mhcgnomes":
+      description: "Python library for parsing MHC nomenclature"
+      homepage: "https://github.com/pirl-unc/mhcgnomes"
+      documentation: "https://github.com/pirl-unc/mhcgnomes"
+      licence: ["Apache-2.0"]
+input:
+  - - typings:
+        type: file
+        description: Per-(sample, tool) typing result files named <sample>__<tool>.txt
+        pattern: "*__*.txt"
+output:
+  - summary:
+      - "hlatyping_results.tsv":
+          type: file
+          description: Harmonized HLA typing summary, one row per sample x tool
+          pattern: "hlatyping_results.tsv"
+authors:
+  - "@jonasscheid"
+maintainers:
+  - "@jonasscheid"

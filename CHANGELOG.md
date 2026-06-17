@@ -11,12 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#213](https://github.com/nf-core/hlatyping/pull/213) - Add metro map pipeline overview diagram (@jonasscheid)
 - [#214](https://github.com/nf-core/hlatyping/pull/214) - Add [Immunotype](https://github.com/AG-Walz/immunotype) support for peptide-based HLA class I typing (@jonasscheid)
 - [#219](https://github.com/nf-core/hlatyping/pull/219) - Add SpecHLA as a BAM-only HLA-typing tool (genome-aligned BAM → ExtractHLAread → SpecHLA) (@jonasscheid)
+- [#220](https://github.com/nf-core/hlatyping/pull/220) - Add a `SUMMARIZE_TYPING` module that harmonizes all tools' HLA calls into a single `hlatyping_results.tsv` using mhcgnomes (@jonasscheid)
 
 ### `Changed`
 
 - [#211](https://github.com/nf-core/hlatyping/pull/211) - Replace local HLA\*LA modules with nf-core community modules `hlala/typing`, `hlala/preparegraph`, `wget`, and `untar`; checksum validation moved to the workflow (@jonasscheid)
 - [#211](https://github.com/nf-core/hlatyping/pull/211) - Clean up published output by disabling publishing for intermediate processes (CHECK_PAIRED, YARA_INDEX, YARA_MAPPER, SAMTOOLS_VIEW, SAMTOOLS_COLLATEFASTQ, HLAHD_INSTALL, WGET, UNTAR, HLALA_PREPAREGRAPH) (@jonasscheid)
 - [#218](https://github.com/nf-core/hlatyping/pull/218) - Merge nf-core template updates up to `4.0.2` (@jonasscheid)
+- [#221](https://github.com/nf-core/hlatyping/pull/221) - Update the metro map overview diagram to include HLA\*LA, SpecHLA, immunotype (TSV input) and the summary step, with animated lines, regenerated using nf-metro 0.7.2 (@jonasscheid)
 
 ### `Fixed`
 
@@ -32,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | `MultiQC`    | 1.32        | 1.34        |
 | `samtools`   | 1.21        | 1.23.1      |
 | `nf-core`    | 3.5.1       | 4.0.2       |
+| `mhcgnomes`  | -           | 1.8.6       |
 | `Nextflow`   | 25.04.2     | 25.10.4     |
 
 ## 2.2.0 - Holocron - 2026-01-28

@@ -1,7 +1,7 @@
 {
     "-profile test_hlala (stub)": {
         "content": [
-            9,
+            10,
             {
                 "CHECK_PAIRED": {
                     "samtools": "1.16.1"
@@ -20,6 +20,9 @@
                 },
                 "SAMTOOLS_VIEW": {
                     "samtools": "1.23.1"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
                 },
                 "UNTAR": {
                     "untar": 1.34
@@ -121,6 +124,7 @@
                 "hlala/SAMPLE_PAIRED_END_BAM/reads_per_level.txt",
                 "hlala/SAMPLE_PAIRED_END_BAM/remapped_with_a.bam",
                 "hlala/SAMPLE_PAIRED_END_BAM/remapped_with_a.bam.bai",
+                "hlatyping_results.tsv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/.stub",
@@ -137,7 +141,7 @@
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-05-20T11:45:52.672369142",
+        "timestamp": "2026-06-12T19:12:56.240913922",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

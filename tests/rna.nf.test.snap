@@ -1,13 +1,16 @@
 {
     "-profile test_rna": {
         "content": [
-            5,
+            6,
             {
                 "FASTQC": {
                     "fastqc": "0.12.1"
                 },
                 "OPTITYPE": {
                     "optitype": "1.3.1"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
                 },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
@@ -26,6 +29,7 @@
                 "fastqc/SAMPLE_RNA_1_fastqc.zip",
                 "fastqc/SAMPLE_RNA_2_fastqc.html",
                 "fastqc/SAMPLE_RNA_2_fastqc.zip",
+                "hlatyping_results.tsv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/fastqc-status-check-heatmap.txt",
@@ -101,7 +105,7 @@
                 
             ]
         ],
-        "timestamp": "2026-05-18T17:59:47.899774775",
+        "timestamp": "2026-06-12T18:54:12.142973112",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

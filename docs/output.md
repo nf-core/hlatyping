@@ -16,6 +16,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [HLA-HD](#hla-hd) - HLA Class I + II genotyping (optional, requires a local installation of HLA-HD)
 - [HLA\*LA](#hlala) - HLA typing from BAM files using a graph-based approach (optional)
 - [SpecHLA](#spechla) - HLA Class I + II genotyping from a genome-aligned BAM
+- [Summary](#summary) - Harmonized HLA typing table across all tools
 - [MultiQC](#multiqc) - Aggregate report describing results from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
@@ -134,6 +135,22 @@ Notes:
 ```tsv
 sample  typing
 sample_0  HLA-A*02:01;HLA-A*24:02;HLA-B*51:08;HLA-C*04:01;HLA-C*16:02
+```
+
+### Summary
+
+`hlatyping_results.tsv`, at the top level of the results directory, harmonizes every selected tool's calls into one table — one row per sample and tool. Alleles are parsed with [mhcgnomes](https://github.com/pirl-unc/mhcgnomes) (keeping the `HLA-` prefix) and given at full resolution and 2-field, with class I and II in separate columns. They are `;`-joined; homozygous loci appear twice; `NA` marks a class a tool does not report.
+
+| Column                               | Description                                                         |
+| ------------------------------------ | ------------------------------------------------------------------- |
+| `sample`                             | Sample identifier                                                   |
+| `predictor`                          | Typing tool (`optitype`, `hlahd`, `hlala`, `spechla`, `immunotype`) |
+| `class_I` / `class_II`               | Class I / II calls at full resolution                               |
+| `class_I_2field` / `class_II_2field` | The same calls truncated to 2-field                                 |
+
+```tsv
+sample    predictor  class_I                                  class_I_2field          class_II  class_II_2field
+sample_0  optitype   HLA-A*01:01;HLA-A*01:01;HLA-B*08:01;...   HLA-A*01:01;...         NA        NA
 ```
 
 ### MultiQC

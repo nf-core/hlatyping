@@ -1,7 +1,7 @@
 {
     "-profile test": {
         "content": [
-            7,
+            8,
             {
                 "CHECK_PAIRED": {
                     "samtools": "1.16.1"
@@ -14,6 +14,9 @@
                 },
                 "SAMTOOLS_COLLATEFASTQ": {
                     "samtools": "1.23.1"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
                 },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
@@ -32,6 +35,7 @@
                 "fastqc/SAMPLE_PAIRED_END_BAM_1_fastqc.zip",
                 "fastqc/SAMPLE_PAIRED_END_BAM_2_fastqc.html",
                 "fastqc/SAMPLE_PAIRED_END_BAM_2_fastqc.zip",
+                "hlatyping_results.tsv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/fastqc-status-check-heatmap.txt",
@@ -103,7 +107,7 @@
                 
             ]
         ],
-        "timestamp": "2026-05-18T17:03:42.879944285",
+        "timestamp": "2026-06-12T18:52:21.304833866",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

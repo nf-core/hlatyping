@@ -1,7 +1,7 @@
 {
     "-profile test_spechla": {
         "content": [
-            6,
+            7,
             {
                 "CHECK_PAIRED": {
                     "samtools": "1.16.1"
@@ -18,6 +18,9 @@
                 "SPECHLA_TYPING": {
                     "spechla": "1.0.12"
                 },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
+                },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
                 }
@@ -28,6 +31,7 @@
                 "fastqc/SAMPLE_PAIRED_END_BAM_1_fastqc.zip",
                 "fastqc/SAMPLE_PAIRED_END_BAM_2_fastqc.html",
                 "fastqc/SAMPLE_PAIRED_END_BAM_2_fastqc.zip",
+                "hlatyping_results.tsv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/fastqc-status-check-heatmap.txt",
@@ -108,7 +112,7 @@
                 
             ]
         ],
-        "timestamp": "2026-05-25T18:48:30.022827558",
+        "timestamp": "2026-06-12T19:18:22.704180296",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
@@ -116,7 +120,7 @@
     },
     "-profile test_spechla (stub)": {
         "content": [
-            6,
+            7,
             {
                 "CHECK_PAIRED": {
                     "samtools": "1.16.1"
@@ -133,6 +137,9 @@
                 "SPECHLA_TYPING": {
                     "spechla": "1.0.12"
                 },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
+                },
                 "Workflow": {
                     "nf-core/hlatyping": "v2.2.0dev"
                 }
@@ -141,6 +148,7 @@
                 "fastqc",
                 "fastqc/SAMPLE_PAIRED_END_BAM.html",
                 "fastqc/SAMPLE_PAIRED_END_BAM.zip",
+                "hlatyping_results.tsv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/.stub",
@@ -178,7 +186,7 @@
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-05-25T21:40:56.331495921",
+        "timestamp": "2026-06-12T19:19:14.292218753",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
