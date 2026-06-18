@@ -297,10 +297,14 @@ workflow HLATYPING {
 
     if ( "hlala" in tool_list ) {
         //
-        // MODULE: Run HLA*LA typing (requires genome-aligned BAM + BAI input)
+        // MODULE: Run HLA*LA typing (requires genome-aligned BAM + BAI input).
+        // RNA is excluded: HLA*LA's single-threaded graph aligner blows up on RNA reads
+        // (observed ~100x slower than DNA, effectively hanging). Use SpecHLA for RNA.
         //
         SAMTOOLS_VIEW(
-            ch_bam.for_hlala.mix(ch_aligned_hlala).map { meta, files -> [meta, files, []] },
+            ch_bam.for_hlala.mix(ch_aligned_hlala)
+                .filter { meta, _files -> meta.seq_type != 'rna' }
+                .map { meta, files -> [meta, files, []] },
             [[:], [], []],
             [[:], []],
             [[:], []],

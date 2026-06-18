@@ -287,8 +287,8 @@ def validateInputSamplesheet(input) {
         }
         if ('hlala' in bam_tools && metas[0].seq_type == 'rna') {
             log.warn(
-                "HLA*LA selected for RNA FASTQ sample '${metas[0].id}'. HLA*LA is designed for " +
-                "WGS/genome-aligned BAMs; RNA-derived results are unvalidated."
+                "Skipping HLA*LA for RNA sample '${metas[0].id}': HLA*LA's graph aligner is " +
+                "pathologically slow on RNA reads (~100x slower than DNA). Use SpecHLA for RNA."
             )
         }
     }
