@@ -254,11 +254,9 @@ def validateInputSamplesheet(input) {
         }
     }
 
-    // HLA*LA and SpecHLA consume a genome-aligned BAM. FASTQ is now supported via the
-    // alignment step (DNA -> bwa, RNA -> STAR), but peptide/TSV input is not. A BAM sample
-    // needs NO reference; a FASTQ sample triggers GRCh38 alignment and so needs one — which
-    // is why these guards live here (per-sample), where input_type/seq_type are known, and
-    // NOT in validateInputParameters (a BAM-only hlala/spechla run must not require --fasta).
+    // hlala/spechla type a genome-aligned BAM. FASTQ is aligned to GRCh38 (DNA->bwa, RNA->STAR);
+    // TSV is rejected. Checks are per-sample (input_type/seq_type are known here) so a BAM-only run
+    // still requires no --fasta — which a parameter-level guard could not express.
     def first_file = fastqs[0][0]
     def input_type = first_file.name.endsWith('.bam') ? 'bam'
         : (first_file.name.endsWith('.tsv') ? 'tsv' : 'fastq')
@@ -271,7 +269,7 @@ def validateInputSamplesheet(input) {
         )
     }
     if (bam_tools && input_type == 'fastq') {
-        // FASTQ + hlala/spechla -> GRCh38 alignment required (GRCh38-locked).
+        // FASTQ -> GRCh38 alignment, so a GRCh38 reference is required.
         if (params.genome && !(params.genome in ['GRCh38', 'GATK.GRCh38', 'hg38'])) {
             error(
                 "${bam_tools.join('/')} alignment from FASTQ is GRCh38-only, but --genome " +
@@ -285,12 +283,15 @@ def validateInputSamplesheet(input) {
                 "to align against. Provide --genome GRCh38 (iGenomes) or --fasta /path/to/GRCh38.fasta."
             )
         }
-        if ('hlala' in bam_tools && metas[0].seq_type == 'rna') {
-            log.warn(
-                "Skipping HLA*LA for RNA sample '${metas[0].id}': HLA*LA's graph aligner is " +
-                "pathologically slow on RNA reads (~100x slower than DNA). Use SpecHLA for RNA."
-            )
-        }
+    }
+
+    // HLA*LA is a DNA graph-genotyping tool with no validated RNA mode, so it is skipped for RNA;
+    // fires for RNA whether it arrives as FASTQ or a samplesheet BAM. SpecHLA handles RNA.
+    if ('hlala' in bam_tools && metas[0].seq_type == 'rna') {
+        log.warn(
+            "Skipping HLA*LA for RNA sample '${metas[0].id}': HLA*LA is a DNA graph-genotyping tool " +
+            "(not splice-aware, no validated RNA mode). Use SpecHLA for RNA."
+        )
     }
 
     return [metas[0], fastqs]

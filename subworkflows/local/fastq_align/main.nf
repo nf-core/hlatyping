@@ -1,6 +1,5 @@
 //
-// Align genuine FASTQ to GRCh38: DNA -> FASTQ_ALIGN_BWA, RNA -> FASTQ_ALIGN_STAR (genome-only).
-// Both end in BAM_SORT_STATS_SAMTOOLS, so the genome emits share one shape.
+// Align FASTQ to the genome: DNA via bwa-mem, RNA via STAR (genome-only); both sort + index downstream.
 //
 include { FASTQ_ALIGN_BWA  } from '../../nf-core/fastq_align_bwa/main'
 include { FASTQ_ALIGN_STAR } from '../../nf-core/fastq_align_star/main'
@@ -15,10 +14,9 @@ workflow FASTQ_ALIGN {
     ch_gtf       // channel: [ val(meta), path(gtf) ]
 
     main:
-    // DNA: bwa-mem, coordinate-sorted (3rd arg = val_sort_bam).
     FASTQ_ALIGN_BWA(ch_dna_reads, ch_bwa, true, ch_fasta_fai)
 
-    // STAR genome-only. Dummy transcripts fai: no --quantMode, so the transcriptome branch no-ops.
+    // empty transcripts fai => STAR's transcriptome/quant branch no-ops (genome-only)
     FASTQ_ALIGN_STAR(ch_rna_reads, ch_star, ch_gtf, true, ch_fasta_fai, channel.value([[id: 'no_transcripts'], [], []]))
 
     emit:

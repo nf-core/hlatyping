@@ -102,8 +102,7 @@ workflow HLATYPING {
     CAT_FASTQ(ch_input_files.fastq_multiple).reads.set { ch_cat_fastq }
 
     //
-    // Genome-align genuine FASTQ when a BAM-only tool (hlala/spechla) is selected.
-    // Samplesheet-BAM-derived FASTQ is excluded — those samples already have a BAM.
+    // Genome-align genuine FASTQ for the BAM-only tools (hlala/spechla); samplesheet BAMs skip this.
     //
     def need_align = ('hlala' in tool_list) || ('spechla' in tool_list)
 
@@ -119,7 +118,7 @@ workflow HLATYPING {
             }
             .set { ch_align_by_type }
 
-        // Fan out each type: one copy gates index building, one copy is aligned.
+        // Two copies per type: `gate` decides which indices to build, `align` is the read input.
         ch_align_by_type.dna.multiMap { meta, reads -> gate: [meta, reads]; align: [meta, reads] }.set { ch_dna }
         ch_align_by_type.rna.multiMap { meta, reads -> gate: [meta, reads]; align: [meta, reads] }.set { ch_rna }
 
@@ -127,12 +126,11 @@ workflow HLATYPING {
             ? channel.value([[id: 'genome'], file(params.gtf, checkIfExists: true)])
             : channel.value([[:], []])
 
-        // Lazy: file(params.fasta) runs only when a FASTQ sample of that type exists -> BAM-only needs no --fasta.
+        // file(params.fasta) is evaluated only when a FASTQ sample of that type exists, so a BAM-only run needs no --fasta.
         def ch_fasta_bwa  = ch_dna.gate.map { _m, _r -> [[id: 'genome'], file(params.fasta, checkIfExists: true)] }.first()
         def ch_fasta_star = ch_rna.gate.map { _m, _r -> [[id: 'genome'], file(params.fasta, checkIfExists: true)] }.first()
-        def ch_fasta_any  = ch_fasta_bwa.mix(ch_fasta_star).first()
 
-        PREPARE_GENOME(ch_fasta_any, ch_fasta_bwa, ch_fasta_star, ch_gtf)
+        PREPARE_GENOME(ch_fasta_bwa, ch_fasta_star, ch_gtf)
 
         FASTQ_ALIGN(
             ch_dna.align,
@@ -143,12 +141,11 @@ workflow HLATYPING {
             ch_gtf,
         )
 
-        // Alignment QC into MultiQC
         ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN.out.stats.collect { _meta, f -> f })
         ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN.out.flagstat.collect { _meta, f -> f })
         ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN.out.idxstats.collect { _meta, f -> f })
 
-        // Shape aligned BAMs like samplesheet BAM input ([meta, [bam]]) and fan to both tools.
+        // Reshape to samplesheet-BAM form ([meta, [bam]]) and fan a copy to each BAM-only tool.
         FASTQ_ALIGN.out.bam
             .map { meta, bam -> [meta, [bam]] }
             .multiMap { meta, files ->
@@ -298,8 +295,8 @@ workflow HLATYPING {
     if ( "hlala" in tool_list ) {
         //
         // MODULE: Run HLA*LA typing (requires genome-aligned BAM + BAI input).
-        // RNA is excluded: HLA*LA's single-threaded graph aligner blows up on RNA reads
-        // (observed ~100x slower than DNA, effectively hanging). Use SpecHLA for RNA.
+        // RNA is excluded: HLA*LA is a DNA graph-genotyping tool (WGS/WES/long-read/assembly),
+        // not splice-aware and with no validated RNA mode. Use SpecHLA for RNA.
         //
         SAMTOOLS_VIEW(
             ch_bam.for_hlala.mix(ch_aligned_hlala)

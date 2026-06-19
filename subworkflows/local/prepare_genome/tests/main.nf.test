@@ -13,10 +13,9 @@ nextflow_workflow {
                 """
                 def fasta = file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true)
                 def ch_fasta = channel.value([ [id:'genome'], fasta ])
-                input[0] = ch_fasta
-                input[1] = ch_fasta                      // DNA gate present -> build bwa
-                input[2] = ch_fasta                      // RNA gate present -> build star
-                input[3] = channel.value([ [:], [] ])    // genome-only STAR index
+                input[0] = ch_fasta                      // DNA gate present -> build bwa (+ faidx)
+                input[1] = ch_fasta                      // RNA gate present -> build star
+                input[2] = channel.value([ [:], [] ])    // genome-only STAR index
                 """
             }
         }

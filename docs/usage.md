@@ -34,9 +34,9 @@ aligned BAM is published under `<outdir>/alignment/`.
   built from the FASTA each run unless you supply a matching one via `--star_index`. Pass
   `--gtf` to build an annotation-aware STAR index (otherwise genome-only). `--save_reference`
   publishes built indices under `<outdir>/reference/`.
-- **HLA\*LA is skipped for RNA samples** — its graph aligner is pathologically slow on RNA reads
-  (observed ~100x slower than DNA, effectively hanging), so RNA samples are excluded from HLA\*LA
-  with a warning. Use SpecHLA for RNA HLA typing (it handles RNA-derived BAMs well).
+- **HLA\*LA is skipped for RNA samples** — HLA\*LA is a DNA graph-genotyping tool (validated on
+  WGS/WES/long-read/assembly), is not splice-aware, and has no validated RNA mode, so RNA samples
+  are excluded from HLA\*LA with a warning. Use SpecHLA for RNA HLA typing (it handles RNA-derived BAMs well).
 - Samplesheet BAM samples continue to be used directly (no re-alignment); FASTQ and BAM can be
   mixed in one samplesheet.
 
@@ -129,7 +129,7 @@ The pipeline supports four HLA typing tools, controlled by the `--tools` paramet
 
 - **OptiType** (default): HLA Class I typing from FASTQ or BAM input. Open-source, included in pipeline containers.
 - **HLA-HD**: HLA Class I + II typing from FASTQ or BAM input. Requires a local installation due to licensing restrictions (see [HLA-HD section](#hla-hd-setup)).
-- **HLA\*LA**: HLA typing from a genome-aligned (GRCh38) BAM, or from FASTQ (aligned to GRCh38 first; see [FASTQ input for HLA\*LA and SpecHLA](#fastq-input-for-hlala-and-spechla)). RNA samples are skipped (HLA\*LA is pathologically slow on RNA reads — use SpecHLA for RNA). Open-source, included in pipeline containers. Uses a graph-based approach with the PRG_MHC_GRCh38_withIMGT reference graph.
+- **HLA\*LA**: HLA typing from a genome-aligned (GRCh38) BAM, or from FASTQ (aligned to GRCh38 first; see [FASTQ input for HLA\*LA and SpecHLA](#fastq-input-for-hlala-and-spechla)). RNA samples are skipped (HLA\*LA is a DNA-only graph tool with no validated RNA mode — use SpecHLA for RNA). Open-source, included in pipeline containers. Uses a graph-based approach with the PRG_MHC_GRCh38_withIMGT reference graph.
 - **SpecHLA**: Full-resolution HLA Class I + II typing from a genome-aligned (GRCh38) BAM, or from FASTQ (aligned to GRCh38 first; see [FASTQ input for HLA\*LA and SpecHLA](#fastq-input-for-hlala-and-spechla)). Open-source, included in pipeline containers (see [SpecHLA notes](#spechla)).
 
 Tools can be combined:
@@ -141,7 +141,7 @@ Tools can be combined:
 ```
 
 > [!NOTE]
-> HLA\*LA requires a genome-aligned BAM (e.g., aligned to GRCh38), not an HLA-reference-aligned BAM. FASTQ input is now supported too: the pipeline aligns reads to GRCh38 first (see [FASTQ input for HLA\*LA and SpecHLA](#fastq-input-for-hlala-and-spechla)). This requires a GRCh38 reference via `--genome GRCh38` or `--fasta`. RNA samples are skipped for HLA\*LA (its graph aligner is pathologically slow on RNA); use SpecHLA for RNA.
+> HLA\*LA requires a genome-aligned BAM (e.g., aligned to GRCh38), not an HLA-reference-aligned BAM. FASTQ input is now supported too: the pipeline aligns reads to GRCh38 first (see [FASTQ input for HLA\*LA and SpecHLA](#fastq-input-for-hlala-and-spechla)). This requires a GRCh38 reference via `--genome GRCh38` or `--fasta`. RNA samples are skipped for HLA\*LA (a DNA-only graph tool with no validated RNA mode); use SpecHLA for RNA.
 
 ### HLA\*LA setup
 
