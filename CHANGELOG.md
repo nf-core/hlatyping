@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#211](https://github.com/nf-core/hlatyping/pull/211) - Clean up published output by disabling publishing for intermediate processes (CHECK_PAIRED, YARA_INDEX, YARA_MAPPER, SAMTOOLS_VIEW, SAMTOOLS_COLLATEFASTQ, HLAHD_INSTALL, WGET, UNTAR, HLALA_PREPAREGRAPH) (@jonasscheid)
 - [#218](https://github.com/nf-core/hlatyping/pull/218) - Merge nf-core template updates up to `4.0.2` (@jonasscheid)
 - [#221](https://github.com/nf-core/hlatyping/pull/221) - Update the metro map overview diagram to include HLA\*LA, SpecHLA, immunotype (TSV input) and the summary step, with animated lines, regenerated using nf-metro 0.7.2 (@jonasscheid)
+- [#223](https://github.com/nf-core/hlatyping/pull/223) - Bump `nf-schema` plugin to 2.7.2 (@jonasscheid)
 
 ### `Fixed`
 
