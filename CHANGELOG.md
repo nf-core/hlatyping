@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#214](https://github.com/nf-core/hlatyping/pull/214) - Add [Immunotype](https://github.com/AG-Walz/immunotype) support for peptide-based HLA class I typing (@jonasscheid)
 - [#219](https://github.com/nf-core/hlatyping/pull/219) - Add SpecHLA as a BAM-only HLA-typing tool (genome-aligned BAM → ExtractHLAread → SpecHLA) (@jonasscheid)
 - [#220](https://github.com/nf-core/hlatyping/pull/220) - Add a `SUMMARIZE_TYPING` module that harmonizes all tools' HLA calls into a single `hlatyping_results.tsv` using mhcgnomes (@jonasscheid)
-- [#222](https://github.com/nf-core/hlatyping/pull/222) - FASTQ input support for HLA\*LA and SpecHLA via a GRCh38 genome-alignment step (DNA: bwa-mem, RNA: STAR) using the nf-core `fastq_align_bwa`/`fastq_align_star` subworkflows (@jonasscheid)
+- [#222](https://github.com/nf-core/hlatyping/pull/222) - FASTQ input support for HLA\*LA and SpecHLA via a GRCh38 genome-alignment step (DNA: bwa-mem, RNA: STAR), inlined into the main workflow's GENOME ALIGNMENT section (@jonasscheid)
+- [#222](https://github.com/nf-core/hlatyping/pull/222) - Fail fast when HLA\*LA is given a GENCODE/Ensembl-named GRCh38 reference (only UCSC/1000G naming matches its `knownReferences`), with a clear message pointing at a compatible reference (@jonasscheid)
 
 ### `Changed`
 

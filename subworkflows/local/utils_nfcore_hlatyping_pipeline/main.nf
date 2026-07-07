@@ -397,3 +397,23 @@ def validateMd5(file, expectedMd5, label = null) {
     def actual = file.withInputStream { org.apache.commons.codec.digest.DigestUtils.md5Hex(it) }
     if (actual != expectedMd5) error "MD5 mismatch for ${label ?: file.name}: expected ${expectedMd5}, got ${actual}"
 }
+
+//
+// Fail fast if the alignment reference uses contig names HLA*LA cannot match. HLA*LA identifies the
+// BAM's reference by matching its @SQ dictionary against bundled knownReferences (1000G_B38, UCSC/1000G
+// naming); GENCODE (e.g. GL000008.2) and Ensembl (bare '6'/'MT') GRCh38 align fine but make HLA*LA fail
+// deep in the run. Reading the .fai right after faidx turns that multi-hour failure into an early error.
+//
+def validateHlalaReference(fai) {
+    def incompatible = fai.readLines().findResults { line -> line.tokenize('\t')[0] }.findAll { contig ->
+        contig ==~ /^[A-Z]{2}\d+\.\d+$/ ||       // GENCODE/GenBank unplaced scaffold, e.g. GL000008.2, KI270302.1
+        contig ==~ /^([1-9]|1[0-9]|2[0-2]|MT)$/  // Ensembl bare chromosome / MT (no 'chr' prefix)
+    }
+    if (incompatible) {
+        error(
+            "HLA*LA cannot use this reference: contigs like ${incompatible.take(3).join(', ')} are GENCODE/Ensembl-named, " +
+            "but HLA*LA only matches UCSC/1000G naming (chr6, chrUn_KI270302v1, ...). Use a GRCh38 full analysis set " +
+            "with UCSC naming (e.g. --genome GATK.GRCh38, or the UCSC hg38.analysisSet). SpecHLA is unaffected. See docs/usage.md."
+        )
+    }
+}

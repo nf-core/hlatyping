@@ -30,6 +30,13 @@ aligned BAM is published under `<outdir>/alignment/`.
   `-r hg38` are GRCh38-bound). Provide the reference with `--genome GRCh38` (iGenomes) or
   `--fasta /path/to/GRCh38.fasta`. A raw `--fasta` is trusted to be GRCh38; a non-GRCh38
   `--genome` is rejected for these tools.
+- **HLA\*LA additionally requires UCSC/1000G contig naming** (`chr6`, `chrUn_KI270302v1`, `…_random`,
+  `…_alt`). It identifies the reference by matching the BAM's `@SQ` dictionary against its bundled
+  `knownReferences`, so a **GENCODE** (`GL000008.2`, `KI270302.1`) or **Ensembl** (bare `6`/`MT`) GRCh38 —
+  though otherwise valid — is rejected. Use a GRCh38 full analysis set with UCSC naming, e.g.
+  `--genome GATK.GRCh38` or the [UCSC hg38.analysisSet](https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/).
+  The pipeline checks this right after indexing and **fails fast** with a clear message rather than
+  letting HLA\*LA fail hours into the run. SpecHLA is naming-agnostic (it only needs `chr6`).
 - A pre-built bwa index is reused if given via `--bwa` (otherwise built once). A STAR index is
   built from the FASTA each run unless you supply a matching one via `--star_index`. Pass
   `--gtf` to build an annotation-aware STAR index (otherwise genome-only). `--save_reference`

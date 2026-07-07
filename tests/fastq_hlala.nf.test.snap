@@ -1,7 +1,7 @@
 {
     "-profile test_fastq_hlala (stub)": {
         "content": [
-            16,
+            15,
             {
                 "BWA_INDEX": {
                     "bwa": "0.7.19-r1273"
@@ -35,9 +35,6 @@
                     "samtools": "1.23.1"
                 },
                 "SAMTOOLS_STATS": {
-                    "samtools": "1.23.1"
-                },
-                "SAMTOOLS_VIEW": {
                     "samtools": "1.23.1"
                 },
                 "SUMMARIZE_TYPING": {
@@ -163,7 +160,7 @@
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-06-17T10:50:42.434948708",
+        "timestamp": "2026-07-01T11:59:06.44794191",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
