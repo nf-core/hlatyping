@@ -89,9 +89,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Reclaim disk before pulling test containers: the heavy SpecHLA image can overflow the
-      # ephemeral runner's small root volume ("no space left on device"). df -h before/after
-      # records the actual headroom so we can tell whether this is enough or the disk needs bumping.
+      # Reclaim disk so heavy tool containers don't overflow the runner's small root volume.
       - name: Free up disk space
         shell: bash
         run: |
