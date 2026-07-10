@@ -1,0 +1,33 @@
+nextflow_pipeline {
+
+    name "Test --genome resolves the reference for FASTQ -> BAM alignment (stub)"
+    script "../main.nf"
+    tag "pipeline"
+    profile "test_fastq_genome"
+    options "-stub-run"
+
+    test("-profile test_fastq_genome (stub) — fasta and bwa index come from igenomes") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def task_names = workflow.trace.tasks().collect { task -> task.name }
+            assertAll(
+                { assert workflow.success },
+                // The igenomes entry supplies a pre-built bwa index, so it must not be rebuilt...
+                { assert task_names.every { name -> !name.contains('BWA_INDEX') } },
+                // ...but it has no fasta_fai, so that one is built.
+                { assert task_names.any { name -> name.contains('SAMTOOLS_FAIDX') } },
+                { assert task_names.any { name -> name.contains('BWA_MEM') } },
+                { assert snapshot(
+                    workflow.trace.succeeded().size(),
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_hlatyping_software_mqc_versions.yml")
+                ).match() }
+            )
+        }
+    }
+}

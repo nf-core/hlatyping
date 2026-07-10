@@ -26,6 +26,7 @@ include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pi
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
 include { validateMd5            } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
 include { validateHlalaReference } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
+include { getGenomeAttribute    } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -136,18 +137,27 @@ workflow HLATYPING {
         ch_align_by_type.dna.multiMap { meta, reads -> gate: [meta, reads]; align: [meta, reads] }.set { ch_dna }
         ch_align_by_type.rna.multiMap { meta, reads -> gate: [meta, reads]; align: [meta, reads] }.set { ch_rna }
 
+        // An explicit --fasta/--fasta_fai/--bwa wins, otherwise fall back to the igenomes entry for
+        // --genome. Resolved here rather than in main.nf: a script-level `params.x = ...` assignment
+        // is not visible inside an included module, so it would silently read back as null.
+        // star_index has no igenomes fallback: those indices are version-locked and the igenomes one
+        // mismatches the installed STAR, so it is rebuilt instead.
+        def ref_fasta = params.fasta ?: getGenomeAttribute('fasta')
+        def ref_fai   = params.fasta_fai ?: getGenomeAttribute('fasta_fai')
+        def ref_bwa   = params.bwa ?: getGenomeAttribute('bwa')
+
         def ch_gtf = params.gtf
             ? channel.value([[id: 'genome'], file(params.gtf, checkIfExists: true)])
             : channel.value([[:], []])
 
-        // file(params.fasta) is read only when a FASTQ sample of that type exists, so a BAM-only run needs no --fasta.
-        def ch_fasta_bwa  = ch_dna.gate.map { _m, _r -> [[id: 'genome'], file(params.fasta, checkIfExists: true)] }.first()
-        def ch_fasta_star = ch_rna.gate.map { _m, _r -> [[id: 'genome'], file(params.fasta, checkIfExists: true)] }.first()
+        // The fasta is read only when a FASTQ sample of that type exists, so a BAM-only run needs no reference.
+        def ch_fasta_bwa  = ch_dna.gate.map { _m, _r -> [[id: 'genome'], file(ref_fasta, checkIfExists: true)] }.first()
+        def ch_fasta_star = ch_rna.gate.map { _m, _r -> [[id: 'genome'], file(ref_fasta, checkIfExists: true)] }.first()
 
         // Build-if-null genome indices; faidx runs once for whichever aligner is used.
         def ch_fasta = ch_fasta_bwa.mix(ch_fasta_star).first()
-        def ch_fai = params.fasta_fai
-            ? channel.value([[id: 'genome'], file(params.fasta_fai, checkIfExists: true)])
+        def ch_fai = ref_fai
+            ? channel.value([[id: 'genome'], file(ref_fai, checkIfExists: true)])
             : SAMTOOLS_FAIDX(ch_fasta.map { meta, fasta -> [meta, fasta, []] }, false).fai
         // .first() -> value channels so a single built index broadcasts to every sample.
         def ch_fasta_fai = ch_fasta.combine(ch_fai).map { fmeta, fasta, _m, fai -> [fmeta, fasta, fai] }.first()
@@ -158,12 +168,14 @@ workflow HLATYPING {
             ch_fasta_fai = ch_fasta_fai.map { meta, fasta, fai -> validateHlalaReference(fai); [meta, fasta, fai] }
         }
 
-        def ch_bwa = (params.bwa
-            ? channel.value([[id: 'bwa'], file(params.bwa, checkIfExists: true)])
-            : BWA_INDEX(ch_fasta_bwa).index).first()
-        def ch_star = (params.star_index
+        // Both branches are value channels (the index processes take only value inputs), so each
+        // index broadcasts to every sample without an explicit .first().
+        def ch_bwa = ref_bwa
+            ? channel.value([[id: 'bwa'], file(ref_bwa, checkIfExists: true)])
+            : BWA_INDEX(ch_fasta_bwa).index
+        def ch_star = params.star_index
             ? channel.value([[id: 'star'], file(params.star_index, checkIfExists: true)])
-            : STAR_GENOMEGENERATE(ch_fasta_star, ch_gtf).index).first()
+            : STAR_GENOMEGENERATE(ch_fasta_star, ch_gtf).index
 
         // DNA -> bwa-mem (sort_bam=false; BAM_SORT_STATS coordinate-sorts downstream).
         FASTQ_ALIGN_BWA(ch_dna.align, ch_bwa, false, ch_fasta_fai)

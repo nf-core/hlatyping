@@ -254,33 +254,43 @@ def validateInputSamplesheet(input) {
         }
     }
 
-    // hlala/spechla type a genome-aligned BAM. FASTQ is aligned to GRCh38 (DNA->bwa, RNA->STAR);
-    // TSV is rejected. Checks are per-sample (input_type/seq_type are known here) so a BAM-only run
-    // still requires no --fasta — which a parameter-level guard could not express.
+    // hlala/spechla type a genome-aligned BAM. FASTQ is aligned to GRCh38 (DNA->bwa, RNA->STAR).
+    // Checks are per-sample (input_type/seq_type are known here) so a BAM-only run still requires
+    // no --fasta — which a parameter-level guard could not express.
     def first_file = fastqs[0][0]
     def input_type = first_file.name.endsWith('.bam') ? 'bam'
         : (first_file.name.endsWith('.tsv') ? 'tsv' : 'fastq')
     def selected = (params.tools ?: 'optitype').tokenize(',')*.trim()
     def bam_tools = selected.findAll { it in ['hlala', 'spechla'] }
-    if (bam_tools && input_type == 'tsv') {
+    def read_tools = selected.findAll { it in ['optitype', 'hlala', 'spechla', 'hlahd'] }
+
+    // --tools is pipeline-wide, so a mixed samplesheet legitimately carries rows a given tool cannot
+    // type. Only complain when a sample has no tool that can type it at all.
+    if (input_type == 'tsv' && !('immunotype' in selected)) {
         error(
-            "${bam_tools.join('/')} require sequencing reads (FASTQ or genome-aligned BAM), " +
-            "but sample '${metas[0].id}' is peptide/TSV input."
+            "Sample '${metas[0].id}' is peptide/TSV input, but none of the selected tools " +
+            "(${selected.join(', ')}) can type peptides. Add 'immunotype' to --tools."
+        )
+    }
+    if (input_type != 'tsv' && !read_tools) {
+        error(
+            "Sample '${metas[0].id}' is ${input_type.toUpperCase()} input, but 'immunotype' only types " +
+            "peptide/TSV input. Add a read-based tool (optitype, hlala, spechla, hlahd) to --tools."
         )
     }
     if (bam_tools && input_type == 'fastq') {
         // FASTQ -> GRCh38 alignment, so a GRCh38 reference is required.
-        if (params.genome && !(params.genome in ['GRCh38', 'GATK.GRCh38', 'hg38'])) {
+        if (params.genome && !(params.genome in ['GRCh38', 'hg38'])) {
             error(
                 "${bam_tools.join('/')} alignment from FASTQ is GRCh38-only, but --genome " +
-                "'${params.genome}' is not a GRCh38 build. Use --genome GRCh38 (or GATK.GRCh38), " +
+                "'${params.genome}' is not a GRCh38 build. Use --genome hg38, " +
                 "or provide a GRCh38 --fasta."
             )
         }
-        if (!params.fasta) {
+        if (!(params.fasta ?: getGenomeAttribute('fasta'))) {
             error(
                 "${bam_tools.join('/')} with FASTQ sample '${metas[0].id}' needs a GRCh38 reference " +
-                "to align against. Provide --genome GRCh38 (iGenomes) or --fasta /path/to/GRCh38.fasta."
+                "to align against. Provide --genome hg38 (iGenomes) or --fasta /path/to/GRCh38.fasta."
             )
         }
     }

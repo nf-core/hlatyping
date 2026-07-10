@@ -18,19 +18,6 @@
 include { HLATYPING  } from './workflows/hlatyping'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_hlatyping_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_hlatyping_pipeline'
-include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_hlatyping_pipeline'
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-params.fasta     = getGenomeAttribute('fasta')
-params.fasta_fai = getGenomeAttribute('fasta_fai')
-params.bwa       = getGenomeAttribute('bwa')
-// NOTE: star_index is deliberately NOT defaulted from igenomes — STAR indices are
-// version-locked and the igenomes one mismatches the installed STAR. Build it instead.
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,0 +1,31 @@
+nextflow_pipeline {
+
+    name "Test a mixed samplesheet of reads and peptides (stub)"
+    script "../main.nf"
+    tag "pipeline"
+    profile "test_mixed"
+    options "-stub-run"
+
+    test("-profile test_mixed (stub) — each sample is typed by the tool that supports its input type") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def task_names = workflow.trace.tasks().collect { task -> task.name }
+            assertAll(
+                { assert workflow.success },
+                // The peptide row must not block the read-based tool, and vice versa
+                { assert task_names.any { name -> name.contains('SPECHLA_TYPING') } },
+                { assert task_names.any { name -> name.contains('IMMUNOTYPE') } },
+                { assert snapshot(
+                    workflow.trace.succeeded().size(),
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_hlatyping_software_mqc_versions.yml")
+                ).match() }
+            )
+        }
+    }
+}

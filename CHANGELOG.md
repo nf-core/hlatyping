@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Changed`
 
 - [#222](https://github.com/nf-core/hlatyping/pull/222) - Test one tool per CI profile (drop the `test_optitype_spechla`/`test_optitype_hlahd` combination profiles) so no single shard pulls two tool containers; multi-tool coverage moves to `test_full` (@jonasscheid)
-- [#222](https://github.com/nf-core/hlatyping/pull/222) - `test_full` now exercises all public tools (OptiType, SpecHLA, HLA\*LA via GRCh38 alignment, immunotype) on UCSC hg38; HLA-HD stays in its dedicated licensed job (@jonasscheid)
+- [#222](https://github.com/nf-core/hlatyping/pull/222) - `test_full` now runs the FASTQ → GRCh38 → BAM tools (SpecHLA, HLA\*LA) plus immunotype on UCSC hg38, over real NA12878 WES and matched GM12878 RNA. OptiType keeps its dedicated light DNA/RNA profiles, and HLA-HD stays in its licensed job (@jonasscheid)
 - [#211](https://github.com/nf-core/hlatyping/pull/211) - Replace local HLA\*LA modules with nf-core community modules `hlala/typing`, `hlala/preparegraph`, `wget`, and `untar`; checksum validation moved to the workflow (@jonasscheid)
 - [#211](https://github.com/nf-core/hlatyping/pull/211) - Clean up published output by disabling publishing for intermediate processes (CHECK_PAIRED, YARA_INDEX, YARA_MAPPER, SAMTOOLS_VIEW, SAMTOOLS_COLLATEFASTQ, HLAHD_INSTALL, WGET, UNTAR, HLALA_PREPAREGRAPH) (@jonasscheid)
 - [#218](https://github.com/nf-core/hlatyping/pull/218) - Merge nf-core template updates up to `4.0.2` (@jonasscheid)
@@ -26,6 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
+- [#222](https://github.com/nf-core/hlatyping/pull/222) - Resolve `--genome` references inside the workflow. A script-level `params.x = ...` in `main.nf` is not visible to included modules, so `fasta`/`fasta_fai`/`bwa` read back as `null` and `--genome` never reached the aligners (@jonasscheid)
+- [#222](https://github.com/nf-core/hlatyping/pull/222) - Accept mixed samplesheets: a peptide/TSV row no longer aborts a run that also selects read-based tools. A sample now only errors when none of the selected tools can type its input type (@jonasscheid)
+- [#222](https://github.com/nf-core/hlatyping/pull/222) - Point the docs and reference guard at `--genome hg38`; `GATK.GRCh38` is not an iGenomes key in this pipeline and iGenomes `GRCh38` is the NCBI build, whose contig naming HLA\*LA rejects (@jonasscheid)
 - [#212](https://github.com/nf-core/hlatyping/pull/212) - Fix nextflow lint errors and warnings (@jonasscheid)
 
 ### `Dependencies`

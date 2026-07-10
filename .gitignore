@@ -9,6 +9,10 @@ testing*
 null/
 work_hlala_graphs/
 .nf-test/
+.nf-test.log
+# licensed HLA-HD tarball, fetched and decrypted by the hlahd CI job
+hlahd.*.tar.gz
+hlahd.*.tar.gz.gpg
 CLAUDE.md
 .claude/
 .lineage/
