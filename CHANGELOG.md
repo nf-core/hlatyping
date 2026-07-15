@@ -26,9 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
-- [#222](https://github.com/nf-core/hlatyping/pull/222) - Resolve `--genome` references inside the workflow. A script-level `params.x = ...` in `main.nf` is not visible to included modules, so `fasta`/`fasta_fai`/`bwa` read back as `null` and `--genome` never reached the aligners (@jonasscheid)
-- [#222](https://github.com/nf-core/hlatyping/pull/222) - Accept mixed samplesheets: a peptide/TSV row no longer aborts a run that also selects read-based tools. A sample now only errors when none of the selected tools can type its input type (@jonasscheid)
-- [#222](https://github.com/nf-core/hlatyping/pull/222) - Point the docs and reference guard at `--genome hg38`; `GATK.GRCh38` is not an iGenomes key in this pipeline and iGenomes `GRCh38` is the NCBI build, whose contig naming HLA\*LA rejects (@jonasscheid)
 - [#212](https://github.com/nf-core/hlatyping/pull/212) - Fix nextflow lint errors and warnings (@jonasscheid)
 
 ### `Dependencies`
