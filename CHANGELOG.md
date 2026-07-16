@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#222](https://github.com/nf-core/hlatyping/pull/222) - Test one tool per CI profile (drop the `test_optitype_spechla`/`test_optitype_hlahd` combination profiles) so no single shard pulls two tool containers; multi-tool coverage moves to `test_full` (@jonasscheid)
 - [#222](https://github.com/nf-core/hlatyping/pull/222) - `test_full` now exercises all public tools (OptiType, SpecHLA, HLA\*LA via GRCh38 alignment, immunotype) on UCSC hg38, over real NA12878 WES and matched GM12878 RNA; OptiType gets 96 GB there because its ILP peaks at 68 GB on full-depth RNA. HLA-HD stays in its dedicated licensed job (@jonasscheid)
+- [#222](https://github.com/nf-core/hlatyping/pull/222) - Update the metro map with the Genome Alignment stage (bwa-mem/STAR) feeding HLA\*LA and SpecHLA from FASTQ (@jonasscheid)
 - [#211](https://github.com/nf-core/hlatyping/pull/211) - Replace local HLA\*LA modules with nf-core community modules `hlala/typing`, `hlala/preparegraph`, `wget`, and `untar`; checksum validation moved to the workflow (@jonasscheid)
 - [#211](https://github.com/nf-core/hlatyping/pull/211) - Clean up published output by disabling publishing for intermediate processes (CHECK_PAIRED, YARA_INDEX, YARA_MAPPER, SAMTOOLS_VIEW, SAMTOOLS_COLLATEFASTQ, HLAHD_INSTALL, WGET, UNTAR, HLALA_PREPAREGRAPH) (@jonasscheid)
 - [#218](https://github.com/nf-core/hlatyping/pull/218) - Merge nf-core template updates up to `4.0.2` (@jonasscheid)
