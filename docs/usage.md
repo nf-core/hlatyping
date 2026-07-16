@@ -21,24 +21,13 @@ When `.bam` files are provided, the pipeline handles them in two ways depending 
 
 ### FASTQ input for HLA\*LA and SpecHLA
 
-HLA\*LA and SpecHLA require a genome-aligned BAM. You can now provide **FASTQ** for these
-tools as well: the pipeline first aligns reads to **GRCh38** — DNA with `bwa-mem`, RNA with
-`STAR` (genome-only) — producing the coordinate-sorted, indexed BAM these tools consume. The
-aligned BAM is published under `<outdir>/alignment/`.
+HLA\*LA and SpecHLA need a genome-aligned BAM. FASTQ input is now accepted too: the pipeline
+aligns reads to GRCh38 first — DNA with `bwa-mem`, RNA with `STAR` — and publishes the BAM under
+`<outdir>/alignment/`. Provide the reference with `--genome hg38` or `--fasta /path/to/GRCh38.fasta`.
 
-- The alignment is **GRCh38-only** (HLA\*LA's `PRG_MHC_GRCh38_withIMGT` graph and SpecHLA's
-  `-r hg38` are GRCh38-bound). Provide the reference with `--genome hg38` (iGenomes) or
-  `--fasta /path/to/GRCh38.fasta`. A raw `--fasta` is trusted to be GRCh38; a non-GRCh38
-  `--genome` is rejected for these tools.
-- **HLA\*LA additionally requires UCSC/1000G contig naming** (`chr6`, `chrUn_KI270302v1`, `…_random`,
-  `…_alt`). It identifies the reference by matching the BAM's `@SQ` dictionary against its bundled
-  `knownReferences`, so a **GENCODE** (`GL000008.2`, `KI270302.1`) or **Ensembl** (bare `6`/`MT`) GRCh38 —
-  though otherwise valid — is rejected. Use `--genome hg38`, whose iGenomes entry is the UCSC
-  analysis set, or point `--fasta` at the
-  [UCSC hg38.analysisSet](https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/).
-  Note that iGenomes `--genome GRCh38` is the NCBI build and is **not** compatible.
-  The pipeline checks this right after indexing and **fails fast** with a clear message rather than
-  letting HLA\*LA fail hours into the run. SpecHLA is naming-agnostic (it only needs `chr6`).
+HLA\*LA additionally requires **UCSC/1000G contig naming** (`chr6`, `chrUn_…`), so use `--genome hg38`
+(not iGenomes `GRCh38`, which is NCBI-named) or a UCSC-named `--fasta`. Incompatible references are
+caught right after indexing with a clear error. SpecHLA is naming-agnostic.
 - A pre-built bwa index is reused if given via `--bwa` (otherwise built once). A STAR index is
   built from the FASTA each run unless you supply a matching one via `--star_index`. Pass
   `--gtf` to build an annotation-aware STAR index (otherwise genome-only). `--save_reference`
@@ -150,7 +139,7 @@ Tools can be combined:
 ```
 
 > [!NOTE]
-> HLA\*LA requires a genome-aligned BAM (e.g., aligned to GRCh38), not an HLA-reference-aligned BAM. FASTQ input is now supported too: the pipeline aligns reads to GRCh38 first (see [FASTQ input for HLA\*LA and SpecHLA](#fastq-input-for-hlala-and-spechla)). This requires a GRCh38 reference via `--genome GRCh38` or `--fasta`. RNA samples are skipped for HLA\*LA (a DNA-only graph tool with no validated RNA mode); use SpecHLA for RNA.
+> HLA\*LA requires a genome-aligned BAM (e.g., aligned to GRCh38), not an HLA-reference-aligned BAM. FASTQ input is now supported too: the pipeline aligns reads to GRCh38 first (see [FASTQ input for HLA\*LA and SpecHLA](#fastq-input-for-hlala-and-spechla)). This requires a GRCh38 reference via `--genome hg38` or `--fasta`. RNA samples are skipped for HLA\*LA (a DNA-only graph tool with no validated RNA mode); use SpecHLA for RNA.
 
 ### HLA\*LA setup
 

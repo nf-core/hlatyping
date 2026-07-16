@@ -254,9 +254,6 @@ def validateInputSamplesheet(input) {
         }
     }
 
-    // hlala/spechla type a genome-aligned BAM. FASTQ is aligned to GRCh38 (DNA->bwa, RNA->STAR).
-    // Checks are per-sample (input_type/seq_type are known here) so a BAM-only run still requires
-    // no --fasta — which a parameter-level guard could not express.
     def first_file = fastqs[0][0]
     def input_type = first_file.name.endsWith('.bam') ? 'bam'
         : (first_file.name.endsWith('.tsv') ? 'tsv' : 'fastq')
@@ -264,8 +261,7 @@ def validateInputSamplesheet(input) {
     def bam_tools = selected.findAll { it in ['hlala', 'spechla'] }
     def read_tools = selected.findAll { it in ['optitype', 'hlala', 'spechla', 'hlahd'] }
 
-    // --tools is pipeline-wide, so a mixed samplesheet legitimately carries rows a given tool cannot
-    // type. Only complain when a sample has no tool that can type it at all.
+    // In a mixed samplesheet, only error when no selected tool can type this sample's input.
     if (input_type == 'tsv' && !('immunotype' in selected)) {
         error(
             "Sample '${metas[0].id}' is peptide/TSV input, but none of the selected tools " +
@@ -279,7 +275,6 @@ def validateInputSamplesheet(input) {
         )
     }
     if (bam_tools && input_type == 'fastq') {
-        // FASTQ -> GRCh38 alignment, so a GRCh38 reference is required.
         if (params.genome && !(params.genome in ['GRCh38', 'hg38'])) {
             error(
                 "${bam_tools.join('/')} alignment from FASTQ is GRCh38-only, but --genome " +
@@ -295,8 +290,7 @@ def validateInputSamplesheet(input) {
         }
     }
 
-    // HLA*LA is a DNA graph-genotyping tool with no validated RNA mode, so it is skipped for RNA;
-    // fires for RNA whether it arrives as FASTQ or a samplesheet BAM. SpecHLA handles RNA.
+    // HLA*LA has no validated RNA mode, so it is skipped for RNA; SpecHLA handles RNA.
     if ('hlala' in bam_tools && metas[0].seq_type == 'rna') {
         log.warn(
             "Skipping HLA*LA for RNA sample '${metas[0].id}': HLA*LA is a DNA graph-genotyping tool " +
@@ -409,11 +403,7 @@ def validateMd5(file, expectedMd5, label = null) {
 }
 
 //
-// Fail fast if the alignment reference uses contig names HLA*LA cannot match. HLA*LA identifies the
-// BAM's reference by matching its @SQ dictionary against bundled knownReferences (1000G_B38, UCSC/1000G
-// naming); GENCODE (e.g. GL000008.2) and Ensembl (bare '6'/'MT') GRCh38 align fine but make HLA*LA fail
-// deep in the run. Reading the .fai right after faidx turns that multi-hour failure into an early error.
-//
+// Fail fast if the reference uses contig names HLA*LA cannot match (GENCODE/Ensembl instead of UCSC/1000G).
 def validateHlalaReference(fai) {
     def incompatible = fai.readLines().findResults { line -> line.tokenize('\t')[0] }.findAll { contig ->
         contig ==~ /^[A-Z]{2}\d+\.\d+$/ ||       // GENCODE/GenBank unplaced scaffold, e.g. GL000008.2, KI270302.1
@@ -422,8 +412,8 @@ def validateHlalaReference(fai) {
     if (incompatible) {
         error(
             "HLA*LA cannot use this reference: contigs like ${incompatible.take(3).join(', ')} are GENCODE/Ensembl-named, " +
-            "but HLA*LA only matches UCSC/1000G naming (chr6, chrUn_KI270302v1, ...). Use a GRCh38 full analysis set " +
-            "with UCSC naming (e.g. --genome GATK.GRCh38, or the UCSC hg38.analysisSet). SpecHLA is unaffected. See docs/usage.md."
+            "but HLA*LA only matches UCSC/1000G naming (chr6, chrUn_KI270302v1, ...). Use --genome hg38 or a UCSC-named " +
+            "GRCh38 --fasta. SpecHLA is unaffected. See docs/usage.md."
         )
     }
 }

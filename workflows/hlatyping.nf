@@ -115,9 +115,8 @@ workflow HLATYPING {
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         GENOME ALIGNMENT: FASTQ -> GRCh38 BAM
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        The BAM-only tools (HLA*LA, SpecHLA) need a whole-genome BAM. On FASTQ input we align
-        it here: DNA with bwa-mem, RNA with STAR (both genome-only), building any missing genome
-        index (faidx/bwa/STAR) on the fly. Samplesheet BAMs skip this.
+        HLA*LA and SpecHLA need a whole-genome BAM. FASTQ input is aligned to GRCh38 here
+        (DNA: bwa-mem, RNA: STAR); samplesheet BAMs skip this.
     */
     def need_align = ('hlala' in tool_list) || ('spechla' in tool_list)
 
@@ -125,7 +124,7 @@ workflow HLATYPING {
     def ch_aligned_spechla = channel.empty()
 
     if (need_align) {
-        // Split FASTQ by molecule type; each keeps a `gate` copy (drives index build) and an `align` copy (reads).
+        // Split by molecule type; `gate` drives the index build, `align` feeds the aligner.
         ch_input_files.fastq_single
             .mix(ch_cat_fastq)
             .branch { meta, _reads ->
@@ -137,11 +136,7 @@ workflow HLATYPING {
         ch_align_by_type.dna.multiMap { meta, reads -> gate: [meta, reads]; align: [meta, reads] }.set { ch_dna }
         ch_align_by_type.rna.multiMap { meta, reads -> gate: [meta, reads]; align: [meta, reads] }.set { ch_rna }
 
-        // An explicit --fasta/--fasta_fai/--bwa wins, otherwise fall back to the igenomes entry for
-        // --genome. Resolved here rather than in main.nf: a script-level `params.x = ...` assignment
-        // is not visible inside an included module, so it would silently read back as null.
-        // star_index has no igenomes fallback: those indices are version-locked and the igenomes one
-        // mismatches the installed STAR, so it is rebuilt instead.
+        // Use --fasta/--fasta_fai/--bwa if given, else the --genome (igenomes) entry.
         def ref_fasta = params.fasta ?: getGenomeAttribute('fasta')
         def ref_fai   = params.fasta_fai ?: getGenomeAttribute('fasta_fai')
         def ref_bwa   = params.bwa ?: getGenomeAttribute('bwa')
@@ -150,26 +145,21 @@ workflow HLATYPING {
             ? channel.value([[id: 'genome'], file(params.gtf, checkIfExists: true)])
             : channel.value([[:], []])
 
-        // The fasta is read only when a FASTQ sample of that type exists, so a BAM-only run needs no reference.
+        // Referenced only per molecule type present, so a BAM-only run needs no reference.
         def ch_fasta_bwa  = ch_dna.gate.map { _m, _r -> [[id: 'genome'], file(ref_fasta, checkIfExists: true)] }.first()
         def ch_fasta_star = ch_rna.gate.map { _m, _r -> [[id: 'genome'], file(ref_fasta, checkIfExists: true)] }.first()
 
-        // Build-if-null genome indices; faidx runs once for whichever aligner is used.
         def ch_fasta = ch_fasta_bwa.mix(ch_fasta_star).first()
         def ch_fai = ref_fai
             ? channel.value([[id: 'genome'], file(ref_fai, checkIfExists: true)])
             : SAMTOOLS_FAIDX(ch_fasta.map { meta, fasta -> [meta, fasta, []] }, false).fai
-        // .first() -> value channels so a single built index broadcasts to every sample.
         def ch_fasta_fai = ch_fasta.combine(ch_fai).map { fmeta, fasta, _m, fai -> [fmeta, fasta, fai] }.first()
 
-        // HLA*LA only matches UCSC/1000G-named references; fail fast here (right after faidx) rather
-        // than hours into the run. SpecHLA is naming-agnostic, so gate on hlala.
+        // HLA*LA only matches UCSC/1000G-named references; fail fast rather than hours into the run.
         if ('hlala' in tool_list) {
             ch_fasta_fai = ch_fasta_fai.map { meta, fasta, fai -> validateHlalaReference(fai); [meta, fasta, fai] }
         }
 
-        // Both branches are value channels (the index processes take only value inputs), so each
-        // index broadcasts to every sample without an explicit .first().
         def ch_bwa = ref_bwa
             ? channel.value([[id: 'bwa'], file(ref_bwa, checkIfExists: true)])
             : BWA_INDEX(ch_fasta_bwa).index
@@ -177,9 +167,7 @@ workflow HLATYPING {
             ? channel.value([[id: 'star'], file(params.star_index, checkIfExists: true)])
             : STAR_GENOMEGENERATE(ch_fasta_star, ch_gtf).index
 
-        // DNA -> bwa-mem (sort_bam=false; BAM_SORT_STATS coordinate-sorts downstream).
         FASTQ_ALIGN_BWA(ch_dna.align, ch_bwa, false, ch_fasta_fai)
-        // RNA -> STAR genome-only (empty transcripts fai no-ops STAR's transcriptome branch).
         FASTQ_ALIGN_STAR(ch_rna.align, ch_star, ch_gtf, true, ch_fasta_fai, channel.value([[id: 'no_transcripts'], [], []]))
 
         def ch_align_bam = FASTQ_ALIGN_BWA.out.bam.mix(FASTQ_ALIGN_STAR.out.bam)
@@ -188,8 +176,7 @@ workflow HLATYPING {
         ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN_BWA.out.flagstat.mix(FASTQ_ALIGN_STAR.out.flagstat).collect { _meta, f -> f })
         ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN_BWA.out.idxstats.mix(FASTQ_ALIGN_STAR.out.idxstats).collect { _meta, f -> f })
 
-        // Aligned BAMs are already BGZF+sorted+indexed: hlala reuses bam+bai (skips the SAMTOOLS_VIEW
-        // re-encode), spechla takes just the bam.
+        // Aligned BAMs are already sorted+indexed: hlala takes bam+bai, spechla just the bam.
         ch_align_bam
             .join(ch_align_bai)
             .multiMap { meta, bam, bai ->
