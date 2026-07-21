@@ -103,10 +103,10 @@
                 },
                 "hlahd_update_reference_dict": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "fa_icon": "fas fa-check",
                     "description": "Update HLA-HD reference dictionary to the latest version before running HLA-HD.",
-                    "help_text": "By default, the HLA-HD reference dictionary is not updated. To update the dictionary to the latest version from the IGMT/HLA database, set this parameter to `true`. Note that an internet connection is required for updating the dictionary from https://github.com/ANHIG/IMGTHLA/raw/refs/heads/Latest/hla.dat.zip"
+                    "help_text": "By default, the HLA-HD reference dictionary is updated to the latest version from the IGMT/HLA database. Note that an internet connection is required for updating the dictionary from https://github.com/ANHIG/IMGTHLA/raw/refs/heads/Latest/hla.dat.zip. To avoid updating the dictionary, set this parameter to `false`."
                 }
             }
         },
