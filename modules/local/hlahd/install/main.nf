@@ -38,7 +38,7 @@ process HLAHD_INSTALL {
 
     # UPDATE THE DICTIONARY IF REQUESTED
     if [ $update_dict_flag -eq 1 ]; then
-        sh update_dictionary.sh
+        sh update.dictionary.sh
     fi
 
     cd ../../
