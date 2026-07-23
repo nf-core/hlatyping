@@ -178,10 +178,10 @@
                     "description": "Path to FASTA index (.fai). Built automatically if not provided.",
                     "fa_icon": "far fa-file-code"
                 },
-                "bwa": {
+                "bwamem2": {
                     "type": "string",
                     "format": "directory-path",
-                    "description": "Path to a pre-built bwa index directory. Built automatically if not provided.",
+                    "description": "Path to a pre-built bwa-mem2 index directory. Built automatically if not provided.",
                     "fa_icon": "fas fa-folder-open"
                 },
                 "star_index": {

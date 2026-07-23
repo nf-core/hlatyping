@@ -1,6 +1,6 @@
 nextflow_pipeline {
 
-    name "Test FASTQ -> bwa -> SpecHLA (stub)"
+    name "Test FASTQ -> bwa-mem2 -> SpecHLA (stub)"
     script "../main.nf"
     tag "pipeline"
     profile "test_fastq_spechla"

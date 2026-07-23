@@ -5,15 +5,15 @@
         "https://github.com/nf-core/modules.git": {
             "modules": {
                 "nf-core": {
-                    "bwa/index": {
+                    "bwamem2/index": {
                         "branch": "master",
-                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "git_sha": "62ce917fd775aaef732eb82019de069c765adfd3",
                         "installed_by": ["modules"]
                     },
-                    "bwa/mem": {
+                    "bwamem2/mem": {
                         "branch": "master",
-                        "git_sha": "2fb127c8fd13de0adaa676df7169131e45c0b114",
-                        "installed_by": ["fastq_align_bwa"]
+                        "git_sha": "62ce917fd775aaef732eb82019de069c765adfd3",
+                        "installed_by": ["modules"]
                     },
                     "cat/fastq": {
                         "branch": "master",
@@ -127,17 +127,12 @@
                     "bam_sort_stats_samtools": {
                         "branch": "master",
                         "git_sha": "156feda0cb6589cd29c04902004fa3b53bc00205",
-                        "installed_by": ["fastq_align_bwa", "fastq_align_star"]
+                        "installed_by": ["fastq_align_star"]
                     },
                     "bam_stats_samtools": {
                         "branch": "master",
                         "git_sha": "156feda0cb6589cd29c04902004fa3b53bc00205",
                         "installed_by": ["bam_sort_stats_samtools"]
-                    },
-                    "fastq_align_bwa": {
-                        "branch": "master",
-                        "git_sha": "cbb7a6362981f07d2c26e43f8186025320569ffd",
-                        "installed_by": ["subworkflows"]
                     },
                     "fastq_align_star": {
                         "branch": "master",

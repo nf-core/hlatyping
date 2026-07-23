@@ -6,7 +6,7 @@ nextflow_pipeline {
     profile "test_fastq_genome"
     options "-stub-run"
 
-    test("-profile test_fastq_genome (stub) — fasta and bwa index come from igenomes") {
+    test("-profile test_fastq_genome (stub) — fasta comes from igenomes, bwa-mem2 index built on the fly") {
 
         when {
             params {
@@ -18,11 +18,11 @@ nextflow_pipeline {
             def task_names = workflow.trace.tasks().collect { task -> task.name }
             assertAll(
                 { assert workflow.success },
-                // The igenomes entry supplies a pre-built bwa index, so it must not be rebuilt...
-                { assert task_names.every { name -> !name.contains('BWA_INDEX') } },
-                // ...but it has no fasta_fai, so that one is built.
+                // The igenomes hg38 entry has no bwa-mem2 index, so one is built from the resolved fasta...
+                { assert task_names.any { name -> name.contains('BWAMEM2_INDEX') } },
+                // ...and it has no fasta_fai either, so that one is built too.
                 { assert task_names.any { name -> name.contains('SAMTOOLS_FAIDX') } },
-                { assert task_names.any { name -> name.contains('BWA_MEM') } },
+                { assert task_names.any { name -> name.contains('BWAMEM2_MEM') } },
                 { assert snapshot(
                     workflow.trace.succeeded().size(),
                     removeNextflowVersion("$outputDir/pipeline_info/nf_core_hlatyping_software_mqc_versions.yml")

@@ -1,14 +1,13 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
-name: fastq_align_bwa
-description: Align reads to a reference genome using bwa then sort with samtools
+name: fastq_align_bwamem2
+description: Align reads to a reference genome using bwa-mem2 then sort with samtools
 keywords:
   - align
   - fasta
   - genome
   - reference
 components:
-  - bwa/mem
-  - bwa/align
+  - bwamem2/mem
   - samtools/sort
   - samtools/index
   - samtools/stats
@@ -23,11 +22,11 @@ input:
         Structure: [ val(meta), [ path(reads) ] ]
   - ch_index:
       description: |
-        BWA genome index files
+        BWA-MEM2 genome index files
         Structure: [ val(meta), path(index) ]
   - val_sort_bam:
       type: boolean
-      description: If true bwa modules sort resulting bam files
+      description: If true bwa-mem2 modules sort resulting bam files
       pattern: "true|false"
   - ch_fasta_fai:
       type: file
@@ -37,20 +36,16 @@ input:
 output:
   - bam_orig:
       description: |
-        BAM file produced by bwa
+        BAM file produced by bwa-mem2
         Structure: [ val(meta), path(bam) ]
   - bam:
       description: |
         BAM file ordered by samtools
         Structure: [ val(meta), path(bam) ]
-  - bai:
+  - index:
       description: |
-        BAI index of the ordered BAM file
-        Structure: [ val(meta), path(bai) ]
-  - csi:
-      description: |
-        CSI index of the ordered BAM file
-        Structure: [ val(meta), path(csi) ]
+        BAI or CSI index of the ordered BAM file
+        Structure: [ val(meta), path(index) ]
   - stats:
       description: |
         File containing samtools stats output
@@ -64,6 +59,6 @@ output:
         File containing samtools idxstats output
         Structure: [ val(meta), path(idxstats) ]
 authors:
-  - "@JoseEspinosa"
+  - "@jonasscheid"
 maintainers:
-  - "@JoseEspinosa"
+  - "@jonasscheid"

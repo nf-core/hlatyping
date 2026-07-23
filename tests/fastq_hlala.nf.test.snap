@@ -3,11 +3,11 @@
         "content": [
             15,
             {
-                "BWA_INDEX": {
-                    "bwa": "0.7.19-r1273"
+                "BWAMEM2_INDEX": {
+                    "bwamem2": "2.2.1"
                 },
-                "BWA_MEM": {
-                    "bwa": "0.7.19-r1273",
+                "BWAMEM2_MEM": {
+                    "bwamem2": "2.2.1",
                     "samtools": "1.22.1"
                 },
                 "FASTQC": {
@@ -160,7 +160,7 @@
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-07-01T11:59:06.44794191",
+        "timestamp": "2026-07-21T19:25:47.757079257",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
