@@ -3,6 +3,10 @@ lint:
   files_unchanged:
     - docs/images/nf-core-hlatyping_logo_dark.png
     - assets/nf-core-hlatyping_logo_light.png
+    - .github/workflows/branch.yml
+    - .github/workflows/linting.yml
+  files_exist:
+    - .github/workflows/linting_comment.yml
 repository_type: pipeline
 template:
   author: Christopher Mohr, Alexander Peltzer, Sven Fillinger
