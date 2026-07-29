@@ -35,11 +35,119 @@
                     "fa_icon": "fas fa-envelope",
                     "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
                     "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+                }
+            }
+        },
+        "hlatyping_options": {
+            "title": "HLA typing options",
+            "type": "object",
+            "description": "Options for the HLA typing step.",
+            "fa_icon": "fas fa-chart-bar",
+            "properties": {
+                "tools": {
+                    "type": "string",
+                    "default": "optitype",
+                    "help_text": "Specifies the tool(s) to use. Multiple tools can be combined in a list separated by comma.\nAvailable are: `optitype`, `hlahd`, `hlala`, `immunotype`, `spechla`.",
+                    "description": "Specifies the hlatyping tool(s) to use."
+                }
+            }
+        },
+        "optitype_optimisation_steps": {
+            "title": "OptiType Optimisation steps",
+            "type": "object",
+            "description": "Options for the optimisation step of the HLA typing pipeline.",
+            "default": "",
+            "fa_icon": "fas fa-calculator",
+            "properties": {
+                "solver": {
+                    "type": "string",
+                    "default": "glpk",
+                    "help_text": "By default, the pipeline uses the `glpk` integer programming (IP) solver. With this pipeline, there is also native support for the `cbc` solver, just pass it as argument with `--solver 'cbc'`, and the pipeline will run OptiType using this IP solver.",
+                    "description": "Specifies the integer programming solver.",
+                    "fa_icon": "fas fa-cogs"
+                },
+                "enumerations": {
+                    "type": "integer",
+                    "default": 1,
+                    "fa_icon": "fas fa-sort-amount-up",
+                    "help_text": "By default, the pipeline will do one enumeration (`--enumerations 1`). If you want OptiType to output the optimal solution and the top `N-1` suboptimal solutions in the result file, please specify the number of enumerations accordingly.",
+                    "description": "Specifies the number of output solutions."
+                },
+                "beta": {
+                    "type": "number",
+                    "default": 0.009,
+                    "fa_icon": "fas fa-braille",
+                    "help_text": "By default, the pipeline uses a beta value of `0.009`. The constant beta weights the regularisation term of the underlying integer linear program to account for homozygosity since the formulation favors heterozygous allele combinations. Beta represents the proportion of reads that need to be additionally explained by a chosen allele combination in order to choose heterzygous solutions over homzygous solutions. Evaluation of different values for beta showed the best performance with `0.009`. Please refer to the original publication of OptiType (doi: 10.1093/bioinformatics/btu548) for details.",
+                    "description": "Specifies the weight of the regularisation term."
                 },
                 "multiqc_title": {
                     "type": "string",
                     "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
+                }
+            }
+        },
+        "hlahd_options": {
+            "title": "HLA-HD options",
+            "type": "object",
+            "description": "Options for running HLA-HD for class II HLA typing.",
+            "default": "",
+            "fa_icon": "fas fa-cog",
+            "properties": {
+                "hlahd_path": {
+                    "type": "string",
+                    "default": null,
+                    "fa_icon": "fas fa-file-zip-o",
+                    "description": "Tarball file location of HLA-HD software distribution.",
+                    "help_text": "Path to the installation tarball of HLA-HD. You need to provide this tarball to run HLA-HD. Obtain a licensed copy from https://w3.genome.med.kyoto-u.ac.jp/HLA-HD/"
+                },
+                "hlahd_update_reference_dict": {
+                    "type": "boolean",
+                    "default": false,
+                    "fa_icon": "fas fa-check",
+                    "description": "Update HLA-HD reference dictionary to the latest version before running HLA-HD.",
+                    "help_text": "By default, the HLA-HD reference dictionary is not updated. To update the dictionary to the latest version from the IGMT/HLA database, set this parameter to `true`. Note that an internet connection is required for updating the dictionary from https://github.com/ANHIG/IMGTHLA/raw/refs/heads/Latest/hla.dat.zip"
+                }
+            }
+        },
+        "hlala_options": {
+            "title": "HLA*LA options",
+            "type": "object",
+            "description": "Options for running HLA*LA for HLA typing from BAM files.",
+            "default": "",
+            "fa_icon": "fas fa-dna",
+            "properties": {
+                "hlala_graph_tarball": {
+                    "type": "string",
+                    "default": null,
+                    "fa_icon": "fas fa-file-archive",
+                    "description": "Path to HLA*LA graph tarball (optional).",
+                    "help_text": "Path to the HLA*LA graph tarball (PRG_MHC_GRCh38_withIMGT.tar.gz). If provided, it will be validated and extracted. If not provided, the graph will be downloaded automatically from Oxford servers."
+                },
+                "hlala_graph_dir": {
+                    "type": "string",
+                    "default": null,
+                    "format": "directory-path",
+                    "fa_icon": "fas fa-folder-open",
+                    "description": "Path to pre-built HLA*LA graph parent directory (optional).",
+                    "help_text": "Path to the parent directory containing the HLA*LA graph (e.g., the directory that contains `PRG_MHC_GRCh38_withIMGT/`). If provided, skips graph download entirely. Takes precedence over `hlala_graph_tarball`."
+                }
+            }
+        },
+        "immunotype_options": {
+            "title": "Immunotype options",
+            "type": "object",
+            "description": "Options for running Immunotype for peptide-based HLA class I typing.",
+            "default": "",
+            "fa_icon": "fas fa-cog",
+            "properties": {
+                "peptide_col_name": {
+                    "type": "string",
+                    "default": "sequence",
+                    "fa_icon": "fas fa-columns",
+                    "description": "Name of the column containing peptide sequences in the input TSV.",
+                    "help_text": "Immunotype requires a list of peptide sequences. When the input TSV has multiple columns (e.g. MHCquant output), this parameter selects which column holds the peptides. Default is `sequence`.",
+                    "hidden": true
                 }
             }
         },
@@ -55,16 +163,6 @@
                     "fa_icon": "fas fa-book",
                     "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
                 },
-                "fasta": {
-                    "type": "string",
-                    "format": "file-path",
-                    "exists": true,
-                    "mimetype": "text/plain",
-                    "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
-                    "description": "Path to FASTA genome file.",
-                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
-                    "fa_icon": "far fa-file-code"
-                },
                 "igenomes_ignore": {
                     "type": "boolean",
                     "description": "Do not load the iGenomes reference config.",
@@ -78,6 +176,19 @@
                     "fa_icon": "fas fa-ban",
                     "hidden": true,
                     "default": "s3://ngi-igenomes/igenomes/"
+                }
+            }
+        },
+        "optional_outputs": {
+            "title": "Optional outputs",
+            "type": "object",
+            "description": "Additional output files produces as intermediates that can be saved",
+            "default": "",
+            "properties": {
+                "save_merged_fastq": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-save",
+                    "description": "Save FastQ files after merging re-sequenced libraries in the results directory."
                 }
             }
         },
@@ -237,7 +348,25 @@
             "$ref": "#/$defs/input_output_options"
         },
         {
+            "$ref": "#/$defs/hlatyping_options"
+        },
+        {
+            "$ref": "#/$defs/optitype_optimisation_steps"
+        },
+        {
+            "$ref": "#/$defs/hlahd_options"
+        },
+        {
+            "$ref": "#/$defs/hlala_options"
+        },
+        {
+            "$ref": "#/$defs/immunotype_options"
+        },
+        {
             "$ref": "#/$defs/reference_genome_options"
+        },
+        {
+            "$ref": "#/$defs/optional_outputs"
         },
         {
             "$ref": "#/$defs/institutional_config_options"
