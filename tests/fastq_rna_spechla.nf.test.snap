@@ -1,0 +1,101 @@
+{
+    "-profile test_fastq_rna_spechla (stub)": {
+        "content": [
+            18,
+            {
+                "FASTQC": {
+                    "fastqc": "0.12.1"
+                },
+                "SAMTOOLS_FAIDX": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_FLAGSTAT": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_IDXSTATS": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_INDEX": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_SORT": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_STATS": {
+                    "samtools": "1.23.1"
+                },
+                "SPECHLA_EXTRACT": {
+                    "spechla": "1.0.12"
+                },
+                "SPECHLA_TYPING": {
+                    "spechla": "1.0.12"
+                },
+                "STAR_ALIGN": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
+                },
+                "STAR_GENOMEGENERATE": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
+                },
+                "Workflow": {
+                    "nf-core/hlatyping": "v2.2.0dev"
+                }
+            },
+            [
+                "alignment",
+                "alignment/SAMPLE_RNA.sorted.bam",
+                "alignment/SAMPLE_RNA.sorted.bam.bai",
+                "fastqc",
+                "fastqc/SAMPLE_RNA.html",
+                "fastqc/SAMPLE_RNA.zip",
+                "hlatyping_results.tsv",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_data/.stub",
+                "multiqc/multiqc_plots",
+                "multiqc/multiqc_plots/.stub",
+                "multiqc/multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/nf_core_hlatyping_software_mqc_versions.yml",
+                "spechla",
+                "spechla/SAMPLE_RNA",
+                "spechla/SAMPLE_RNA/HLA_A_break_points_spechap.txt",
+                "spechla/SAMPLE_RNA/HLA_A_freq.txt",
+                "spechla/SAMPLE_RNA/HLA_B_break_points_spechap.txt",
+                "spechla/SAMPLE_RNA/HLA_B_freq.txt",
+                "spechla/SAMPLE_RNA/HLA_C_break_points_spechap.txt",
+                "spechla/SAMPLE_RNA/HLA_C_freq.txt",
+                "spechla/SAMPLE_RNA/HLA_DPA1_break_points_spechap.txt",
+                "spechla/SAMPLE_RNA/HLA_DPA1_freq.txt",
+                "spechla/SAMPLE_RNA/HLA_DPB1_break_points_spechap.txt",
+                "spechla/SAMPLE_RNA/HLA_DPB1_freq.txt",
+                "spechla/SAMPLE_RNA/HLA_DQA1_break_points_spechap.txt",
+                "spechla/SAMPLE_RNA/HLA_DQA1_freq.txt",
+                "spechla/SAMPLE_RNA/HLA_DQB1_break_points_spechap.txt",
+                "spechla/SAMPLE_RNA/HLA_DQB1_freq.txt",
+                "spechla/SAMPLE_RNA/HLA_DRB1_break_points_spechap.txt",
+                "spechla/SAMPLE_RNA/HLA_DRB1_freq.txt",
+                "spechla/SAMPLE_RNA/hla.result.details.txt",
+                "spechla/SAMPLE_RNA/hla.result.g.group.txt",
+                "spechla/SAMPLE_RNA/hla.result.txt"
+            ],
+            [
+                "SAMPLE_RNA.html:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "SAMPLE_RNA.zip:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
+            ]
+        ],
+        "timestamp": "2026-06-17T10:54:26.486376986",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    }
+}

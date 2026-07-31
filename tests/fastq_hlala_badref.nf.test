@@ -1,0 +1,24 @@
+nextflow_pipeline {
+
+    name "Test HLA*LA fails fast on a GENCODE/Ensembl-named reference"
+    script "../main.nf"
+    tag "pipeline"
+    profile "test_fastq_hlala_badref"
+    options "-stub-run"
+
+    test("-profile test_fastq_hlala_badref (stub) — incompatible reference errors early") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert (workflow.stdout + [workflow.errorReport ?: '']).join('\n').contains("HLA*LA cannot use this reference") }
+            )
+        }
+    }
+}

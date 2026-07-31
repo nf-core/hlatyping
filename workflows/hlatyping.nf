@@ -25,6 +25,8 @@ include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pi
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
 include { validateMd5            } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
+include { validateHlalaReference } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
+include { getGenomeAttribute    } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,6 +51,16 @@ include { UNTAR                  } from '../modules/nf-core/untar/main'
 include { WGET                   } from '../modules/nf-core/wget/main'
 include { YARA_INDEX             } from '../modules/nf-core/yara/index/main'
 include { YARA_MAPPER            } from '../modules/nf-core/yara/mapper/main'
+// Genome-alignment modules for the FASTQ -> BAM step (see GENOME ALIGNMENT section below)
+include { SAMTOOLS_FAIDX         } from '../modules/nf-core/samtools/faidx/main'
+include { BWAMEM2_INDEX          } from '../modules/nf-core/bwamem2/index/main'
+include { STAR_GENOMEGENERATE    } from '../modules/nf-core/star/genomegenerate/main'
+
+//
+// SUBWORKFLOW: Local and installed directly from nf-core/subworkflows
+//
+include { FASTQ_ALIGN_BWAMEM2    } from '../subworkflows/local/fastq_align_bwamem2/main'
+include { FASTQ_ALIGN_STAR       } from '../subworkflows/nf-core/fastq_align_star/main'
 
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 
@@ -98,6 +110,83 @@ workflow HLATYPING {
     // MODULE: Concatenate FastQ files from same sample if required
     //
     CAT_FASTQ(ch_input_files.fastq_multiple).reads.set { ch_cat_fastq }
+
+    /*
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        GENOME ALIGNMENT: FASTQ -> GRCh38 BAM
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        HLA*LA and SpecHLA need a whole-genome BAM. FASTQ input is aligned to GRCh38 here
+        (DNA: bwa-mem2, RNA: STAR); samplesheet BAMs skip this.
+    */
+    def need_align = ('hlala' in tool_list) || ('spechla' in tool_list)
+
+    def ch_aligned_hlala   = channel.empty()
+    def ch_aligned_spechla = channel.empty()
+
+    if (need_align) {
+        // Split by molecule type; `gate` drives the index build, `align` feeds the aligner.
+        ch_input_files.fastq_single
+            .mix(ch_cat_fastq)
+            .branch { meta, _reads ->
+                rna: meta.seq_type == 'rna'
+                dna: true
+            }
+            .set { ch_align_by_type }
+
+        ch_align_by_type.dna.multiMap { meta, reads -> gate: [meta, reads]; align: [meta, reads] }.set { ch_dna }
+        ch_align_by_type.rna.multiMap { meta, reads -> gate: [meta, reads]; align: [meta, reads] }.set { ch_rna }
+
+        // Use --fasta/--fasta_fai/--bwamem2 if given, else the --genome (igenomes) entry.
+        def ref_fasta   = params.fasta ?: getGenomeAttribute('fasta')
+        def ref_fai     = params.fasta_fai ?: getGenomeAttribute('fasta_fai')
+        def ref_bwamem2 = params.bwamem2 ?: getGenomeAttribute('bwamem2')
+
+        def ch_gtf = params.gtf
+            ? channel.value([[id: 'genome'], file(params.gtf, checkIfExists: true)])
+            : channel.value([[:], []])
+
+        // Referenced only per molecule type present, so a BAM-only run needs no reference.
+        def ch_fasta_dna  = ch_dna.gate.map { _m, _r -> [[id: 'genome'], file(ref_fasta, checkIfExists: true)] }.first()
+        def ch_fasta_star = ch_rna.gate.map { _m, _r -> [[id: 'genome'], file(ref_fasta, checkIfExists: true)] }.first()
+
+        def ch_fasta = ch_fasta_dna.mix(ch_fasta_star).first()
+        def ch_fai = ref_fai
+            ? channel.value([[id: 'genome'], file(ref_fai, checkIfExists: true)])
+            : SAMTOOLS_FAIDX(ch_fasta.map { meta, fasta -> [meta, fasta, []] }, false).fai
+        def ch_fasta_fai = ch_fasta.combine(ch_fai).map { fmeta, fasta, _m, fai -> [fmeta, fasta, fai] }.first()
+
+        // HLA*LA only matches UCSC/1000G-named references; fail fast rather than hours into the run.
+        if ('hlala' in tool_list) {
+            ch_fasta_fai = ch_fasta_fai.map { meta, fasta, fai -> validateHlalaReference(fai); [meta, fasta, fai] }
+        }
+
+        def ch_bwamem2 = ref_bwamem2
+            ? channel.value([[id: 'bwamem2'], file(ref_bwamem2, checkIfExists: true)])
+            : BWAMEM2_INDEX(ch_fasta_dna).index
+        def ch_star = params.star_index
+            ? channel.value([[id: 'star'], file(params.star_index, checkIfExists: true)])
+            : STAR_GENOMEGENERATE(ch_fasta_star, ch_gtf).index
+
+        FASTQ_ALIGN_BWAMEM2(ch_dna.align, ch_bwamem2, false, ch_fasta_fai)
+        FASTQ_ALIGN_STAR(ch_rna.align, ch_star, ch_gtf, true, ch_fasta_fai, channel.value([[id: 'no_transcripts'], [], []]))
+
+        def ch_align_bam = FASTQ_ALIGN_BWAMEM2.out.bam.mix(FASTQ_ALIGN_STAR.out.bam)
+        def ch_align_bai = FASTQ_ALIGN_BWAMEM2.out.index.mix(FASTQ_ALIGN_STAR.out.index)
+        ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN_BWAMEM2.out.stats.mix(FASTQ_ALIGN_STAR.out.stats).collect { _meta, f -> f })
+        ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN_BWAMEM2.out.flagstat.mix(FASTQ_ALIGN_STAR.out.flagstat).collect { _meta, f -> f })
+        ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN_BWAMEM2.out.idxstats.mix(FASTQ_ALIGN_STAR.out.idxstats).collect { _meta, f -> f })
+
+        // Aligned BAMs are already sorted+indexed: hlala takes bam+bai, spechla just the bam.
+        ch_align_bam
+            .join(ch_align_bai)
+            .multiMap { meta, bam, bai ->
+                for_hlala: [meta, bam, bai]
+                for_spechla: [meta, [bam]]
+            }
+            .set { ch_aligned }
+        ch_aligned_hlala = ch_aligned.for_hlala
+        ch_aligned_spechla = ch_aligned.for_spechla
+    }
 
     // determine BAM pairedness for fastq conversion
     CHECK_PAIRED(ch_bam.for_fastq_conversion)
@@ -197,7 +286,7 @@ workflow HLATYPING {
         // MODULE: Extract HLA reads from the genome-aligned BAM, then type with SpecHLA
         //
         SPECHLA_EXTRACT(
-            ch_bam.for_spechla.map { meta, files -> [meta, files[0]] }
+            ch_bam.for_spechla.mix(ch_aligned_spechla).map { meta, files -> [meta, files[0]] }
         )
 
         SPECHLA_TYPING(SPECHLA_EXTRACT.out.reads)
@@ -236,10 +325,16 @@ workflow HLATYPING {
 
     if ( "hlala" in tool_list ) {
         //
-        // MODULE: Run HLA*LA typing (requires genome-aligned BAM + BAI input)
+        // MODULE: Run HLA*LA typing (requires genome-aligned BAM + BAI input).
+        // RNA is excluded: HLA*LA is a DNA graph-genotyping tool (WGS/WES/long-read/assembly),
+        // not splice-aware and with no validated RNA mode. Use SpecHLA for RNA.
         //
+        // Samplesheet BAMs may not be BGZF -> re-encode + index here; freshly aligned BAMs already
+        // are, so they bypass SAMTOOLS_VIEW and reuse their own index.
         SAMTOOLS_VIEW(
-            ch_bam.for_hlala.map { meta, files -> [meta, files, []] },
+            ch_bam.for_hlala
+                .filter { meta, _files -> meta.seq_type != 'rna' }
+                .map { meta, files -> [meta, files, []] },
             [[:], [], []],
             [[:], []],
             [[:], []],
@@ -248,6 +343,7 @@ workflow HLATYPING {
 
         SAMTOOLS_VIEW.out.bam
             .join(SAMTOOLS_VIEW.out.bai)
+            .mix(ch_aligned_hlala.filter { meta, _bam, _bai -> meta.seq_type != 'rna' })
             .set { ch_bam_with_index }
 
         // Graph acquisition: pre-built directory takes precedence; otherwise

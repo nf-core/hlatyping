@@ -14,3 +14,5 @@ yara/**/*.{bam,bai}
 spechla/**/*
 hlatyping_results.tsv
 pipeline_info/*.{html,json,txt,yml}
+alignment/*.{bam,bam.bai,bai}
+reference/**

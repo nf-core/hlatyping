@@ -5,6 +5,8 @@ lint:
     - .prettierignore
   nf_test_content:
     - nf-test.config
+    # asserts an early pipeline failure (incompatible HLA*LA reference), so it produces no versions.yml to snapshot
+    - tests/fastq_hlala_badref.nf.test
   schema_params: false
 nf_core_version: 4.0.3
 repository_type: pipeline

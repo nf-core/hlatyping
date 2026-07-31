@@ -1,0 +1,54 @@
+{
+    "-profile test_fastq_genome (stub) \u2014 fasta comes from igenomes, bwa-mem2 index built on the fly": {
+        "content": [
+            13,
+            {
+                "BWAMEM2_INDEX": {
+                    "bwamem2": "2.2.1"
+                },
+                "BWAMEM2_MEM": {
+                    "bwamem2": "2.2.1",
+                    "samtools": "1.22.1"
+                },
+                "FASTQC": {
+                    "fastqc": "0.12.1"
+                },
+                "SAMTOOLS_FAIDX": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_FLAGSTAT": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_IDXSTATS": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_INDEX": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_SORT": {
+                    "samtools": "1.23.1"
+                },
+                "SAMTOOLS_STATS": {
+                    "samtools": "1.23.1"
+                },
+                "SPECHLA_EXTRACT": {
+                    "spechla": "1.0.12"
+                },
+                "SPECHLA_TYPING": {
+                    "spechla": "1.0.12"
+                },
+                "SUMMARIZE_TYPING": {
+                    "mhcgnomes": "1.8.6"
+                },
+                "Workflow": {
+                    "nf-core/hlatyping": "v2.2.0dev"
+                }
+            }
+        ],
+        "timestamp": "2026-07-21T19:23:49.959947045",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    }
+}
