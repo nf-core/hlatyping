@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#218](https://github.com/nf-core/hlatyping/pull/218) - Merge nf-core template updates up to `4.0.2` (@jonasscheid)
 - [#221](https://github.com/nf-core/hlatyping/pull/221) - Update the metro map overview diagram to include HLA\*LA, SpecHLA, immunotype (TSV input) and the summary step, with animated lines, regenerated using nf-metro 0.7.2 (@jonasscheid)
 - [#223](https://github.com/nf-core/hlatyping/pull/223) - Bump `nf-schema` plugin to 2.7.2 (@jonasscheid)
+- [#227](https://github.com/nf-core/hlatyping/pull/227) - Merge nf-core template updates up to `4.0.3` (@jonasscheid)
 
 ### `Fixed`
 
@@ -34,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | `SpecHLA`    | -           | 1.0.12      |
 | `MultiQC`    | 1.32        | 1.34        |
 | `samtools`   | 1.21        | 1.23.1      |
-| `nf-core`    | 3.5.1       | 4.0.2       |
+| `nf-core`    | 3.5.1       | 4.0.3       |
 | `mhcgnomes`  | -           | 1.8.6       |
 | `Nextflow`   | 25.04.2     | 25.10.4     |
 
