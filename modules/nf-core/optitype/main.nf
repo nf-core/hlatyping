@@ -19,27 +19,31 @@ process OPTITYPE {
     task.ext.when == null || task.ext.when
 
     script:
-    def args      = task.ext.args   ?: ''
-    def args2     = task.ext.args2  ?: ''
-    prefix        = task.ext.prefix ?: "${meta.id}"
+    def args            = task.ext.args ?: ''
+    def solver          = task.ext.args2?.getAt("solver") ? "${task.ext.args2["solver"]}" : 'glpk'
+    // GLPK is single threaded only
+    def solver_threads  = "${solver}" == 'glpk' ? 1 : "${task.cpus}"
+    def unpaired_weight = task.ext.args2?.getAt("unpaired_weight") ? "${task.ext.args2["unpaired_weight"]}" : 0
+    def use_discordant  = task.ext.args2?.getAt("use_discordant") ? "${task.ext.args2["use_discordant"]}" : 'false'
+    prefix              = task.ext.prefix ?: "${meta.id}"
 
     """
-    # Create a config for OptiType on a per sample basis with task.ext.args2
+    touch config.txt
 
-    #Doing it old school now
-    echo "[mapping]" > config.ini
+    echo "[mapping]" >> config.ini
     echo "razers3=razers3" >> config.ini
-    echo "threads=$task.cpus" >> config.ini
+    echo threads="${task.cpus}" >> config.ini
+
     echo "[ilp]" >> config.ini
-    echo "$args2" >> config.ini
-    echo "threads=1" >> config.ini
+    echo "solver=${solver}" >> config.ini
+    echo "threads=${solver_threads}" >> config.ini
+
     echo "[behavior]" >> config.ini
     echo "deletebam=true" >> config.ini
-    echo "unpaired_weight=0" >> config.ini
-    echo "use_discordant=false" >> config.ini
+    echo "unpaired_weight=${unpaired_weight}" >> config.ini
+    echo "use_discordant=${use_discordant}" >> config.ini
 
-    # Run the actual OptiType typing with args
-    OptiTypePipeline.py -i ${bam} -c config.ini $args --prefix $prefix --outdir $prefix
+    OptiTypePipeline.py --${meta['seq_type']} --config config.ini ${args} --prefix "${prefix}" --outdir "${prefix}" --input ${bam}
     """
 
     stub:
