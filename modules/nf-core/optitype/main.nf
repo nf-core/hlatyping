@@ -4,8 +4,8 @@ process OPTITYPE {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/mulled-v2-f3579993d544920cc7c09e8ddf77569e95ea8950:d3ee2331cb4615915b1eda5d23f231da6b0741d7-0' :
-        'quay.io/biocontainers/mulled-v2-f3579993d544920cc7c09e8ddf77569e95ea8950:d3ee2331cb4615915b1eda5d23f231da6b0741d7-0' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/9f/9ff14340c6c903c1c9d926fb7ffa60460986852515c76673cc54f6c958ff35bd/data' :
+        'community.wave.seqera.io/library/optitype_coincbc_cplex:0b46ade42a5009b2' }"
 
     input:
     tuple val(meta), path(bam), path(bai)
@@ -13,7 +13,7 @@ process OPTITYPE {
     output:
     tuple val(meta), path("${prefix}/*.tsv"), emit: hla_type
     tuple val(meta), path("${prefix}/*.pdf"), emit: coverage_plot
-    tuple val("${task.process}"), val('optitype'), eval('grep "Version:" $(which OptiTypePipeline.py) | sed "s/Version: //g"'), emit: versions_optitype, topic: versions
+    tuple val("${task.process}"), val('optitype'), eval('optitype info | sed -n "s/.*OptiType version: \\([0-9.]*\\).*/\\1/p"'), emit: versions_optitype, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -25,6 +25,8 @@ process OPTITYPE {
     def solver_threads  = "${solver}" == 'glpk' ? 1 : "${task.cpus}"
     def unpaired_weight = task.ext.args2?.getAt("unpaired_weight") ? "${task.ext.args2["unpaired_weight"]}" : 0
     def use_discordant  = task.ext.args2?.getAt("use_discordant") ? "${task.ext.args2["use_discordant"]}" : 'false'
+    // Each bam has to be prefixed with `--input`
+    def bam_str         = bam.join(" --input ")
     prefix              = task.ext.prefix ?: "${meta.id}"
 
     """
@@ -43,7 +45,7 @@ process OPTITYPE {
     echo "unpaired_weight=${unpaired_weight}" >> config.ini
     echo "use_discordant=${use_discordant}" >> config.ini
 
-    OptiTypePipeline.py --${meta['seq_type']} --config config.ini ${args} --prefix "${prefix}" --outdir "${prefix}" --input ${bam}
+    optitype run --${meta['seq_type']} --config config.ini ${args} --prefix "${prefix}" --outdir "${prefix}" --input ${bam_str}
     """
 
     stub:
