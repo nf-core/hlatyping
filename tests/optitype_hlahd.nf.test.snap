@@ -13,7 +13,7 @@
                     "hlahd": "1.7.1"
                 },
                 "OPTITYPE": {
-                    "optitype": "1.3.1"
+                    "optitype": "1.5.0"
                 },
                 "SUMMARIZE_TYPING": {
                     "mhcgnomes": "1.8.6"
@@ -128,10 +128,10 @@
                 "SAMPLE_FASTQ_RNA_final.result.txt:md5,15e8f8fe058169c02f4136e092981500"
             ]
         ],
-        "timestamp": "2026-06-12T19:59:22.088826704",
+        "timestamp": "2026-08-19T15:43:56.604749003",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.10.4"
+            "nextflow": "26.04.6"
         }
     }
 }
