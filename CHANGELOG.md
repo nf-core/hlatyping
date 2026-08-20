@@ -20,11 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#218](https://github.com/nf-core/hlatyping/pull/218) - Merge nf-core template updates up to `4.0.2` (@jonasscheid)
 - [#221](https://github.com/nf-core/hlatyping/pull/221) - Update the metro map overview diagram to include HLA\*LA, SpecHLA, immunotype (TSV input) and the summary step, with animated lines, regenerated using nf-metro 0.7.2 (@jonasscheid)
 - [#223](https://github.com/nf-core/hlatyping/pull/223) - Bump `nf-schema` plugin to 2.7.2 (@jonasscheid)
+- [#225](https://github.com/nf-core/hlatyping/pull/225) - Set `--hlahd_update_reference_dict` to `true` by default (@SpikyClip)
 - [#227](https://github.com/nf-core/hlatyping/pull/227) - Merge nf-core template updates up to `4.0.3` (@jonasscheid)
 
 ### `Fixed`
 
 - [#212](https://github.com/nf-core/hlatyping/pull/212) - Fix nextflow lint errors and warnings (@jonasscheid)
+- [#225](https://github.com/nf-core/hlatyping/pull/225) - Fix typo in `HLAHD_INSTALL` that broke the reference dictionary update (`update_dictionary.sh` -> `update.dictionary.sh`) (@SpikyClip)
 
 ### `Dependencies`
 
