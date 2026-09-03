@@ -6,7 +6,7 @@ lint:
   nf_test_content:
     - nf-test.config
   schema_params: false
-nf_core_version: 4.0.3
+nf_core_version: 4.1.0
 repository_type: pipeline
 template:
   author: Christopher Mohr, Alexander Peltzer, Sven Fillinger
