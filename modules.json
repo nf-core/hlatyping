@@ -37,7 +37,7 @@
                     },
                     "optitype": {
                         "branch": "master",
-                        "git_sha": "fcad955c9c9529407951b09583707290c9220c94",
+                        "git_sha": "7557e3468d1a55fe8c21500fd5c7b469560d89aa",
                         "installed_by": ["modules"]
                     },
                     "samtools/collatefastq": {
