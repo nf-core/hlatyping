@@ -63,9 +63,9 @@
                     "type": "string",
                     "default": "glpk",
                     "description": "Specifies the integer programming solver.",
-                    "help_text": "The single-threaded `glpk` integer programming (IP) solver is used by default. Alternatively, there is support for the multi-threaded `cbc` or `cplex` solvers.",
+                    "help_text": "The `glpk` integer programming (IP) solver is used by default. Alternatively, there is support for the `cbc` solver.",
                     "fa_icon": "fas fa-cogs",
-                    "enum": ["glpk", "cbc", "cplex"]
+                    "enum": ["glpk", "cbc"]
                 },
                 "optitype_enumerations": {
                     "type": "integer",
