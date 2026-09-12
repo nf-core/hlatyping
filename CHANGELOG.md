@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | `Immunotype` | -           | 1.0.2       |
 | `SpecHLA`    | -           | 1.0.12      |
 | `MultiQC`    | 1.32        | 1.35        |
+| `OptiType`   | 1.3.5       | 1.5.0       |
 | `samtools`   | 1.21        | 1.23.1      |
 | `nf-core`    | 3.5.1       | 4.1.0       |
 | `mhcgnomes`  | -           | 1.8.6       |
