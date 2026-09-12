@@ -50,7 +50,7 @@ If multiple libraries/runs have been provided for the same sample in the input s
 [OptiType](https://github.com/FRED-2/OptiType) is an HLA genotyping algorithm based on linear integer programming. It provides accurate 4-digit HLA genotyping predictions from NGS data.
 For further reading and documentation see the [OptiType documentation](https://github.com/FRED-2/OptiType).
 
-The pipeline results contain a CSV file with the predicted HLA genotype. Each line contains one solution with the predicted HLA alleles in 4-digit nomenclature, the number of reads that are covered by this solution and the objective function value. If the number of enumerations (--enumerate N) is higher than 1, the CSV file will contain the optimal and sub-optimal solutions.
+The pipeline results contain a CSV file with the predicted HLA genotype. Each line contains one solution with the predicted HLA alleles in 4-digit nomenclature, the number of reads that are covered by this solution and the objective function value. If the number of enumerations (`--optitype_enumerations N`) is higher than 1, the CSV file will contain the optimal and sub-optimal solutions.
 
 ```tsv
     A1  A2  B1  B2  C1  C2  Reads   Objective

@@ -52,38 +52,45 @@
                 }
             }
         },
-        "optitype_optimisation_steps": {
-            "title": "OptiType Optimisation steps",
+        "optitype_options": {
+            "title": "OptiType options",
             "type": "object",
-            "description": "Options for the optimisation step of the HLA typing pipeline.",
+            "description": "Options for running OptiType for class I HLA typing.",
             "default": "",
             "fa_icon": "fas fa-calculator",
             "properties": {
-                "solver": {
+                "optitype_solver": {
                     "type": "string",
                     "default": "glpk",
-                    "help_text": "By default, the pipeline uses the `glpk` integer programming (IP) solver. With this pipeline, there is also native support for the `cbc` solver, just pass it as argument with `--solver 'cbc'`, and the pipeline will run OptiType using this IP solver.",
                     "description": "Specifies the integer programming solver.",
-                    "fa_icon": "fas fa-cogs"
+                    "help_text": "The `glpk` integer programming (IP) solver is used by default. Alternatively, there is support for the `cbc` solver.",
+                    "fa_icon": "fas fa-cogs",
+                    "enum": ["glpk", "cbc"]
                 },
-                "enumerations": {
+                "optitype_enumerations": {
                     "type": "integer",
                     "default": 1,
                     "fa_icon": "fas fa-sort-amount-up",
-                    "help_text": "By default, the pipeline will do one enumeration (`--enumerations 1`). If you want OptiType to output the optimal solution and the top `N-1` suboptimal solutions in the result file, please specify the number of enumerations accordingly.",
-                    "description": "Specifies the number of output solutions."
+                    "description": "Specifies the number of output solutions.",
+                    "help_text": "By default, the pipeline will do one enumeration (`--enumerations 1`). If you want OptiType to output the optimal solution and the top `N-1` suboptimal solutions in the result file, please specify the number of enumerations accordingly."
                 },
-                "beta": {
+                "optitype_beta": {
                     "type": "number",
                     "default": 0.009,
                     "fa_icon": "fas fa-braille",
-                    "help_text": "By default, the pipeline uses a beta value of `0.009`. The constant beta weights the regularisation term of the underlying integer linear program to account for homozygosity since the formulation favors heterozygous allele combinations. Beta represents the proportion of reads that need to be additionally explained by a chosen allele combination in order to choose heterzygous solutions over homzygous solutions. Evaluation of different values for beta showed the best performance with `0.009`. Please refer to the original publication of OptiType (doi: 10.1093/bioinformatics/btu548) for details.",
-                    "description": "Specifies the weight of the regularisation term."
+                    "description": "Specifies the weight of the regularisation term.",
+                    "help_text": "By default, the pipeline uses a beta value of `0.009`. The constant beta weights the regularisation term of the underlying integer linear program to account for homozygosity since the formulation favors heterozygous allele combinations. Beta represents the proportion of reads that need to be additionally explained by a chosen allele combination in order to choose heterzygous solutions over homzygous solutions. Evaluation of different values for beta showed the best performance with `0.009`. Please refer to the original publication of OptiType (doi: 10.1093/bioinformatics/btu548) for details."
                 },
-                "multiqc_title": {
-                    "type": "string",
-                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
-                    "fa_icon": "fas fa-file-signature"
+                "optitype_unpaired_weight": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Sets the weight of unpaired reads.",
+                    "help_text": "In paired-end mode one might want to use reads with just one mapped end (e.g. the other end falls outside the reference region). This setting allows the user to keep them with an optionally reduced weight. A value of `0` means they are discarded for typing, `0.2` means single reads are \"worth\" 20% of paired reads, and a value of `1` means they are treated as valuable as properly mapped read pairs. Note: unpaired reads will be reported on the result coverage plots for completeness, regardless of this setting."
+                },
+                "optitype_use_discordant": {
+                    "type": "boolean",
+                    "description": "Use discordant read pairs for typing.",
+                    "help_text": "We call a read pair discordant if its two ends best-map to two disjoint sets of alleles. Such reads can be either omitted or either of their ends treated as unpaired hits. Note: discordant read pairs are reported on the coverage plots as unpaired reads, regardless of this setting."
                 }
             }
         },
@@ -290,6 +297,11 @@
                     "fa_icon": "fas fa-palette",
                     "hidden": true
                 },
+                "multiqc_title": {
+                    "type": "string",
+                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
+                    "fa_icon": "fas fa-file-signature"
+                },
                 "multiqc_config": {
                     "type": "string",
                     "format": "file-path",
@@ -351,7 +363,7 @@
             "$ref": "#/$defs/hlatyping_options"
         },
         {
-            "$ref": "#/$defs/optitype_optimisation_steps"
+            "$ref": "#/$defs/optitype_options"
         },
         {
             "$ref": "#/$defs/hlahd_options"
