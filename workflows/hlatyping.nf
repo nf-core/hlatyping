@@ -26,7 +26,6 @@ include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pi
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
 include { validateMd5            } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
 include { validateHlalaReference } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
-include { getGenomeAttribute    } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -74,6 +73,7 @@ include { paramsSummaryMap       } from 'plugin/nf-schema'
 workflow HLATYPING {
     take:
     ch_samplesheet // channel: samplesheet read in from --input
+    genome_fasta // string: reference genome FASTA (from --fasta or the --genome iGenomes entry), resolved in main.nf
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -137,10 +137,9 @@ workflow HLATYPING {
         ch_align_by_type.dna.multiMap { meta, reads -> gate: [meta, reads]; align: [meta, reads] }.set { ch_dna }
         ch_align_by_type.rna.multiMap { meta, reads -> gate: [meta, reads]; align: [meta, reads] }.set { ch_rna }
 
-        // Use --fasta/--fasta_fai/--bwamem2 if given, else the --genome (igenomes) entry.
-        def ref_fasta   = params.fasta ?: getGenomeAttribute('fasta')
-        def ref_fai     = params.fasta_fai ?: getGenomeAttribute('fasta_fai')
-        def ref_bwamem2 = params.bwamem2 ?: getGenomeAttribute('bwamem2')
+        def ref_fasta   = genome_fasta
+        def ref_fai     = params.fasta_fai
+        def ref_bwamem2 = params.bwamem2
 
         def ch_gtf = params.gtf
             ? channel.value([[id: 'genome'], file(params.gtf, checkIfExists: true)])

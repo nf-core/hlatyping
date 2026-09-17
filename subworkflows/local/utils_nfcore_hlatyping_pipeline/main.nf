@@ -33,6 +33,7 @@ workflow PIPELINE_INITIALISATION {
     help // boolean: Display help message and exit
     help_full // boolean: Show the full help message
     show_hidden // boolean: Show hidden parameters in the help message
+    fasta //  string: Reference genome FASTA resolved in main.nf (--fasta or the --genome iGenomes entry)
 
     main:
 
@@ -123,7 +124,7 @@ workflow PIPELINE_INITIALISATION {
         }
         .groupTuple()
         .map { samplesheet ->
-            validateInputSamplesheet(samplesheet)
+            validateInputSamplesheet(samplesheet, fasta)
         }
         .map { meta, input_files ->
             return [meta, input_files.flatten()]
@@ -223,7 +224,7 @@ def validateHlahdPath() {
 //
 // Validate channels from input samplesheet
 //
-def validateInputSamplesheet(input) {
+def validateInputSamplesheet(input, fasta) {
     def (metas, fastqs) = input[1..2]
 
     // Check that multiple runs of the same sample are of the same datatype i.e. single-end / paired-end
@@ -276,14 +277,7 @@ def validateInputSamplesheet(input) {
         )
     }
     if (bam_tools && input_type == 'fastq') {
-        if (params.genome && !(params.genome in ['GRCh38', 'hg38'])) {
-            error(
-                "${bam_tools.join('/')} alignment from FASTQ is GRCh38-only, but --genome " +
-                "'${params.genome}' is not a GRCh38 build. Use --genome hg38, " +
-                "or provide a GRCh38 --fasta."
-            )
-        }
-        if (!(params.fasta ?: getGenomeAttribute('fasta'))) {
+        if (!fasta) {
             error(
                 "${bam_tools.join('/')} with FASTQ sample '${metas[0].id}' needs a GRCh38 reference " +
                 "to align against. Provide --genome hg38 (iGenomes) or --fasta /path/to/GRCh38.fasta."
