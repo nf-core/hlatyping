@@ -12,11 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#214](https://github.com/nf-core/hlatyping/pull/214) - Add [Immunotype](https://github.com/AG-Walz/immunotype) support for peptide-based HLA class I typing (@jonasscheid)
 - [#219](https://github.com/nf-core/hlatyping/pull/219) - Add SpecHLA as a BAM-only HLA-typing tool (genome-aligned BAM → ExtractHLAread → SpecHLA) (@jonasscheid)
 - [#220](https://github.com/nf-core/hlatyping/pull/220) - Add a `SUMMARIZE_TYPING` module that harmonizes all tools' HLA calls into a single `hlatyping_results.tsv` using mhcgnomes (@jonasscheid)
-- [#222](https://github.com/nf-core/hlatyping/pull/222) - FASTQ input support for HLA\*LA and SpecHLA via a GRCh38 genome-alignment step (DNA: bwa-mem2, RNA: STAR), inlined into the main workflow's GENOME ALIGNMENT section (@jonasscheid)
+- [#222](https://github.com/nf-core/hlatyping/pull/222) - FASTQ input support for HLA\*LA and SpecHLA via a GRCh38 genome-alignment step (DNA: bwa-mem2 through the nf-core `fastq_align_dna` subworkflow, RNA: STAR) (@jonasscheid)
 - [#222](https://github.com/nf-core/hlatyping/pull/222) - Fail fast when HLA\*LA is given a GENCODE/Ensembl-named GRCh38 reference (only UCSC/1000G naming matches its `knownReferences`), with a clear message pointing at a compatible reference (@jonasscheid)
 
 ### `Changed`
 
+- [#222](https://github.com/nf-core/hlatyping/pull/222) - Restrict `--genome` to the GRCh38 iGenomes builds (`hg38`, `GRCh38`) via the parameter schema (@jonasscheid)
 - [#222](https://github.com/nf-core/hlatyping/pull/222) - Test one tool per CI profile (drop the `test_optitype_spechla`/`test_optitype_hlahd` combination profiles) so no single shard pulls two tool containers; multi-tool coverage moves to `test_full` (@jonasscheid)
 - [#222](https://github.com/nf-core/hlatyping/pull/222) - `test_full` now exercises all public tools (OptiType, SpecHLA, HLA\*LA via GRCh38 alignment, immunotype) on UCSC hg38, over real NA12878 WES and matched GM12878 RNA; OptiType gets 96 GB there because its ILP peaks at 68 GB on full-depth RNA. HLA-HD stays in its dedicated licensed job (@jonasscheid)
 - [#222](https://github.com/nf-core/hlatyping/pull/222) - Update the metro map with the Genome Alignment stage (bwa-mem2/STAR) feeding HLA\*LA and SpecHLA from FASTQ (@jonasscheid)

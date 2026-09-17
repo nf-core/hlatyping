@@ -25,9 +25,10 @@ HLA\*LA and SpecHLA need a genome-aligned BAM. FASTQ input is now accepted too: 
 aligns reads to GRCh38 first — DNA with `bwa-mem2`, RNA with `STAR` — and publishes the BAM under
 `<outdir>/alignment/`. Provide the reference with `--genome hg38` or `--fasta /path/to/GRCh38.fasta`.
 
-HLA\*LA additionally requires **UCSC/1000G contig naming** (`chr6`, `chrUn_…`), so use `--genome hg38`
-(not iGenomes `GRCh38`, which is NCBI-named) or a UCSC-named `--fasta`. Incompatible references are
-caught right after indexing with a clear error. SpecHLA is naming-agnostic.
+`--genome` accepts only the GRCh38 iGenomes builds `hg38` (UCSC naming) and `GRCh38` (NCBI naming); other
+builds are rejected at parameter validation. HLA\*LA additionally requires **UCSC/1000G contig naming**
+(`chr6`, `chrUn_…`), so use `--genome hg38` (not `GRCh38`) or a UCSC-named `--fasta`. Incompatible references
+are caught right after indexing with a clear error. SpecHLA is naming-agnostic.
 
 - A pre-built bwa-mem2 index is reused if given via `--bwamem2` (otherwise built once). A STAR index is
   built from the FASTA each run unless you supply a matching one via `--star_index`. Pass
