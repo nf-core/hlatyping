@@ -57,10 +57,11 @@ include { BWAMEM2_INDEX          } from '../modules/nf-core/bwamem2/index/main'
 include { STAR_GENOMEGENERATE    } from '../modules/nf-core/star/genomegenerate/main'
 
 //
-// SUBWORKFLOW: Local and installed directly from nf-core/subworkflows
+// SUBWORKFLOW: Installed directly from nf-core/subworkflows
 //
-include { FASTQ_ALIGN_BWAMEM2    } from '../subworkflows/local/fastq_align_bwamem2/main'
-include { FASTQ_ALIGN_STAR       } from '../subworkflows/nf-core/fastq_align_star/main'
+include { FASTQ_ALIGN_DNA         } from '../subworkflows/nf-core/fastq_align_dna/main'
+include { FASTQ_ALIGN_STAR        } from '../subworkflows/nf-core/fastq_align_star/main'
+include { BAM_SORT_STATS_SAMTOOLS } from '../subworkflows/nf-core/bam_sort_stats_samtools/main'
 
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 
@@ -167,14 +168,16 @@ workflow HLATYPING {
             ? channel.value([[id: 'star'], file(params.star_index, checkIfExists: true)])
             : STAR_GENOMEGENERATE(ch_fasta_star, ch_gtf).index
 
-        FASTQ_ALIGN_BWAMEM2(ch_dna.align, ch_bwamem2, false, ch_fasta_fai)
+        // DNA: bwa-mem2 via the community dispatcher, then sort/index/stats (as FASTQ_ALIGN_STAR does internally)
+        FASTQ_ALIGN_DNA(ch_dna.align, ch_bwamem2, ch_fasta_dna, 'bwamem2', false)
+        BAM_SORT_STATS_SAMTOOLS(FASTQ_ALIGN_DNA.out.bam, ch_fasta_fai)
         FASTQ_ALIGN_STAR(ch_rna.align, ch_star, ch_gtf, true, ch_fasta_fai, channel.value([[id: 'no_transcripts'], [], []]))
 
-        def ch_align_bam = FASTQ_ALIGN_BWAMEM2.out.bam.mix(FASTQ_ALIGN_STAR.out.bam)
-        def ch_align_bai = FASTQ_ALIGN_BWAMEM2.out.index.mix(FASTQ_ALIGN_STAR.out.index)
-        ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN_BWAMEM2.out.stats.mix(FASTQ_ALIGN_STAR.out.stats).collect { _meta, f -> f })
-        ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN_BWAMEM2.out.flagstat.mix(FASTQ_ALIGN_STAR.out.flagstat).collect { _meta, f -> f })
-        ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN_BWAMEM2.out.idxstats.mix(FASTQ_ALIGN_STAR.out.idxstats).collect { _meta, f -> f })
+        def ch_align_bam = BAM_SORT_STATS_SAMTOOLS.out.bam.mix(FASTQ_ALIGN_STAR.out.bam)
+        def ch_align_bai = BAM_SORT_STATS_SAMTOOLS.out.index.mix(FASTQ_ALIGN_STAR.out.index)
+        ch_multiqc_files = ch_multiqc_files.mix(BAM_SORT_STATS_SAMTOOLS.out.stats.mix(FASTQ_ALIGN_STAR.out.stats).collect { _meta, f -> f })
+        ch_multiqc_files = ch_multiqc_files.mix(BAM_SORT_STATS_SAMTOOLS.out.flagstat.mix(FASTQ_ALIGN_STAR.out.flagstat).collect { _meta, f -> f })
+        ch_multiqc_files = ch_multiqc_files.mix(BAM_SORT_STATS_SAMTOOLS.out.idxstats.mix(FASTQ_ALIGN_STAR.out.idxstats).collect { _meta, f -> f })
 
         // Aligned BAMs are already sorted+indexed: hlala takes bam+bai, spechla just the bam.
         ch_align_bam
