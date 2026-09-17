@@ -3,10 +3,10 @@ nextflow_pipeline {
     name "Test FASTQ -> bwa-mem2 -> SpecHLA (stub)"
     script "../main.nf"
     tag "pipeline"
-    profile "test_fastq_spechla"
+    profile "test_fastq_dna_spechla"
     options "-stub-run"
 
-    test("-profile test_fastq_spechla (stub)") {
+    test("-profile test_fastq_dna_spechla (stub)") {
 
         when {
             params {
