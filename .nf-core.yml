@@ -8,7 +8,7 @@ lint:
     # asserts an early pipeline failure (incompatible HLA*LA reference), so it produces no versions.yml to snapshot
     - tests/fastq_hlala_badref.nf.test
   schema_params: false
-nf_core_version: 4.0.2
+nf_core_version: 4.1.0
 repository_type: pipeline
 template:
   author: Christopher Mohr, Alexander Peltzer, Sven Fillinger
