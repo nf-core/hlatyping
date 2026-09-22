@@ -50,7 +50,6 @@ include { UNTAR                  } from '../modules/nf-core/untar/main'
 include { WGET                   } from '../modules/nf-core/wget/main'
 include { YARA_INDEX             } from '../modules/nf-core/yara/index/main'
 include { YARA_MAPPER            } from '../modules/nf-core/yara/mapper/main'
-// Genome-alignment modules for the FASTQ -> BAM step (see GENOME ALIGNMENT section below)
 include { SAMTOOLS_FAIDX         } from '../modules/nf-core/samtools/faidx/main'
 include { BWAMEM2_INDEX          } from '../modules/nf-core/bwamem2/index/main'
 include { STAR_GENOMEGENERATE    } from '../modules/nf-core/star/genomegenerate/main'
@@ -116,8 +115,7 @@ workflow HLATYPING {
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         GENOME ALIGNMENT: FASTQ -> GRCh38 BAM
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        HLA*LA and SpecHLA need a whole-genome BAM. FASTQ input is aligned to GRCh38 here
-        (DNA: bwa-mem2, RNA: STAR); samplesheet BAMs skip this.
+        HLA*LA and SpecHLA need a genome-aligned BAM; FASTQ samples are aligned here, samplesheet BAMs skip this.
     */
     def need_align = ('hlala' in tool_list) || ('spechla' in tool_list)
 
@@ -167,7 +165,6 @@ workflow HLATYPING {
             ? channel.value([[id: 'star'], file(params.star_index, checkIfExists: true)])
             : STAR_GENOMEGENERATE(ch_fasta_star, ch_gtf).index
 
-        // DNA: bwa-mem2 via the community dispatcher, then sort/index/stats (as FASTQ_ALIGN_STAR does internally)
         FASTQ_ALIGN_DNA(ch_dna.align, ch_bwamem2, ch_fasta_dna, 'bwamem2', false)
         BAM_SORT_STATS_SAMTOOLS(FASTQ_ALIGN_DNA.out.bam, ch_fasta_fai)
         FASTQ_ALIGN_STAR(ch_rna.align, ch_star, ch_gtf, true, ch_fasta_fai, channel.value([[id: 'no_transcripts'], [], []]))
@@ -327,12 +324,9 @@ workflow HLATYPING {
 
     if ( "hlala" in tool_list ) {
         //
-        // MODULE: Run HLA*LA typing (requires genome-aligned BAM + BAI input).
-        // RNA is excluded: HLA*LA is a DNA graph-genotyping tool (WGS/WES/long-read/assembly),
-        // not splice-aware and with no validated RNA mode. Use SpecHLA for RNA.
+        // MODULE: Run HLA*LA typing on DNA only (no validated RNA mode). Samplesheet BAMs are
+        // re-encoded to BGZF and indexed here; pipeline-aligned BAMs already are and bypass this.
         //
-        // Samplesheet BAMs may not be BGZF -> re-encode + index here; freshly aligned BAMs already
-        // are, so they bypass SAMTOOLS_VIEW and reuse their own index.
         SAMTOOLS_VIEW(
             ch_bam.for_hlala
                 .filter { meta, _files -> meta.seq_type != 'rna' }
