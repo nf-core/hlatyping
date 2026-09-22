@@ -89,6 +89,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Reclaim disk so heavy tool containers don't overflow the runner's small root volume.
+      - name: Free up disk space
+        shell: bash
+        run: |
+          echo "== disk before cleanup =="; df -h /
+          sudo rm -rf /opt/hostedtoolcache /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup "${AGENT_TOOLSDIRECTORY:-}" 2>/dev/null || true
+          docker system prune -af --volumes 2>/dev/null || true
+          echo "== disk after cleanup =="; df -h /
+
       - name: Run nf-test
         id: run_nf_test
         uses: ./.github/actions/nf-test

@@ -22,12 +22,6 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_hlat
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
@@ -39,6 +33,7 @@ workflow NFCORE_HLATYPING {
 
     take:
     samplesheet // channel: samplesheet read in from --input
+    fasta // string: reference genome FASTA (from --fasta or the --genome iGenomes entry)
 
     main:
 
@@ -47,6 +42,7 @@ workflow NFCORE_HLATYPING {
     //
     HLATYPING (
         samplesheet,
+        fasta,
         params.multiqc_config,
         params.multiqc_logo,
         params.multiqc_methods_description,
@@ -65,6 +61,11 @@ workflow {
 
     main:
     //
+    // Reference genome: an explicit --fasta wins, otherwise the --genome (iGenomes) entry
+    //
+    def fasta = params.fasta ?: getGenomeAttribute('fasta')
+
+    //
     // SUBWORKFLOW: Run initialisation tasks
     //
     PIPELINE_INITIALISATION (
@@ -76,14 +77,16 @@ workflow {
         params.input,
         params.help,
         params.help_full,
-        params.show_hidden
+        params.show_hidden,
+        fasta
     )
 
     //
     // WORKFLOW: Run main workflow
     //
     NFCORE_HLATYPING (
-        PIPELINE_INITIALISATION.out.samplesheet
+        PIPELINE_INITIALISATION.out.samplesheet,
+        fasta
     )
     //
     // SUBWORKFLOW: Run completion tasks
