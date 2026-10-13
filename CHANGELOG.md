@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#214](https://github.com/nf-core/hlatyping/pull/214) - Add [Immunotype](https://github.com/AG-Walz/immunotype) support for peptide-based HLA class I typing (@jonasscheid)
 - [#219](https://github.com/nf-core/hlatyping/pull/219) - Add SpecHLA as a BAM-only HLA-typing tool (genome-aligned BAM → ExtractHLAread → SpecHLA) (@jonasscheid)
 - [#220](https://github.com/nf-core/hlatyping/pull/220) - Add a `SUMMARIZE_TYPING` module that harmonizes all tools' HLA calls into a single `hlatyping_results.tsv` using mhcgnomes (@jonasscheid)
+- [#232](https://github.com/nf-core/hlatyping/pull/232) - Add `AGENTS.md` from the nf-core pipeline template (@jonasscheid)
 
 ### `Changed`
 
