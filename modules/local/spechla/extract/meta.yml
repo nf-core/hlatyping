@@ -1,0 +1,37 @@
+name: spechla_extract
+description: Extract HLA-related reads from a genome-aligned BAM using SpecHLA's ExtractHLAread.sh.
+keywords:
+  - hla
+  - typing
+  - mhc
+  - immunology
+tools:
+  - spechla:
+      description: SpecHLA enables full-resolution HLA typing from sequencing data.
+      homepage: https://github.com/deepomicslab/SpecHLA
+      documentation: https://github.com/deepomicslab/SpecHLA/blob/master/README.MD
+      tool_dev_url: https://github.com/deepomicslab/SpecHLA
+      doi: 10.1016/j.crmeth.2023.100589
+      licence: ["MIT"]
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information.
+        e.g. [ id:'sample1', single_end:false, seq_type:'dna' ]
+  - bam:
+      type: file
+      description: |
+        Coordinate-sorted, genome-aligned (hg38/hg19) BAM file.
+        A `.bai` index is not required; the tool self-indexes.
+      pattern: "*.bam"
+output:
+  - reads:
+      type: file
+      description: Paired-end FASTQ of extracted HLA reads
+      pattern: "*_extract_{1,2}.fq.gz"
+  - versions_spechla:
+      type: list
+      description: Tuple of (process, tool, version) emitted to the `versions` topic channel
+authors:
+  - "@jonasscheid"

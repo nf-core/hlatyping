@@ -1,0 +1,38 @@
+name: spechla_typing
+description: Full-resolution HLA typing from paired-end short-read sequencing data using SpecHLA.
+keywords:
+  - hla
+  - typing
+  - mhc
+  - immunology
+tools:
+  - spechla:
+      description: SpecHLA enables full-resolution HLA typing from sequencing data.
+      homepage: https://github.com/deepomicslab/SpecHLA
+      documentation: https://github.com/deepomicslab/SpecHLA/blob/master/README.MD
+      tool_dev_url: https://github.com/deepomicslab/SpecHLA
+      doi: 10.1016/j.crmeth.2023.100589
+      licence: ["MIT"]
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information.
+        e.g. [ id:'sample1', single_end:false, seq_type:'dna' ]
+  - fastq:
+      type: list
+      description: List of two paired-end FASTQ files (must be paired-end)
+      pattern: "*.{fq,fastq}.gz"
+output:
+  - results:
+      type: file
+      description: |
+        SpecHLA typing result text files: the per-locus HLA calls
+        (`hla.result*.txt`), candidate alleles with mapping scores, and
+        per-locus haplotype frequencies.
+      pattern: "*.txt"
+  - versions_spechla:
+      type: list
+      description: Tuple of (process, tool, version) emitted to the `versions` topic channel
+authors:
+  - "@jonasscheid"
