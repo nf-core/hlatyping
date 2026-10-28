@@ -1,0 +1,89 @@
+%%metro title: nf-core/hlatyping
+%%metro logo: docs/images/nf-core-hlatyping_logo_dark.png
+%%metro center_ports: true
+%%metro file: fastq_in | FASTQ
+%%metro file: bam_in | BAM
+%%metro file: tsv_in | TSV
+%%metro file: results_tsv | TSV
+%%metro file: report_html | HTML
+%%metro line: fastq | FASTQ | #2db572
+%%metro line: bam | BAM | #e6842a
+%%metro line: tsv | TSV | #8e5bd0
+%%metro legend: bl
+
+graph LR
+    subgraph preprocessing [Pre-processing]
+        %%metro exit: right | fastq, bam, tsv
+        fastq_in[ ]
+        bam_in[ ]
+        tsv_in[ ]
+        cat_fastq[cat FASTQ]
+        check_paired[Check Paired]
+        collatefastq[BAM to FASTQ]
+        fastqc[FastQC]
+
+        fastq_in -->|fastq| cat_fastq
+        cat_fastq -->|fastq| fastqc
+        bam_in -->|bam| check_paired
+        check_paired -->|bam| collatefastq
+        collatefastq -->|bam| fastqc
+    end
+
+    subgraph hla_typing [HLA Typing]
+        %%metro entry: left | fastq, bam, tsv
+        %%metro exit: right | fastq, bam, tsv
+        yara_index[Yara Index]
+        yara_mapper[Yara Mapper]
+        optitype_run[OptiType]
+        _hd_delay[ ]
+        hlahd_run[HLA-HD]
+        _hd_pad[ ]
+        _la_delay[ ]
+        hlala_run[HLA*LA]
+        _la_pad[ ]
+        _se_delay[ ]
+        spechla_extract[Extract HLA reads]
+        spechla_run[SpecHLA]
+        _im_delay[ ]
+        immunotype_run[immunotype]
+        _merge[ ]
+
+        yara_index -->|fastq,bam| yara_mapper
+        yara_mapper -->|fastq,bam| optitype_run
+        optitype_run -->|fastq,bam| _merge
+
+        _hd_delay -->|fastq,bam| hlahd_run
+        hlahd_run -->|fastq,bam| _hd_pad
+        _hd_pad -->|fastq,bam| _merge
+
+        _la_delay -->|bam| hlala_run
+        hlala_run -->|bam| _la_pad
+        _la_pad -->|bam| _merge
+
+        _se_delay -->|bam| spechla_extract
+        spechla_extract -->|bam| spechla_run
+        spechla_run -->|bam| _merge
+
+        _im_delay -->|tsv| immunotype_run
+        immunotype_run -->|tsv| _merge
+    end
+
+    subgraph summary [Summary]
+        %%metro entry: left | fastq, bam, tsv
+        summarize[Summarize]
+        multiqc[MultiQC]
+        results_tsv[ ]
+        report_html[ ]
+
+        summarize -->|fastq,bam,tsv| results_tsv
+        multiqc -->|fastq,bam,tsv| report_html
+    end
+
+    %% Inter-section edges
+    fastqc -->|fastq,bam| yara_index
+    fastqc -->|fastq,bam| _hd_delay
+    bam_in -->|bam| _la_delay
+    bam_in -->|bam| _se_delay
+    tsv_in -->|tsv| _im_delay
+    _merge -->|fastq,bam,tsv| summarize
+    _merge -->|fastq,bam,tsv| multiqc

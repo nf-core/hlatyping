@@ -100,6 +100,7 @@ jobs:
           profile: ${{ matrix.profile }}
           shard: ${{ matrix.shard }}
           total_shards: ${{ env.TOTAL_SHARDS }}
+          tags: "pipeline"
 
       - name: Report test status
         if: ${{ always() }}
@@ -132,8 +133,42 @@ jobs:
           name: pr-comment-fragment-${{ strategy.job-index }}
           path: pr-comment-fragment/
 
+  hlahd:
+    name: Run HLA-HD tests
+    if: ${{ ( github.event_name == 'push' && github.repository == 'nf-core/hlatyping' ) || github.event.pull_request.head.repo.full_name == 'nf-core/hlatyping' }}
+    runs-on:
+      - runs-on=${{ github.run_id }}-hlahd
+      - runner=4cpu-linux-x64
+    strategy:
+      fail-fast: false
+      matrix:
+        NXF_VER:
+          - "25.10.4"
+          - "latest-everything"
+    steps:
+      - name: Check out pipeline code
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          fetch-depth: 0
+
+      - name: Install HLA-HD
+        run: |
+          curl -L -o hlahd.1.7.1.tar.gz.gpg https://raw.githubusercontent.com/nf-core/test-datasets/hlatyping/software/hlahd.1.7.1.tar.gz.gpg
+          gpg --batch --yes --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output ${{ github.workspace }}/hlahd.1.7.1.tar.gz --decrypt hlahd.1.7.1.tar.gz.gpg
+
+      - name: Run nf-test
+        uses: ./.github/actions/nf-test
+        continue-on-error: ${{ matrix.NXF_VER == 'latest-everything' }}
+        env:
+          NFT_WORKDIR: ${{ env.NFT_WORKDIR }}
+          NXF_VERSION: ${{ matrix.NXF_VER }}
+        with:
+          profile: docker
+          tags: hlahd
+          changed_since: ""
+
   confirm-pass:
-    needs: [nf-test]
+    needs: [nf-test, hlahd]
     if: always()
     runs-on: # use self-hosted runners
       - runs-on=${{ github.run_id }}-confirm-pass
