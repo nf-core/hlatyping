@@ -6,11 +6,22 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+The `hlatyping` pipeline can currently deal with two input formats: `.fastq{.gz}` or `.bam`. If the input file type is `bam`, than the pipeline extracts all reads from it and performs an mapping additional step with the `yara` mapper against the HLA reference sequence. Indices are generated using `yara`. OptiType uses [razers3](https://github.com/seqan/seqan/tree/master/apps/razers3), which is very memory consuming. In order to avoid memory issues during pipeline execution, we reduce the mapping information on the relevant HLA regions on chromosome 6.
+
+### FASTQ input
+
+When `.fastq{.gz}` files are provided, the pipeline extracts reads and maps them against the HLA reference sequence on chromosome 6 using `yara`. OptiType and/or HLA-HD then perform HLA typing from the mapped reads.
+
+### BAM input
+
+When `.bam` files are provided, the pipeline handles them in two ways depending on the selected tools:
+
+- **OptiType / HLA-HD**: Reads are extracted from the BAM file using `samtools`, converted to FASTQ, and then processed through the standard FASTQ pipeline path.
+- **HLA\*LA**: BAM files are used directly. The BAM is re-compressed to BGZF format, indexed, and passed to HLA\*LA along with the graph reference. **Important:** HLA\*LA requires genome-aligned BAM files (e.g., aligned to GRCh38), not HLA-reference-aligned BAMs. FASTQ input is not supported for HLA\*LA.
 
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 4 columns, and a header row as shown in the examples below.
 
 ```bash
 --input '[path to samplesheet file]'
@@ -18,46 +29,143 @@ You will need to create a samplesheet with information about the samples you wou
 
 ### Multiple runs of the same sample
 
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
+The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes. Concatenation is only supported for `fastq` files, not `BAM` files.
 
 ```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
+sample,fastq_1,fastq_2,seq_type
+CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz,rna
+CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz,rna
+CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz,rna
 ```
 
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 4 columns to match those defined in the table below.
 
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
+A final samplesheet file consisting of both single- and paired-end data may look something like the one below.
 
 ```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+sample,fastq_1,fastq_2,seq_type
+CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz,dna
+CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz,dna
+CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz,dna
+TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,,dna
+TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,,dna
+TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,,dna
+TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,,dna
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+The pipeline can also process `BAM` files. If you want to process a `BAM` file, just add the corresponding column to the samplesheet and provide the full path to the file. `FASTQ` and `BAM` files can be mixed in the same sample sheet.
+
+```console
+sample,fastq_1,fastq_2,bam,seq_type
+CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz,,dna
+CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz,,rna
+TREATMENT_REP1,,,AEG588A4_S4_L003_R1_001.bam,dna
+```
+
+Peptide TSV input is also supported for Immunotype (selected via `--tools immunotype`). Rows set `seq_type` to `peptide` and use the `tsv` column instead of `fastq_*`/`bam`:
+
+```console
+sample,tsv,seq_type
+HepG2_A,HepG2_A.tsv,peptide
+```
+
+| Column     | Description                                                                                                                |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `sample`   | Custom sample name.                                                                                                        |
+| `fastq_1`  | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz". |
+| `fastq_2`  | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz". |
+| `bam`      | OPTIONAL. Full path to BAM file.                                                                                           |
+| `tsv`      | OPTIONAL. Full path to a peptide TSV (used with `seq_type: peptide` for Immunotype).                                       |
+| `seq_type` | `DNA`, `RNA`, or `peptide`.                                                                                                |
+
+Each row must provide exactly one of `fastq_1`, `bam`, or `tsv`. By default the `tsv` file is assumed to have a header with a `sequence` column (MHCquant-style); override with `--peptide_col_name <col>`, or pass a headerless peptide list by setting `peptide_col_name` to `null` via a params file.
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+
+### HLA references
+
+Each HLA typing tool ships its own allele reference, so results are reported against different IPD-IMGT/HLA releases:
+
+| Tool         | IPD-IMGT/HLA release                    | Source                                                                                                                                  |
+| ------------ | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **OptiType** | `3.14.0` (July 2013)                    | `hla_reference_dna.fasta` / `hla_reference_rna.fasta` shipped in `./data/references`, selected from the `seq_type` column (`dna`/`rna`) |
+| **SpecHLA**  | `3.38.0`                                | Bundled in the SpecHLA container; shown in the header of its `hla.result.details.txt` output                                            |
+| **HLA\*LA**  | embedded in the reference graph         | IMGT alleles built into the `PRG_MHC_GRCh38_withIMGT` population reference graph                                                        |
+| **HLA-HD**   | depends on the installed HLA-HD version | Allele dictionary bundled with your local HLA-HD installation                                                                           |
+
+The OptiType references in `./data/references` have been processed as described in the OptiType [publication](https://doi.org/10.1093/bioinformatics/btu548).
+
+For OptiType you can always download new versions from the [HLA database](https://www.ebi.ac.uk/ipd/imgt/hla/docs/release.html), but be aware that these allele sets are missing intron sequence information, which will have a negative influence in the HLA typing outcome in case of DNAseq.
+
+We are currently looking into a dynamic solution, in order to build pre-processed input HLA references from current HLA allele information from the IPD-IMGT/HLA database.
+If you wish to repeatedly use the same parameters for multiple runs, rather than specifying each flag in the command, you can specify these in a params file.
+
+### HLA typing tools
+
+The pipeline supports four HLA typing tools, controlled by the `--tools` parameter:
+
+- **OptiType** (default): HLA Class I typing from FASTQ or BAM input. Open-source, included in pipeline containers.
+- **HLA-HD**: HLA Class I + II typing from FASTQ or BAM input. Requires a local installation due to licensing restrictions (see [HLA-HD section](#hla-hd-setup)).
+- **HLA\*LA**: HLA typing from BAM input only. Open-source, included in pipeline containers. Uses a graph-based approach with the PRG_MHC_GRCh38_withIMGT reference graph.
+- **SpecHLA**: Full-resolution HLA Class I + II typing from a genome-aligned BAM input (BAM only). Open-source, included in pipeline containers (see [SpecHLA notes](#spechla)).
+
+Tools can be combined:
+
+```bash
+--tools optitype,hlala      # Run both OptiType and HLA*LA (BAM input required)
+--tools optitype,hlahd      # Run both OptiType and HLA-HD
+--tools optitype,spechla    # Run both OptiType and SpecHLA
+```
+
+> [!NOTE]
+> HLA\*LA requires genome-aligned BAM input (e.g., aligned to GRCh38). Unlike OptiType and HLA-HD, it cannot work from FASTQ files or HLA-reference-aligned BAMs. If you specify `--tools hlala` with FASTQ-only samples, HLA\*LA will not run for those samples.
+
+### HLA\*LA setup
+
+HLA\*LA requires a graph reference (~5 GB) which can be provided in three ways:
+
+1. **Automatic download** (default): The graph is downloaded from a [Zenodo mirror](https://zenodo.org/records/19336310) during the pipeline run.
+2. **Pre-downloaded tarball**: Provide the path to a downloaded `PRG_MHC_GRCh38_withIMGT.tar.gz` tarball:
+   ```bash
+   --hlala_graph_tarball /path/to/PRG_MHC_GRCh38_withIMGT.tar.gz
+   ```
+3. **Pre-built graph directory**: Provide the parent directory containing the extracted graph:
+   ```bash
+   --hlala_graph_dir /path/to/graphs/
+   ```
+   The directory should contain the `PRG_MHC_GRCh38_withIMGT/` subdirectory.
+
+### HLA-HD setup
+
+HLA-HD is not distributed with the pipeline's containers due to licensing restrictions. The software is freely available for academic and non-commercial research. Users must register and download it from the [HLA-HD website](https://w3.genome.med.kyoto-u.ac.jp/HLA-HD/). Provide the path to the downloaded tarball:
+
+```bash
+--tools hlahd --hlahd_path /path/to/hlahd.1.7.1.tar.gz
+```
+
+### SpecHLA
+
+SpecHLA performs HLA typing for Class I and Class II across 8 loci. See the [SpecHLA documentation](https://github.com/deepomicslab/SpecHLA) for tool-specific details.
+
+In nf-core/hlatyping it is **BAM-only**: `--tools spechla` requires a coordinate-sorted, genome-aligned BAM (hg38 by default) as input — FASTQ samples are rejected at parameter validation. The pipeline runs SpecHLA's own `ExtractHLAread` step to pull HLA reads from the BAM before typing.
+
+- For BAMs aligned to hg19, override the reference build:
+  ```nextflow
+  process { withName: SPECHLA_EXTRACT { ext.args = '-r hg19' } }
+  ```
+- Typing mode (`-u`) and population prior (`-p`) default to `-u 1 -p nonuse` (exon typing, ancestry-neutral). `-u`: `0` = full-length, `1` = exon (required for WES and RNA-seq). `-p`: `Asian | Black | Caucasian | Unknown | nonuse`. Override via `ext.args`:
+  ```nextflow
+  process { withName: SPECHLA_TYPING { ext.args = '-u 0 -p nonuse' } }
+  ```
 
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/hlatyping --input ./samplesheet.csv --outdir ./results --genome GRCh37 -profile docker
+nextflow run nf-core/hlatyping --input ./samplesheet.csv --outdir ./results -profile docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
@@ -70,8 +178,6 @@ work                # Directory containing the nextflow working files
 .nextflow_log       # Log file from Nextflow
 # Other nextflow hidden files, eg. history of pipeline runs and old logs.
 ```
-
-If you wish to repeatedly use the same parameters for multiple runs, rather than specifying each flag in the command, you can specify these in a params file.
 
 Pipeline settings can be provided in a `yaml` or `json` file via `-params-file <file>`.
 
