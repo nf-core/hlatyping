@@ -26,6 +26,9 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Disk space cleanup
+      uses: jlumbroso/free-disk-space@ceedf095f4ec1a097402bc6bd80831f2e1a6fde6 # v2.0.0
+
     - name: Setup Nextflow
       uses: nf-core/setup-nextflow@v3
       with:
