@@ -22,8 +22,8 @@
                     "yara": "1.0.2"
                 },
                 "YARA_MAPPER": {
-                    "yara": "1.0.2",
-                    "samtools": "1.16.1"
+                    "samtools": "1.16.1",
+                    "yara": "1.0.2"
                 }
             },
             [
