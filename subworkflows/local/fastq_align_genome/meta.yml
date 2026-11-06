@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "fastq_align_genome"
+description: Align DNA FASTQ with bwa-mem2 and RNA FASTQ with STAR to a genome, building missing indices
+keywords:
+  - align
+  - genome
+  - fastq
+  - bam
+components:
+  - samtools/faidx
+  - bwamem2/index
+  - star/genomegenerate
+  - fastq_align_dna
+  - fastq_align_star
+  - bam_sort_stats_samtools
+input:
+  - ch_reads:
+      type: file
+      description: |
+        Reads to align, routed by meta.seq_type
+        Structure: [ val(meta), [ path(reads) ] ]
+      pattern: "*.{fastq,fq}.gz"
+  - genome_fasta:
+      type: string
+      description: Path to the genome FASTA
+  - fasta_fai:
+      type: string
+      description: Path to the FASTA index, built if empty
+  - bwamem2_index:
+      type: string
+      description: Path to the bwa-mem2 index, built if empty
+  - star_index:
+      type: string
+      description: Path to the STAR index, built if empty
+  - gtf:
+      type: string
+      description: Path to a GTF for an annotation-aware STAR index
+  - check_hlala_ref:
+      type: boolean
+      description: Fail if the FASTA index has contig names that HLA*LA cannot match
+output:
+  - bam_bai:
+      type: file
+      description: |
+        Coordinate-sorted BAM and index
+        Structure: [ val(meta), path(bam), path(bai) ]
+      pattern: "*.{bam,bai}"
+  - mqc:
+      type: file
+      description: samtools stats, flagstat, idxstats and STAR Log.final.out for MultiQC
+authors:
+  - "@jonasscheid"
+maintainers:
+  - "@jonasscheid"

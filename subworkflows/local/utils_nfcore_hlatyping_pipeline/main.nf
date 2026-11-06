@@ -33,6 +33,7 @@ workflow PIPELINE_INITIALISATION {
     help // boolean: Display help message and exit
     help_full // boolean: Show the full help message
     show_hidden // boolean: Show hidden parameters in the help message
+    fasta //  string: Path to genome FASTA
 
     main:
 
@@ -123,7 +124,7 @@ workflow PIPELINE_INITIALISATION {
         }
         .groupTuple()
         .map { samplesheet ->
-            validateInputSamplesheet(samplesheet)
+            validateInputSamplesheet(samplesheet, fasta)
         }
         .map { meta, input_files ->
             return [meta, input_files.flatten()]
@@ -223,7 +224,7 @@ def validateHlahdPath() {
 //
 // Validate channels from input samplesheet
 //
-def validateInputSamplesheet(input) {
+def validateInputSamplesheet(input, fasta) {
     def (metas, fastqs) = input[1..2]
 
     // Check that multiple runs of the same sample are of the same datatype i.e. single-end / paired-end
@@ -255,16 +256,23 @@ def validateInputSamplesheet(input) {
         }
     }
 
-    // SpecHLA is BAM-only in hlatyping: it consumes a genome-aligned BAM via
-    // ExtractHLAread. Reject FASTQ/TSV samples here rather than failing later.
     def first_file = fastqs[0][0]
     def input_type = first_file.name.endsWith('.bam') ? 'bam'
         : (first_file.name.endsWith('.tsv') ? 'tsv' : 'fastq')
-    if (input_type != 'bam' && "spechla" in (params.tools ?: 'optitype').tokenize(',')) {
-        error(
-            "SpecHLA requires a genome-aligned BAM, but sample '${metas[0].id}' is '${input_type}' input.\n" +
-            "Either remove --tools spechla, or supply a genome-aligned BAM for this sample."
-        )
+    def selected = params.tools.tokenize(',')
+    def align_tools = selected.intersect(metas[0].seq_type == 'rna' ? ['spechla'] : ['hlala', 'spechla'])
+
+    if (input_type == 'tsv' && !('immunotype' in selected)) {
+        error("Sample '${metas[0].id}' is peptide/TSV input; add 'immunotype' to --tools.")
+    }
+    if (input_type != 'tsv' && !selected.intersect(['optitype', 'hlala', 'spechla', 'hlahd'])) {
+        error("Sample '${metas[0].id}' is ${input_type.toUpperCase()} input; add optitype, hlala, spechla or hlahd to --tools.")
+    }
+    if (input_type == 'fastq' && align_tools && !fasta) {
+        error("${align_tools.join('/')} on FASTQ sample '${metas[0].id}' needs --genome hg38 or --fasta.")
+    }
+    if ('hlala' in selected && metas[0].seq_type == 'rna') {
+        log.warn("Skipping HLA*LA for RNA sample '${metas[0].id}'; HLA*LA has no RNA mode.")
     }
 
     return [metas[0], fastqs]
@@ -369,4 +377,20 @@ def validateMd5(file, expectedMd5, label = null) {
     if (workflow.stubRun) return
     def actual = file.withInputStream { org.apache.commons.codec.digest.DigestUtils.md5Hex(it) }
     if (actual != expectedMd5) error "MD5 mismatch for ${label ?: file.name}: expected ${expectedMd5}, got ${actual}"
+}
+
+//
+// Fail if the reference uses contig names HLA*LA cannot match
+//
+def validateHlalaReference(fai) {
+    def incompatible = fai.readLines().findResults { line -> line.tokenize('\t')[0] }.findAll { contig ->
+        contig ==~ /^[A-Z]{2}\d+\.\d+$/ ||       // GENCODE/GenBank unplaced scaffold, e.g. GL000008.2, KI270302.1
+        contig ==~ /^([1-9]|1[0-9]|2[0-2]|MT)$/  // Ensembl bare chromosome / MT (no 'chr' prefix)
+    }
+    if (incompatible) {
+        error(
+            "HLA*LA cannot use this reference: contigs like ${incompatible.take(3).join(', ')} are GENCODE/Ensembl-named. " +
+            "Use --genome hg38 or a UCSC-named GRCh38 --fasta."
+        )
+    }
 }

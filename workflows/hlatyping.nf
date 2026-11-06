@@ -25,6 +25,7 @@ include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pi
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
 include { validateMd5            } from '../subworkflows/local/utils_nfcore_hlatyping_pipeline'
+include { FASTQ_ALIGN_GENOME     } from '../subworkflows/local/fastq_align_genome'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,6 +62,7 @@ include { paramsSummaryMap       } from 'plugin/nf-schema'
 workflow HLATYPING {
     take:
     ch_samplesheet // channel: samplesheet read in from --input
+    genome_fasta // string: path to genome FASTA
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -98,6 +100,24 @@ workflow HLATYPING {
     // MODULE: Concatenate FastQ files from same sample if required
     //
     CAT_FASTQ(ch_input_files.fastq_multiple).reads.set { ch_cat_fastq }
+
+    def ch_aligned = channel.empty()
+
+    if (tool_list.intersect(['hlala', 'spechla'])) {
+        FASTQ_ALIGN_GENOME(
+            ch_input_files.fastq_single
+                .mix(ch_cat_fastq)
+                .filter { meta, _reads -> meta.seq_type != 'rna' || 'spechla' in tool_list },
+            genome_fasta,
+            params.fasta_fai,
+            params.bwamem2,
+            params.star_index,
+            params.gtf,
+            'hlala' in tool_list,
+        )
+        ch_aligned = FASTQ_ALIGN_GENOME.out.bam_bai
+        ch_multiqc_files = ch_multiqc_files.mix(FASTQ_ALIGN_GENOME.out.mqc)
+    }
 
     // determine BAM pairedness for fastq conversion
     CHECK_PAIRED(ch_bam.for_fastq_conversion)
@@ -197,7 +217,7 @@ workflow HLATYPING {
         // MODULE: Extract HLA reads from the genome-aligned BAM, then type with SpecHLA
         //
         SPECHLA_EXTRACT(
-            ch_bam.for_spechla.map { meta, files -> [meta, files[0]] }
+            ch_bam.for_spechla.map { meta, files -> [meta, files[0]] }.mix(ch_aligned.map { meta, bam, _bai -> [meta, bam] })
         )
 
         SPECHLA_TYPING(SPECHLA_EXTRACT.out.reads)
@@ -239,7 +259,9 @@ workflow HLATYPING {
         // MODULE: Run HLA*LA typing (requires genome-aligned BAM + BAI input)
         //
         SAMTOOLS_VIEW(
-            ch_bam.for_hlala.map { meta, files -> [meta, files, []] },
+            ch_bam.for_hlala
+                .filter { meta, _files -> meta.seq_type != 'rna' }
+                .map { meta, files -> [meta, files, []] },
             [[:], [], []],
             [[:], []],
             [[:], []],
@@ -248,6 +270,7 @@ workflow HLATYPING {
 
         SAMTOOLS_VIEW.out.bam
             .join(SAMTOOLS_VIEW.out.bai)
+            .mix(ch_aligned.filter { meta, _bam, _bai -> meta.seq_type != 'rna' })
             .set { ch_bam_with_index }
 
         // Graph acquisition: pre-built directory takes precedence; otherwise

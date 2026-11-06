@@ -89,6 +89,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /opt/hostedtoolcache /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup
+          docker system prune -af --volumes
+
       - name: Run nf-test
         id: run_nf_test
         uses: ./.github/actions/nf-test

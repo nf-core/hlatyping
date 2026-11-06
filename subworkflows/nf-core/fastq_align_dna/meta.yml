@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "fastq_align_dna"
+description: Align fastq files to a reference genome
+keywords:
+  - fastq
+  - bam
+  - sort
+  - bwamem
+  - bwamem2
+  - dragmap
+  - snapaligner
+  - strobealign
+components:
+  - bowtie2/align
+  - bwa/mem
+  - bwamem2/mem
+  - dragmap/align
+  - snapaligner/align
+  - strobealign
+input:
+  - ch_reads:
+      type: file
+      description: |
+        List of input FastQ files of size 1 and 2 for single-end and paired-end data,
+        respectively.
+
+        Structure: [ val(meta), [ path(reads) ] ]
+  - ch_aligner_index:
+      type: directory
+      description: |
+        Directory containing the aligner genome index files.
+
+        Structure: [ val(meta2), path(index) ]
+  - ch_fasta:
+      type: file
+      description: |
+        Reference genome in fasta format.
+
+        Structure: [ val(meta3), path(fasta) ]
+      pattern: "*.{fa, fasta, fna}"
+  - aligner:
+      type: string
+      description: Aligner to use for alignment
+      enum:
+        - bowtie2
+        - bwa
+        - bwamem2
+        - dragmap
+        - snap
+        - strobealign
+  - sort:
+      type: boolean
+      description: sort output
+output:
+  - bam:
+      type: file
+      description: |
+        BAM file.
+
+        Structure: [ val(meta), path(bam) ]
+      pattern: "*.bam"
+  - bam_index:
+      type: file
+      description: |
+        BAM index (only produced by some aligners).
+
+        Structure: [ val(meta), path(bai/csi) ]
+      pattern: "*.{bai, csi}"
+  - reports:
+      type: file
+      description: |
+        Alignment report (currently only for dragmap).
+
+        Structure: [ val(meta), path(log) ]
+authors:
+  - "@matthdsm"
+maintainers:
+  - "@matthdsm"
