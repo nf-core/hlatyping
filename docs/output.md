@@ -102,7 +102,7 @@ DPB1  DPB1*04:01:01:01  DPB1*04:02:01:01
 
 </details>
 
-FASTQ samples are aligned to GRCh38 only when `--tools` includes `hlala` or `spechla`; samplesheet BAMs skip this step. The reference comes from `--genome hg38` or `--fasta`. samtools `stats`, `flagstat` and `idxstats` of the aligned BAMs are shown in the MultiQC report.
+FASTQ samples are aligned to GRCh38 only when `--tools` includes `hlala` or `spechla`; samplesheet BAMs skip this step. The reference comes from `--genome hg38` or `--fasta`. The MultiQC report shows samtools `stats`, `flagstat` and `idxstats` of the aligned BAMs and the STAR `Log.final.out`.
 
 ### HLA\*LA
 

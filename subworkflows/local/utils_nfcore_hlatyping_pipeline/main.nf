@@ -33,7 +33,7 @@ workflow PIPELINE_INITIALISATION {
     help // boolean: Display help message and exit
     help_full // boolean: Show the full help message
     show_hidden // boolean: Show hidden parameters in the help message
-    fasta //  string: Reference genome FASTA resolved in main.nf (--fasta or the --genome iGenomes entry)
+    fasta //  string: Path to genome FASTA
 
     main:
 
@@ -259,38 +259,20 @@ def validateInputSamplesheet(input, fasta) {
     def first_file = fastqs[0][0]
     def input_type = first_file.name.endsWith('.bam') ? 'bam'
         : (first_file.name.endsWith('.tsv') ? 'tsv' : 'fastq')
-    def selected = (params.tools ?: 'optitype').tokenize(',')*.trim()
-    def bam_tools = selected.findAll { it in ['hlala', 'spechla'] }
-    def read_tools = selected.findAll { it in ['optitype', 'hlala', 'spechla', 'hlahd'] }
+    def selected = params.tools.tokenize(',')
+    def align_tools = selected.intersect(metas[0].seq_type == 'rna' ? ['spechla'] : ['hlala', 'spechla'])
 
-    // In a mixed samplesheet, only error when no selected tool can type this sample's input.
     if (input_type == 'tsv' && !('immunotype' in selected)) {
-        error(
-            "Sample '${metas[0].id}' is peptide/TSV input, but none of the selected tools " +
-            "(${selected.join(', ')}) can type peptides. Add 'immunotype' to --tools."
-        )
+        error("Sample '${metas[0].id}' is peptide/TSV input; add 'immunotype' to --tools.")
     }
-    if (input_type != 'tsv' && !read_tools) {
-        error(
-            "Sample '${metas[0].id}' is ${input_type.toUpperCase()} input, but 'immunotype' only types " +
-            "peptide/TSV input. Add a read-based tool (optitype, hlala, spechla, hlahd) to --tools."
-        )
+    if (input_type != 'tsv' && !selected.intersect(['optitype', 'hlala', 'spechla', 'hlahd'])) {
+        error("Sample '${metas[0].id}' is ${input_type.toUpperCase()} input; add optitype, hlala, spechla or hlahd to --tools.")
     }
-    if (bam_tools && input_type == 'fastq') {
-        if (!fasta) {
-            error(
-                "${bam_tools.join('/')} with FASTQ sample '${metas[0].id}' needs a GRCh38 reference " +
-                "to align against. Provide --genome hg38 (iGenomes) or --fasta /path/to/GRCh38.fasta."
-            )
-        }
+    if (input_type == 'fastq' && align_tools && !fasta) {
+        error("${align_tools.join('/')} on FASTQ sample '${metas[0].id}' needs --genome hg38 or --fasta.")
     }
-
-    // HLA*LA has no validated RNA mode, so it is skipped for RNA; SpecHLA handles RNA.
-    if ('hlala' in bam_tools && metas[0].seq_type == 'rna') {
-        log.warn(
-            "Skipping HLA*LA for RNA sample '${metas[0].id}': HLA*LA is a DNA graph-genotyping tool " +
-            "(not splice-aware, no validated RNA mode). Use SpecHLA for RNA."
-        )
+    if ('hlala' in selected && metas[0].seq_type == 'rna') {
+        log.warn("Skipping HLA*LA for RNA sample '${metas[0].id}'; HLA*LA has no RNA mode.")
     }
 
     return [metas[0], fastqs]
@@ -398,7 +380,8 @@ def validateMd5(file, expectedMd5, label = null) {
 }
 
 //
-// Fail fast if the reference uses contig names HLA*LA cannot match (GENCODE/Ensembl instead of UCSC/1000G).
+// Fail if the reference uses contig names HLA*LA cannot match
+//
 def validateHlalaReference(fai) {
     def incompatible = fai.readLines().findResults { line -> line.tokenize('\t')[0] }.findAll { contig ->
         contig ==~ /^[A-Z]{2}\d+\.\d+$/ ||       // GENCODE/GenBank unplaced scaffold, e.g. GL000008.2, KI270302.1
@@ -406,9 +389,8 @@ def validateHlalaReference(fai) {
     }
     if (incompatible) {
         error(
-            "HLA*LA cannot use this reference: contigs like ${incompatible.take(3).join(', ')} are GENCODE/Ensembl-named, " +
-            "but HLA*LA only matches UCSC/1000G naming (chr6, chrUn_KI270302v1, ...). Use --genome hg38 or a UCSC-named " +
-            "GRCh38 --fasta. SpecHLA is unaffected. See docs/usage.md."
+            "HLA*LA cannot use this reference: contigs like ${incompatible.take(3).join(', ')} are GENCODE/Ensembl-named. " +
+            "Use --genome hg38 or a UCSC-named GRCh38 --fasta."
         )
     }
 }

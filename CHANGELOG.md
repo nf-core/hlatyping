@@ -12,12 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#214](https://github.com/nf-core/hlatyping/pull/214) - Add [Immunotype](https://github.com/AG-Walz/immunotype) support for peptide-based HLA class I typing (@jonasscheid)
 - [#219](https://github.com/nf-core/hlatyping/pull/219) - Add SpecHLA as a BAM-only HLA-typing tool (genome-aligned BAM → ExtractHLAread → SpecHLA) (@jonasscheid)
 - [#220](https://github.com/nf-core/hlatyping/pull/220) - Add a `SUMMARIZE_TYPING` module that harmonizes all tools' HLA calls into a single `hlatyping_results.tsv` using mhcgnomes (@jonasscheid)
-- [#222](https://github.com/nf-core/hlatyping/pull/222) - FASTQ input support for HLA\*LA and SpecHLA via a GRCh38 genome-alignment step (DNA: bwa-mem2 through the nf-core `fastq_align_dna` subworkflow, RNA: STAR) (@jonasscheid)
+- [#222](https://github.com/nf-core/hlatyping/pull/222) - Align FASTQ to GRCh38 (bwa-mem2, STAR) for HLA\*LA and SpecHLA (@jonasscheid)
 - [#232](https://github.com/nf-core/hlatyping/pull/232) - Add `AGENTS.md` from the nf-core pipeline template (@jonasscheid)
 
 ### `Changed`
 
-- [#222](https://github.com/nf-core/hlatyping/pull/222) - Restrict `--genome` to the GRCh38 iGenomes builds (`hg38`, `GRCh38`) via the parameter schema (@jonasscheid)
 - [#211](https://github.com/nf-core/hlatyping/pull/211) - Replace local HLA\*LA modules with nf-core community modules `hlala/typing`, `hlala/preparegraph`, `wget`, and `untar`; checksum validation moved to the workflow (@jonasscheid)
 - [#211](https://github.com/nf-core/hlatyping/pull/211) - Clean up published output by disabling publishing for intermediate processes (CHECK_PAIRED, YARA_INDEX, YARA_MAPPER, SAMTOOLS_VIEW, SAMTOOLS_COLLATEFASTQ, HLAHD_INSTALL, WGET, UNTAR, HLALA_PREPAREGRAPH) (@jonasscheid)
 - [#218](https://github.com/nf-core/hlatyping/pull/218) - Merge nf-core template updates up to `4.0.2` (@jonasscheid)

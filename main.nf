@@ -33,7 +33,7 @@ workflow NFCORE_HLATYPING {
 
     take:
     samplesheet // channel: samplesheet read in from --input
-    fasta // string: reference genome FASTA (from --fasta or the --genome iGenomes entry)
+    fasta // string: path to genome FASTA
 
     main:
 
@@ -60,9 +60,6 @@ workflow NFCORE_HLATYPING {
 workflow {
 
     main:
-    //
-    // Reference genome: an explicit --fasta wins, otherwise the --genome (iGenomes) entry
-    //
     def fasta = params.fasta ?: getGenomeAttribute('fasta')
 
     //

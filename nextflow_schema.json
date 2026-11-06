@@ -47,6 +47,7 @@
                 "tools": {
                     "type": "string",
                     "default": "optitype",
+                    "pattern": "^(optitype|hlahd|hlala|spechla|immunotype)(,(optitype|hlahd|hlala|spechla|immunotype))*$",
                     "help_text": "Specifies the tool(s) to use. Multiple tools can be combined in a list separated by comma.\nAvailable are: `optitype`, `hlahd`, `hlala`, `immunotype`, `spechla`.",
                     "description": "Specifies the hlatyping tool(s) to use."
                 }
@@ -174,6 +175,7 @@
                 "fasta": {
                     "type": "string",
                     "format": "file-path",
+                    "exists": true,
                     "mimetype": "text/plain",
                     "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
                     "description": "Path to GRCh38 genome FASTA. Required for HLA*LA/SpecHLA from FASTQ input if --genome is not set.",
@@ -182,6 +184,7 @@
                 "fasta_fai": {
                     "type": "string",
                     "format": "file-path",
+                    "exists": true,
                     "pattern": "^\\S+\\.fai$",
                     "description": "Path to FASTA index (.fai). Built automatically if not provided.",
                     "fa_icon": "far fa-file-code"
@@ -189,18 +192,21 @@
                 "bwamem2": {
                     "type": "string",
                     "format": "directory-path",
+                    "exists": true,
                     "description": "Path to a pre-built bwa-mem2 index directory. Built automatically if not provided.",
                     "fa_icon": "fas fa-folder-open"
                 },
                 "star_index": {
                     "type": "string",
                     "format": "directory-path",
+                    "exists": true,
                     "description": "Path to a pre-built STAR index directory (must match the installed STAR version). Built genome-only if not provided.",
                     "fa_icon": "fas fa-folder-open"
                 },
                 "gtf": {
                     "type": "string",
                     "format": "file-path",
+                    "exists": true,
                     "pattern": "^\\S+\\.gtf(\\.gz)?$",
                     "description": "Optional GTF. If provided, the STAR index is built annotation-aware; otherwise genome-only.",
                     "fa_icon": "far fa-file-code"
