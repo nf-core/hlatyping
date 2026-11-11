@@ -12,4 +12,6 @@ work_hlala_graphs/
 CLAUDE.md
 .claude/
 .lineage/
+.nf-test/
+.nf-test.log
 docs/superpowers/
