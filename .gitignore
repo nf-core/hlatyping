@@ -13,3 +13,4 @@ CLAUDE.md
 .claude/
 .lineage/
 docs/superpowers/
+.nf-test.log
