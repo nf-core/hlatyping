@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#229](https://github.com/nf-core/hlatyping/pull/229) - Refactor OptiType module and prefix OptiType parameters.
 - [#227](https://github.com/nf-core/hlatyping/pull/227) - Merge nf-core template updates up to `4.0.3` (@jonasscheid)
 - [#231](https://github.com/nf-core/hlatyping/pull/231) - Merge nf-core template updates up to `4.1.0` (@jonasscheid)
+- [#XXX](https://github.com/nf-core/hlatyping/pull/XXX) - Merge nf-core template updates up to `4.2.2` (@jonasscheid)
 
 ### `Fixed`
 
@@ -36,10 +37,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | `HLA*LA`     | -           | 1.0.4       |
 | `Immunotype` | -           | 1.0.2       |
 | `SpecHLA`    | -           | 1.0.12      |
+| `FastQC`     | 0.12.1      | 0.13.0      |
 | `MultiQC`    | 1.32        | 1.35        |
 | `OptiType`   | 1.3.5       | 1.5.0       |
 | `samtools`   | 1.21        | 1.23.1      |
-| `nf-core`    | 3.5.1       | 4.1.0       |
+| `nf-core`    | 3.5.1       | 4.2.2       |
 | `mhcgnomes`  | -           | 1.8.6       |
 | `Nextflow`   | 25.04.2     | 25.10.4     |
 
