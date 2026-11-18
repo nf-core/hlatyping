@@ -4,7 +4,7 @@
             13,
             {
                 "FASTQC": {
-                    "fastqc": "0.12.1"
+                    "fastqc": "0.13.0"
                 },
                 "HLAHD": {
                     "hlahd": "1.7.1"
@@ -25,8 +25,8 @@
                     "yara": "1.0.2"
                 },
                 "YARA_MAPPER": {
-                    "yara": "1.0.2",
-                    "samtools": "1.16.1"
+                    "samtools": "1.16.1",
+                    "yara": "1.0.2"
                 }
             },
             [
@@ -128,10 +128,10 @@
                 "SAMPLE_FASTQ_RNA_final.result.txt:md5,15e8f8fe058169c02f4136e092981500"
             ]
         ],
-        "timestamp": "2026-08-19T15:43:56.604749003",
+        "timestamp": "2026-11-18T11:38:25.052315963",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "25.10.4"
         }
     }
 }

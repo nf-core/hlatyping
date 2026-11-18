@@ -7,7 +7,7 @@
                     "samtools": "1.16.1"
                 },
                 "FASTQC": {
-                    "fastqc": "0.12.1"
+                    "fastqc": "0.13.0"
                 },
                 "SAMTOOLS_COLLATEFASTQ": {
                     "samtools": "1.23.1"
@@ -112,7 +112,7 @@
                 
             ]
         ],
-        "timestamp": "2026-06-12T19:18:22.704180296",
+        "timestamp": "2026-11-18T11:27:19.74054487",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
@@ -126,7 +126,7 @@
                     "samtools": "1.16.1"
                 },
                 "FASTQC": {
-                    "fastqc": "0.12.1"
+                    "fastqc": "0.13.0"
                 },
                 "SAMTOOLS_COLLATEFASTQ": {
                     "samtools": "1.23.1"
@@ -186,7 +186,7 @@
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-06-12T19:19:14.292218753",
+        "timestamp": "2026-11-18T11:28:28.206779646",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

@@ -7,7 +7,7 @@
                     "samtools": "1.16.1"
                 },
                 "FASTQC": {
-                    "fastqc": "0.12.1"
+                    "fastqc": "0.13.0"
                 },
                 "OPTITYPE": {
                     "optitype": "1.5.0"
@@ -31,8 +31,8 @@
                     "yara": "1.0.2"
                 },
                 "YARA_MAPPER": {
-                    "yara": "1.0.2",
-                    "samtools": "1.16.1"
+                    "samtools": "1.16.1",
+                    "yara": "1.0.2"
                 }
             },
             [
@@ -131,10 +131,10 @@
                 
             ]
         ],
-        "timestamp": "2026-08-19T15:50:48.285763741",
+        "timestamp": "2026-11-18T11:18:25.900082698",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "25.10.4"
         }
     },
     "-profile test_optitype_spechla (stub)": {
@@ -145,7 +145,7 @@
                     "samtools": "1.16.1"
                 },
                 "FASTQC": {
-                    "fastqc": "0.12.1"
+                    "fastqc": "0.13.0"
                 },
                 "OPTITYPE": {
                     "optitype": "1.5.0"
@@ -169,8 +169,8 @@
                     "yara": "1.0.2"
                 },
                 "YARA_MAPPER": {
-                    "yara": "1.0.2",
-                    "samtools": "1.16.1"
+                    "samtools": "1.16.1",
+                    "yara": "1.0.2"
                 }
             },
             [
@@ -219,10 +219,10 @@
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-08-19T15:51:06.109550407",
+        "timestamp": "2026-11-18T11:19:45.81977881",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "25.10.4"
         }
     }
 }
