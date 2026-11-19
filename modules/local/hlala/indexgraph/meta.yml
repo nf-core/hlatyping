@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "hlala_indexgraph"
+description: Build the bwa index of the extended reference genome inside a prepared HLA*LA graph directory.
+keywords:
+  - hla
+  - typing
+  - graph
+  - index
+  - bwa
+tools:
+  - "bwa":
+      description: |
+        BWA is a software package for mapping DNA sequences against
+        a large reference genome, such as the human genome.
+      homepage: "http://bio-bwa.sourceforge.net/"
+      documentation: "https://bio-bwa.sourceforge.net/bwa.shtml"
+      tool_dev_url: "https://github.com/lh3/bwa"
+      doi: "10.1093/bioinformatics/btp324"
+      licence: ["GPL-3.0-or-later"]
+      identifier: biotools:bwa
+
+input:
+  - - meta:
+        type: map
+        description: Groovy Map containing graph information. e.g. `[
+          id:'PRG_MHC_GRCh38_withIMGT' ]`
+    - graph:
+        type: directory
+        description: |
+          HLA*LA graph directory prepared with `HLA-LA --action prepareGraph`.
+          It contains `extendedReferenceGenome/extendedReferenceGenome.fa`.
+output:
+  graph:
+    - - meta:
+          type: map
+          description: Groovy Map containing graph information. e.g. `[
+            id:'PRG_MHC_GRCh38_withIMGT' ]`
+      - "${graph}":
+          type: directory
+          description: Graph directory with the bwa index files next to
+            `extendedReferenceGenome.fa`.
+  versions_bwa:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - bwa:
+          type: string
+          description: The name of the tool
+      - 'bwa 2>&1 | sed -n "/^Version/ s/Version: //p"':
+          type: eval
+          description: The expression to obtain the version of the tool
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - bwa:
+          type: string
+          description: The name of the tool
+      - 'bwa 2>&1 | sed -n "/^Version/ s/Version: //p"':
+          type: eval
+          description: The expression to obtain the version of the tool
+authors:
+  - "@jonasscheid"
+maintainers:
+  - "@jonasscheid"

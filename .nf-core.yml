@@ -6,6 +6,7 @@ lint:
   nf_test_content:
     - nf-test.config
     - tests/fastq_hlala_badref.nf.test
+    - tests/hlala_noindex.nf.test
   schema_params: false
 nf_core_version: 4.1.0
 repository_type: pipeline

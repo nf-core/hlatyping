@@ -138,7 +138,7 @@
                     "format": "directory-path",
                     "fa_icon": "fas fa-folder-open",
                     "description": "Path to pre-built HLA*LA graph parent directory (optional).",
-                    "help_text": "Path to the parent directory containing the HLA*LA graph (e.g., the directory that contains `PRG_MHC_GRCh38_withIMGT/`). If provided, skips graph download entirely. Takes precedence over `hlala_graph_tarball`."
+                    "help_text": "Path to the parent directory containing the HLA*LA graph (e.g., the directory that contains `PRG_MHC_GRCh38_withIMGT/`). If provided, skips graph download entirely. Takes precedence over `hlala_graph_tarball`. The graph must hold the bwa index of `extendedReferenceGenome/extendedReferenceGenome.fa`."
                 }
             }
         },

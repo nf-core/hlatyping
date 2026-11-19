@@ -18,6 +18,7 @@ include { CHECK_PAIRED           } from '../modules/local/check_paired'
 include { HLAHD_INSTALL          } from '../modules/local/hlahd/install'
 include { HLAHD                  } from '../modules/local/hlahd/genotype'
 include { HLALA_PREPAREGRAPH     } from '../modules/nf-core/hlala/preparegraph/main'
+include { HLALA_INDEXGRAPH       } from '../modules/local/hlala/indexgraph/main'
 include { IMMUNOTYPE             } from '../modules/local/immunotype/main'
 include { SUMMARIZE_TYPING       } from '../modules/local/summarize/main'
 
@@ -295,12 +296,13 @@ workflow HLATYPING {
 
         UNTAR(ch_tarball)
         HLALA_PREPAREGRAPH(UNTAR.out.untar)
+        HLALA_INDEXGRAPH(HLALA_PREPAREGRAPH.out.graph)
 
         // HLALA_TYPING needs the parent directory (--customGraphDir).
         def ch_graph_dir = (params.hlala_graph_dir
                 ? channel.value(file(params.hlala_graph_dir, checkIfExists: true))
                 : channel.empty())
-            .mix(HLALA_PREPAREGRAPH.out.graph.map { _meta, graph -> graph.parent })
+            .mix(HLALA_INDEXGRAPH.out.graph.map { _meta, graph -> graph.parent })
             .first()
 
         ch_bam_with_index

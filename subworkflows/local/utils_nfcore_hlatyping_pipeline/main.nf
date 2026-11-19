@@ -192,6 +192,7 @@ def validateInputParameters() {
     genomeExistsError()
     validateToolsParam()
     validateHlahdPath()
+    validateHlalaGraphDir()
 }
 
 //
@@ -216,6 +217,22 @@ def validateHlahdPath() {
         if (params.hlahd_path == null || !file(params.hlahd_path).exists()) {
             error(
                 "HLA-HD tool selected but hlahd_path is not set or does not exist: ${params.hlahd_path}\n" + "Please download HLA-HD from https://w3.genome.med.kyoto-u.ac.jp/HLA-HD/ and provide the path to the tarball via the '--hlahd_path' parameter."
+            )
+        }
+    }
+}
+
+//
+// Validate that a user-supplied HLA*LA graph holds the bwa index of the extended reference genome
+//
+def validateHlalaGraphDir() {
+    def tools = params.tools ?: 'optitype'
+    if ("hlala" in tools.tokenize(",") && params.hlala_graph_dir) {
+        def fasta = "${params.hlala_graph_dir}/PRG_MHC_GRCh38_withIMGT/extendedReferenceGenome/extendedReferenceGenome.fa"
+        def missing = ['amb', 'ann', 'bwt', 'pac', 'sa'].findAll { suffix -> !file("${fasta}.${suffix}").exists() }
+        if (missing) {
+            error(
+                "The HLA*LA graph in --hlala_graph_dir has no complete bwa index (missing: ${missing.join(', ')}).\n" + "Build it once before the run with: bwa index ${fasta}"
             )
         }
     }

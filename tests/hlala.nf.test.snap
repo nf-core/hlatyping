@@ -1,13 +1,16 @@
 {
     "-profile test_hlala (stub)": {
         "content": [
-            10,
+            11,
             {
                 "CHECK_PAIRED": {
                     "samtools": "1.16.1"
                 },
                 "FASTQC": {
                     "fastqc": "0.12.1"
+                },
+                "HLALA_INDEXGRAPH": {
+                    "bwa": "0.7.12-r1039"
                 },
                 "HLALA_PREPAREGRAPH": {
                     "hla-la": "1.0.4"
@@ -141,7 +144,7 @@
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-06-12T19:12:56.240913922",
+        "timestamp": "2026-11-19T22:14:17.502851509",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

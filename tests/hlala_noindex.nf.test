@@ -1,0 +1,25 @@
+nextflow_pipeline {
+
+    name "Test HLA*LA fails fast on a graph directory without bwa index"
+    script "../main.nf"
+    tag "pipeline"
+    profile "test_hlala"
+    options "-stub-run"
+
+    test("-profile test_hlala --hlala_graph_dir without bwa index (stub)") {
+
+        when {
+            params {
+                outdir          = "$outputDir"
+                hlala_graph_dir = "$outputDir"
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert workflow.stdout.any { line -> line.contains("has no complete bwa index") } }
+            )
+        }
+    }
+}

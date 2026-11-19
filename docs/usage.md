@@ -147,7 +147,12 @@ HLA\*LA requires a graph reference (~5 GB) which can be provided in three ways:
    ```bash
    --hlala_graph_dir /path/to/graphs/
    ```
-   The directory should contain the `PRG_MHC_GRCh38_withIMGT/` subdirectory.
+   The directory should contain the `PRG_MHC_GRCh38_withIMGT/` subdirectory. The graph must be prepared with `HLA-LA --action prepareGraph`, and the extended reference genome must have a bwa index. The pipeline stops at start-up if an index file is missing. Build the index once before the run:
+   ```bash
+   bwa index /path/to/graphs/PRG_MHC_GRCh38_withIMGT/extendedReferenceGenome/extendedReferenceGenome.fa
+   ```
+
+With options 1 and 2, the pipeline prepares the graph and builds the bwa index once, before HLA\*LA types the samples.
 
 ### HLA-HD setup
 

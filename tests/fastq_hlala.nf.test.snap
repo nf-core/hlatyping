@@ -1,7 +1,7 @@
 {
     "-profile test_fastq_hlala (stub)": {
         "content": [
-            15,
+            16,
             {
                 "BWAMEM2_INDEX": {
                     "bwamem2": "2.2.1"
@@ -12,6 +12,9 @@
                 },
                 "FASTQC": {
                     "fastqc": "0.12.1"
+                },
+                "HLALA_INDEXGRAPH": {
+                    "bwa": "0.7.12-r1039"
                 },
                 "HLALA_PREPAREGRAPH": {
                     "hla-la": "1.0.4"
@@ -160,7 +163,7 @@
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-07-21T19:25:47.757079257",
+        "timestamp": "2026-11-19T22:12:18.284296445",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
