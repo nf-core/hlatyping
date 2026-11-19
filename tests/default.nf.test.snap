@@ -7,7 +7,7 @@
                     "samtools": "1.16.1"
                 },
                 "FASTQC": {
-                    "fastqc": "0.12.1"
+                    "fastqc": "0.13.0"
                 },
                 "OPTITYPE": {
                     "optitype": "1.5.0"
@@ -25,8 +25,8 @@
                     "yara": "1.0.2"
                 },
                 "YARA_MAPPER": {
-                    "yara": "1.0.2",
-                    "samtools": "1.16.1"
+                    "samtools": "1.16.1",
+                    "yara": "1.0.2"
                 }
             },
             [
@@ -107,10 +107,10 @@
                 
             ]
         ],
-        "timestamp": "2026-08-19T15:26:01.042072332",
+        "timestamp": "2026-11-18T10:59:42.196153842",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "25.10.4"
         }
     }
 }

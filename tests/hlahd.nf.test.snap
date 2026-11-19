@@ -4,7 +4,7 @@
             7,
             {
                 "FASTQC": {
-                    "fastqc": "0.12.1"
+                    "fastqc": "0.13.0"
                 },
                 "HLAHD": {
                     "hlahd": "1.7.1"
@@ -106,7 +106,7 @@
                 "SAMPLE_FASTQ_RNA_final.result.txt:md5,15e8f8fe058169c02f4136e092981500"
             ]
         ],
-        "timestamp": "2026-06-12T19:53:26.83827479",
+        "timestamp": "2026-11-18T11:34:14.24202298",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
